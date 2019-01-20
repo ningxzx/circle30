@@ -21,7 +21,7 @@ import './index.less'
     dispatch(asyncAdd())
   }
 }))
-class Index extends Component {
+class Mine extends Component {
 
     config = {
     navigationBarTitleText: 'CirCle30'
@@ -45,10 +45,10 @@ class Index extends Component {
         <Button className='dec_btn' onClick={this.props.asyncAdd}>async</Button>
         <View><Text>{this.props.counter.num}</Text></View>
         <View><Text>Hello, World</Text></View>
-        <Tabbar route="index"></Tabbar>
+        <Tabbar route="mine"></Tabbar>
       </View>
     )
   }
 }
 
-export default Index
+export default Mine

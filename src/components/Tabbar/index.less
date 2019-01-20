@@ -1,3 +1,4 @@
+@import "/app.less";
 .menu-wrapper {
     position: absolute;
     left: 0;
@@ -16,7 +17,7 @@
         flex-direction: column;
         justify-content: space-between;
         padding: 15px 0 5px;
-        .home-icon,.exercise-icon,.user-icon{
+        .home-icon,.exercise-icon,.mine-icon{
             background-repeat: no-repeat;
             background-size:100% 100%;
         }
@@ -24,21 +25,61 @@
             width: 44px;
             height: 42px;
         }
+        .home-icon-2x{
+            background-image: url('../../assets/images/ic_home@2x.png');
+        }
+        .home-icon-3x{
+            background-image: url('../../assets/images/ic_home@3x.png');
+        }
         .exercise-icon{
             width: 44px;
             height: 42px;
         }
-        .user-icon{
+        .exercise-icon-2x{
+            background-image: url('../../assets/images/ic_exercise@2x.png');
+        }
+        .exercise-icon-3x{
+            background-image: url('../../assets/images/ic_exercise@3x.png');
+        }
+        .mine-icon{
             width: 42px;
             height: 42px;
         }
+        .mine-icon-2x{
+            background-image: url('../../assets/images/ic_mine@2x.png');
+        }
+        .mine-icon-3x{
+            background-image: url('../../assets/images/ic_mine@3x.png');
+        }
         text {
-            font-family: PingFangSC-Regular;
             font-size: 20px;
-            color: #666666;
-            letter-spacing: 0;
+            color: @textNormal;
+            color: @mainColor;
             text-align: center;
             line-height: 20px;
+        }
+    }
+    .menu.on{
+        .home-icon-2x{
+            background-image: url('../../assets/images/ic_home_on@2x.png');
+        }
+        .home-icon-3x{
+            background-image: url('../../assets/images/ic_home_on@3x.png');
+        }
+        .exercise-icon-2x{
+            background-image: url('../../assets/images/ic_exercise_on@2x.png');
+        }
+        .exercise-icon-3x{
+            background-image: url('../../assets/images/ic_exercise_on@3x.png');
+        }
+        .mine-icon-2x{
+            background-image: url('../../assets/images/ic_mine_on@2x.png');
+        }
+        .mine-icon-3x{
+            background-image: url('../../assets/images/ic_mine_on@3x.png');
+        }
+        text{
+            color: @mainColor;
         }
     }
 }
