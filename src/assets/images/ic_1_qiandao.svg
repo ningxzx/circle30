@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="42px" height="42px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
+    <title>ic_1_qiandao</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="44" height="44"></rect>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="1-首页-1" transform="translate(-647.000000, -153.000000)">
+            <g id="Group-4" transform="translate(0.000000, 128.000000)">
+                <g id="ic_1_qiandao" transform="translate(646.000000, 24.000000)">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <use id="Mask" fill="#D8D8D8" fill-rule="nonzero" opacity="0" xlink:href="#path-1"></use>
+                    <path d="M39.5,31 C39.5,30.1715729 40.1715729,29.5 41,29.5 C41.8284271,29.5 42.5,30.1715729 42.5,31 L42.5,37 C42.5,40.0375661 40.0375661,42.5 37,42.5 L7,42.5 C3.96243388,42.5 1.5,40.0375661 1.5,37 L1.5,31 C1.5,30.1715729 2.17157288,29.5 3,29.5 C3.82842712,29.5 4.5,30.1715729 4.5,31 L4.5,37 C4.5,38.3807119 5.61928813,39.5 7,39.5 L37,39.5 C38.3807119,39.5 39.5,38.3807119 39.5,37 L39.5,31 Z M4.5,13 C4.5,13.8284271 3.82842712,14.5 3,14.5 C2.17157288,14.5 1.5,13.8284271 1.5,13 L1.5,7 C1.5,3.96243388 3.96243388,1.5 7,1.5 L37,1.5 C40.0375661,1.5 42.5,3.96243388 42.5,7 L42.5,13 C42.5,13.8284271 41.8284271,14.5 41,14.5 C40.1715729,14.5 39.5,13.8284271 39.5,13 L39.5,7 C39.5,5.61928813 38.3807119,4.5 37,4.5 L7,4.5 C5.61928813,4.5 4.5,5.61928813 4.5,7 L4.5,13 Z M3.5,21 L40.5,21 C41.3284271,21 42,21.6715729 42,22.5 C42,23.3284271 41.3284271,24 40.5,24 L3.5,24 C2.67157288,24 2,23.3284271 2,22.5 C2,21.6715729 2.67157288,21 3.5,21 Z" id="Combined-Shape" fill="#666666" fill-rule="nonzero" mask="url(#mask-2)"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

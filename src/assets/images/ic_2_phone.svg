@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
+    <title>ic_2_phone</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="24" height="24"></rect>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="2-门店详情" transform="translate(-28.000000, -790.000000)">
+            <g id="Group-7" transform="translate(0.000000, 528.000000)">
+                <g id="ic_2_phone" transform="translate(28.000000, 262.000000)">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <use id="Mask" fill="#EDEDED" opacity="0" xlink:href="#path-1"></use>
+                    <path d="M6.54535086,7.60588186 C8.08689706,6.06433566 9.45716031,5.12227966 6.71663378,1.69662147 C3.97610721,-1.72903672 2.09199522,0.840206921 0.636090471,2.3817531 C-1.07673862,4.09458219 0.550449023,10.6033328 6.97355814,17.0264419 C13.3966673,23.449551 19.8197764,25.0767386 21.6182469,23.3639095 C23.1597931,21.8223634 25.7290367,20.0238928 22.3033785,17.2833662 C18.8777203,14.5428397 17.9356643,15.913103 16.3941182,17.4546491 C15.2807793,18.5679881 12.5402527,16.2556688 10.142292,13.8577081 C7.74433124,11.4597473 5.43201194,8.71922077 6.54535086,7.60588186 Z" id="Path" fill="#666666" mask="url(#mask-2)"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
