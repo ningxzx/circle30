@@ -13,14 +13,19 @@ class Tabbar extends Component {
   onClick() {
 
   }
+  toHome(){
+    Taro.redirectTo({
+      url: '/pages/index/index'
+    })
+  }
   render() {
     const { global: { pixelRatio }, route } = this.props
     return (
       <View className="menu-wrapper" onClick={this.onClick}>
-        <Navigator className={`menu ${route == 'index' ? 'on' : ''}`} url="/pages/index/index" hover-class="on">
+        <View className={`menu ${route == 'index' ? 'on' : ''}`} onClick={this.toHome}>
           <View className={`home-icon ${pixelRatio == 3 ? 'home-icon-3x' : 'home-icon-2x'}`}></View>
           <Text>首页</Text>
-        </Navigator>
+        </View>
         <Navigator className={`menu ${route == 'exercise' ? 'on' : ''}`} url="/pages/exercise/index" hover-class="on">
           <View className={`exercise-icon ${pixelRatio == 3 ? 'exercise-icon-3x' : 'exercise-icon-2x'} `} ></View>
           <Text>训练</Text>

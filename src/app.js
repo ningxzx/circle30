@@ -20,15 +20,47 @@ class App extends Component {
 
   config = {
     pages: [
+      'pages/login/index',
       'pages/index/index',
-      'pages/exercise/index',
       'pages/mine/index',
+      'pages/store/index',
+      'pages/students/index',
+      'pages/project/index',
+      'pages/book/index',
+      'pages/selectStore/index',
+      'pages/selectCoupon/index',
+      'pages/bookStatus/index',
+      'pages/exercise/index',
+      'pages/bookInfo/index',
+      'pages/coupons/index',
     ],
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
       navigationBarTitleText: 'WeChat',
       navigationBarTextStyle: 'black'
+    },
+    tabBar: {
+      list: [{
+        pagePath: "pages/index/index",
+        text: "首页",
+        iconPath: "./assets/images/ic_home@2x.png",
+        selectedIconPath: "./assets/images/ic_home_on@2x.png"
+      }, {
+        pagePath: "pages/exercise/index",
+        text: "训练",
+        iconPath: "./assets/images/ic_exercise@2x.png",
+        selectedIconPath: "./assets/images/ic_exercise_on@2x.png"
+      },{
+        pagePath: "pages/mine/index",
+        text: "我的",
+        iconPath: "./assets/images/ic_mine@2x.png",
+        selectedIconPath: "./assets/images/ic_mine_on@2x.png"
+      }],
+      color: '#666',
+      selectedColor: '#14d0b4',
+      backgroundColor: '#fff',
+      borderStyle: '#ccc'
     }
   }
 

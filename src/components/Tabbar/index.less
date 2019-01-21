@@ -1,4 +1,4 @@
-@import "/app.less";
+@import '../../varible.less';
 .menu-wrapper {
     position: absolute;
     left: 0;
@@ -9,8 +9,7 @@
     width: 750px;
     height: 98px;
     box-sizing: border-box;
-    background-color: #fff;
-    border-top:1px solid #ccc;
+    border-top:1px solid @borderColor;
     .menu {
         width: 44px;
         display: flex;
@@ -54,7 +53,6 @@
         text {
             font-size: 20px;
             color: @textNormal;
-            color: @mainColor;
             text-align: center;
             line-height: 20px;
         }
