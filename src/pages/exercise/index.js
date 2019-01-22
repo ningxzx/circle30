@@ -1,51 +1,71 @@
 import Taro, { Component } from '@tarojs/taro'
-import { View, Button, Text } from '@tarojs/components'
+import { View, Swiper, Text } from '@tarojs/components'
 import { connect } from '@tarojs/redux'
-import Tabbar from '../../components/Tabbar'
-
-import { add, minus, asyncAdd } from '../../actions/counter'
-
 import './index.less'
 
 
 @connect(({ counter }) => ({
   counter
-}), (dispatch) => ({
-  add () {
-    dispatch(add())
-  },
-  dec () {
-    dispatch(minus())
-  },
-  asyncAdd () {
-    dispatch(asyncAdd())
-  }
 }))
 class Exercise extends Component {
-
-    config = {
-    navigationBarTitleText: '首页'
+  constructor() {
+    this.state = {
+      current: 'future'
+    }
+  }
+  config = {
+    navigationBarTitleText: '我的训练'
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     console.log(this.props, nextProps)
   }
-
-  componentWillUnmount () { }
-
-  componentDidShow () { }
-
-  componentDidHide () { }
-
-  render () {
+  tapTab(e) {
+    this.setState({
+      current: e.currentTarget.dataset.idx
+    })
+  }
+  pagechange(e) {
+    if ("touch" === e.detail.source) {
+      let currentPageIndex = this.data.currentIndex
+      currentPageIndex = (currentPageIndex + 1) % 2
+      this.setData({
+        currentIndex: currentPageIndex
+      })
+    }
+  }
+  render() {
+    const { current } = this.state
     return (
-      <View className='index'>
-        <Button className='add_btn' onClick={this.props.add}>+</Button>
-        <Button className='dec_btn' onClick={this.props.dec}>-</Button>
-        <Button className='dec_btn' onClick={this.props.asyncAdd}>async</Button>
-        <View><Text>{this.props.counter.num}</Text></View>
-        <View><Text>Hello, World</Text></View>
-        <Tabbar route="exercise"></Tabbar>
+      <View className='exercise'>
+        <View className="tabHeaderWrapper">
+          <View className={`tabHeader ${current == 'future' ? 'on' : ''}`} data-idx='future' onClick={this.tapTab}>待训练</View>
+          <View className={`tabHeader ${current == 'ongoing' ? 'on' : ''}`} data-idx='ongoing' onClick={this.tapTab}>历史训练</View>
+        </View>
+        <View className="tabPaneWrapper">
+          <Swiper circular current={current == 'future' ? 0 : 1} className="exercise-list-swiper">
+            <SwiperItem className="exercise-list-wrapper">
+              <View className="cell">
+                <Text>我的训练</Text>
+                <Text className="icon-ic_more iconfont"></Text>
+              </View>
+              <View className="cell">
+                <Text>优惠券</Text>
+                <Text className="icon-ic_more iconfont"></Text>
+              </View>
+            </SwiperItem>
+            <SwiperItem className="exercise-list-wrapper">
+              <View className="cell">
+                <Text>我的训练3</Text>
+                <Text className="icon-ic_more iconfont"></Text>
+              </View>
+              <View className="cell">
+                <Text>优惠券</Text>
+                <Text className="icon-ic_more iconfont"></Text>
+              </View>
+            </SwiperItem>
+          </Swiper>
+        </View>
       </View>
     )
   }

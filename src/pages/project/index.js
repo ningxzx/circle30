@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
 import { connect } from '@tarojs/redux'
-import Tabbar from '../../components/Tabbar'
+
 
 import { add, minus, asyncAdd } from '../../actions/counter'
 
@@ -40,7 +40,7 @@ class Mine extends Component {
   render () {
     return (
       <View className='index'>
-        <Tabbar route="mine"></Tabbar>
+        
       </View>
     )
   }

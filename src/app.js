@@ -20,9 +20,10 @@ class App extends Component {
 
   config = {
     pages: [
-      'pages/login/index',
-      'pages/index/index',
+      'pages/exercise/index',
       'pages/mine/index',
+      'pages/index/index',
+      'pages/login/index',
       'pages/store/index',
       'pages/students/index',
       'pages/project/index',
@@ -30,14 +31,14 @@ class App extends Component {
       'pages/selectStore/index',
       'pages/selectCoupon/index',
       'pages/bookStatus/index',
-      'pages/exercise/index',
       'pages/bookInfo/index',
       'pages/coupons/index',
     ],
     window: {
+      backgroundColor:'#f4f4f4',
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: 'WeChat',
+      navigationBarTitleText: 'CirCle30',
       navigationBarTextStyle: 'black'
     },
     tabBar: {

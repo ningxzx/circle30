@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
 import { connect } from '@tarojs/redux'
-import Tabbar from '../../components/Tabbar'
+
 
 import { add, minus, asyncAdd } from '../../actions/counter'
 
@@ -45,7 +45,6 @@ class Index extends Component {
         <Button className='dec_btn' onClick={this.props.asyncAdd}>async</Button>
         <View><Text>{this.props.counter.num}</Text></View>
         <View><Text>Hello, World</Text></View>
-        <Tabbar route="index"></Tabbar>
       </View>
     )
   }
