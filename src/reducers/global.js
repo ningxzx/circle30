@@ -2,8 +2,12 @@ import Taro from '@tarojs/taro'
 
 const systemInfo = Taro.getSystemInfoSync()
 const INITIAL_STATE = {
-    ...systemInfo
+    ...systemInfo,
+    appid:'wx880c53e9a6239e51'
 }
-export default function global(state = INITIAL_STATE) {
-    return state
+export default function global(state = INITIAL_STATE, action) {
+    switch (action.type) {
+        default:
+            return state
+    }
 }

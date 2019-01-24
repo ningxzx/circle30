@@ -20,10 +20,10 @@ class App extends Component {
 
   config = {
     pages: [
+      'pages/login/index',
+      'pages/index/index',
       'pages/exercise/index',
       'pages/mine/index',
-      'pages/index/index',
-      'pages/login/index',
       'pages/store/index',
       'pages/students/index',
       'pages/project/index',
@@ -61,7 +61,7 @@ class App extends Component {
       color: '#666',
       selectedColor: '#14d0b4',
       backgroundColor: '#fff',
-      borderStyle: '#ccc'
+      borderStyle: 'black'
     }
   }
 
