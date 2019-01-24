@@ -41,7 +41,6 @@ export default {
         let { url, data } = params
         let contentType = 'application/json'
         contentType = params.contentType || contentType
-        console.log(params)
 
         const option = {
             isShowLoading: false,

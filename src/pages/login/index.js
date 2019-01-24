@@ -1,6 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
-import { View, Button, Text } from '@tarojs/components'
-import { login } from '../../actions/user'
+import { View, Button, Text, Image } from '@tarojs/components'
+import { login, setUserInfo } from '../../actions/user'
 import { connect } from '@tarojs/redux'
 
 import './index.less'
@@ -11,10 +11,12 @@ import './index.less'
 }), (dispatch) => ({
   login(param) {
     dispatch(login(param))
+  },
+  setUserInfo(param) {
+    dispatch(setUserInfo(param))
   }
 }))
 class Login extends Component {
-
   config = {
     navigationBarTitleText: '登录'
   }
@@ -23,12 +25,11 @@ class Login extends Component {
     console.log(this.props, nextProps)
   }
   componentDidMount() {
+    const { global: { appid }, login, setUserInfo } = this.props
     wx.login({
       success: res => {
         if (res.errMsg === 'login:ok') {
           const { code } = res
-          const { global: { appid }, login } = this.props
-          console.log(login)
           login({ code, appid })
         }
       }
@@ -40,7 +41,8 @@ class Login extends Component {
           wx.getUserInfo({
             success: res => {
               // 可以将 res 发送给后台解码出 unionId
-              this.globalData.userInfo = res.userInfo
+              setUserInfo(res.userInfo)
+              // register(res)
               // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
               // 所以此处加入 callback 以防止这种情况
               if (this.userInfoReadyCallback) {
@@ -52,18 +54,22 @@ class Login extends Component {
       }
     })
   }
-
-  componentDidHide() { }
+  getUserInfo(e) {
+    app.globalData.userInfo = e.detail.userInfo
+    this.setData({
+      userInfo: e.detail.userInfo,
+      hasUserInfo: true
+    })
+  }
 
   render() {
-    const { global: { pixelRatio }, route } = this.props
-
+    const { user: { avatarUrl } } = this.props
     return (
       <View className='login'>
-        <View className={`avatar ${pixelRatio == 3 ? 'avatar-3x' : 'avatar-2x'}`}></View>
+        <Image src={avatarUrl} className="avatar"></Image>
         <Text className="login-title">登录</Text>
         <Text className="login-tips">请允许微信授权以获取你的身份信息</Text>
-        <View className="login-btn">立即登录</View>
+        <Button className="login-btn" open-type="getUserInfo" onGetUserInfo="getUserInfo">立即登录</Button>
       </View>
     )
   }

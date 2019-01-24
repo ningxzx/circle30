@@ -20,19 +20,18 @@ class App extends Component {
 
   config = {
     pages: [
-      'pages/login/index',
+      'pages/coupons/index',
       'pages/index/index',
+      'pages/book/index',
+      'pages/login/index',
       'pages/exercise/index',
       'pages/mine/index',
       'pages/store/index',
       'pages/students/index',
       'pages/project/index',
-      'pages/book/index',
       'pages/selectStore/index',
-      'pages/selectCoupon/index',
       'pages/bookStatus/index',
       'pages/bookInfo/index',
-      'pages/coupons/index',
     ],
     window: {
       backgroundColor:'#f4f4f4',

@@ -1,0 +1,63 @@
+@import '../../varible.less';
+.store-list {
+    .cell {
+        margin: 28px;
+        background: #ffffff;
+        border: 1px solid #fff;
+        padding: 40px 30px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-radius: 8px;
+        .left-content {
+            width: 460px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            .cell-title {
+                font-size: 32px;
+            }
+            .cell-detail {
+                text {
+                    font-size: 24px;
+                    color: @textLight;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                }
+            }
+        }
+        .right-content {
+            .iconfont {
+                color: @fontColor;
+                margin-right: 10px;
+            }
+            .distance {
+                color: @textLight;
+                font-size: 24px;
+            }
+        }
+        .status-str {
+            width: 130px;
+            height: 34px;
+            border-radius: 17px;
+            background: @textLight;
+            border-radius: 17px;
+            font-size: 20px;
+            color: #fff;
+            margin-left: 20px;
+        }
+    }
+    .cell.disable {
+        border: 1px solid @borderColor;
+        background-color: transparent;
+    }
+    .cell.selected {
+        background: #E9FAF3;
+        border: 1px solid @mainColor;
+    }
+}

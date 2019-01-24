@@ -1,0 +1,160 @@
+@import "../../varible.less";
+.book {
+    .book-info-wrapper {
+        margin-bottom: 20px;
+        background: #ffffff;
+        .book-info {
+            font-size: 28px;
+            padding: 0 28px;
+            height: 108px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .icon-ic_more {
+                margin-left: 10px;
+            }
+        }
+        .book-info+.book-info {
+            border-top: 1px solid @borderColor;
+        }
+        .getUserPhoneBtn {
+            color: @textLight;
+            font-size: 28px;
+            border: none;
+            background-color: transparent;
+            margin: 0;
+        }
+    }
+    .period-wrapper {
+        margin-top: 20px;
+        width: 750px;
+        box-sizing: border-box;
+        padding: 0 28px;
+        .period {
+            width: 337px;
+            float: left;
+            background: #FFFFFF;
+            border: 1px solid #fff;
+            border-radius: 8px;
+            height: 188px;
+            box-sizing: border-box;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+            &>text {
+                font-size: 28px;
+            }
+            .period-detail {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                .period-avatars-wrapper {
+                    .period-avatars {
+                        position: absolute;
+                        bottom: 0;
+                        width: 70px;
+                        height: 70px;
+                        border-radius: 35px;
+                        background-color: #fff;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        image {
+                            width: 60px;
+                            height: 60px;
+                            border-radius: 30px;
+                        }
+                    }
+                    .period-avatars:last-child {
+                        left: 96px;
+                        z-index: 1;
+                    }
+                    .period-avatars:nth-child(2) {
+                        left: 48px;
+                        z-index: 5;
+                    }
+                    .period-avatars:first-child {
+                        left: 0;
+                        z-index: 10;
+                    }
+                }
+                .status-text {
+                    font-size: 24px;
+                }
+                .status-text.joined {
+                    font-size: 24px;
+                    color: @mainColor;
+                }
+                .status-text.full {
+                    font-size: 24px;
+                    color: @textLight;
+                }
+            }
+        }
+        .period:nth-child(odd) {
+            margin-right: 20px;
+            margin-bottom: 20px;
+        }
+        .period.disable {
+            background: transparent;
+            border: 1px solid @borderColor;
+        }
+        .period.selected {
+            background: #E9FAF3;
+            border: 1px solid @mainColor;
+        }
+    }
+    .period-wrapper:after {
+        content: "";
+        display: block;
+        clear: both;
+    }
+    .coupon-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 110px;
+        padding: 0 28px;
+        font-size: 28px;
+        background: #FFFFFF;
+        box-shadow: 0 -6px 10px 0 rgba(153, 153, 153, 0.10), inset 0 -1px 0 0 #CCCCCC;
+        .coupon-text{
+            margin-right: 10px;
+        }
+        .discount{
+            color:#FF747C;
+        }
+        .coupon-num{
+            color: @textLight;
+        }
+    }
+    .footer{
+        height: 120px;
+        display: flex;
+        .amount{
+            height: 120px;
+            width: 310px;
+            color:@mainColor;
+            background: #fff;
+            font-size: 42px;
+            border-top:1px solid @borderColor;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            padding-left: 28px;
+        }
+        .pay-button{
+            flex:1;
+            height: 120px;
+            flex:1;
+            color:#fff;
+            background-color: @mainColor;
+            font-size: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+}

@@ -1,12 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
 import { connect } from '@tarojs/redux'
-
-
-import { add, minus, asyncAdd } from '../../actions/counter'
-
 import './index.less'
-
 
 @connect(({ global }) => ({
   global
@@ -28,7 +23,7 @@ class Mine extends Component {
   componentDidHide() { }
 
   render() {
-    const { global: { pixelRatio }, route } = this.props
+    const { global: { pixelRatio } } = this.props
     return (
       <View>
         <View className="avatar-wrapper">
