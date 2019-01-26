@@ -37,6 +37,12 @@ class Index extends Component {
   componentWillMount() {
     Taro.getLocation().then()
   }
+  toProject(e){
+    const title = e.currentTarget.dataset.title
+    Taro.navigateTo({
+      url: `/pages/project/index?name=${title}`
+    })
+  }
   jumpToBook() {
     Taro.navigateTo({
       url: '/pages/book/index'
@@ -69,7 +75,7 @@ class Index extends Component {
         <View className="exercise-list">
           <View className="gap"></View>
           {cources.length ? cources.map((cource, i) => {
-            return (<View className="cell" key={i}>
+            return (<View className="cell" key={i} onClick={this.toProject} data-title={cource.name}>
               <View className="exercise-info">
                 <Text className="exercise-name">{cource.name}</Text>
                 <View className="exercise-detail">
