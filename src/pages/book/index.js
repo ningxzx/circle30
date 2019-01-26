@@ -70,8 +70,8 @@ class Book extends Component {
                             <Text>{x.period}</Text>
                             <View className="period-detail">
                                 <View className="period-avatars-wrapper">
-                                    {x.avatars.slice(0, 3).map(src => {
-                                        return <View className="period-avatars"><Image className="mini-avatar" src={src}></Image></View>
+                                    {x.avatars.slice(0, 3).map((src,i) => {
+                                        return <View className="period-avatars" key={i}><Image className="mini-avatar" src={src}></Image></View>
                                     })}
                                 </View>
                                 <Text className={`${statusClass} status-text`}>{statusText}</Text>

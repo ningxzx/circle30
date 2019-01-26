@@ -2,9 +2,10 @@ import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
 import { connect } from '@tarojs/redux'
 import { WeekDate } from '../../components'
+import { wxLogin } from '../../utils/helper'
 import './index.less'
 
-
+@wxLogin
 @connect(({ global }) => ({
   global
 }))
@@ -28,7 +29,10 @@ class Index extends Component {
   componentWillReceiveProps(nextProps) {
     console.log(this.props, nextProps)
   }
-  jumpToBook(){
+  componentWillMount() {
+    Taro.getLocation().then()
+  }
+  jumpToBook() {
     Taro.navigateTo({
       url: '/pages/book/index'
     })
@@ -49,7 +53,7 @@ class Index extends Component {
             <Text className="icon-ic__plan iconfont"></Text>
             <Text className="card-title-text">训练计划</Text>
           </View>
-          <WeekDate/>
+          <WeekDate />
         </View>
         <View className="exercise-list">
           <View className="gap"></View>
@@ -65,7 +69,9 @@ class Index extends Component {
               </View>
               <Text className="icon-ic_more iconfont"></Text>
             </View>)
-          }) : <Image src="cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_noplan@2x.png" />}
+          }) : <View className="blank-wrapper" ><Image src="cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_noplan@2x.png" />
+              <Text>暂无训练计划</Text>
+            </View>}
         </View >
         <View className="card">
           <View className="card-title">

@@ -22,18 +22,8 @@ class Login extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(this.props, nextProps)
   }
   componentDidMount() {
-    const { global: { appid }, login, setUserInfo } = this.props
-    wx.login({
-      success: res => {
-        if (res.errMsg === 'login:ok') {
-          const { code } = res
-          login({ code, appid })
-        }
-      }
-    })
     wx.getSetting({
       success: res => {
         if (res.authSetting['scope.userInfo']) {
@@ -55,15 +45,11 @@ class Login extends Component {
     })
   }
   getUserInfo(e) {
-    app.globalData.userInfo = e.detail.userInfo
-    this.setData({
-      userInfo: e.detail.userInfo,
-      hasUserInfo: true
-    })
+    console.log(e.detail.userInfo)
   }
 
   render() {
-    const { user: { avatarUrl } } = this.props
+    const avatarUrl = this.props.user.avatarUrl || ''
     return (
       <View className='login'>
         <Image src={avatarUrl} className="avatar"></Image>

@@ -3,13 +3,15 @@ import Taro from '@tarojs/taro'
 const INITIAL_STATE = {}
 export default function global(state = INITIAL_STATE, action) {
     switch (action.type) {
-        case "SET_SESSION":
+        case "GET_SESSION":
+            Taro.setStorageSync({
+                key:'openId',
+                value:action.payload.data.openId
+            })
             return {
-                ...state,
-                ...action.payload.data
+                ...state
             }
         case "SET_USER_INFO":
-         console.log(action)
             return {
                 ...state,
                 ...action.info

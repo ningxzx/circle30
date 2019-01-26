@@ -14,11 +14,13 @@ export function createApiAction(actionType, func = () => {}) {
       callback = { success: () => {}, failed: () => {} },
       customActionType = actionType,
     ) => async (dispatch) => {
+      console.log(params)
+      console.log(callback)
       try {
         dispatch({ type: `${customActionType  }_request`, params });
         const data = await func(params);
         dispatch({ type: customActionType, params, payload: data });
-  
+        console.log(callback.success)
         callback.success && callback.success({ payload: data })
         return data
       } catch (e) {

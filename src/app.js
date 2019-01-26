@@ -1,9 +1,6 @@
 import '@tarojs/async-await'
 import Taro, { Component } from '@tarojs/taro'
-import { Provider } from '@tarojs/redux'
-
-import Index from './pages/index'
-
+import { Provider, connect } from '@tarojs/redux'
 import configStore from './store'
 
 import './app.less'
@@ -15,18 +12,18 @@ import './app.less'
 // }
 
 const store = configStore()
-
 class App extends Component {
 
   config = {
     pages: [
+      'pages/share/index',
       'pages/index/index',
+      'pages/login/index',
+      'pages/store/index',
       'pages/coupons/index',
       'pages/book/index',
-      'pages/login/index',
       'pages/exercise/index',
       'pages/mine/index',
-      'pages/store/index',
       'pages/students/index',
       'pages/project/index',
       'pages/selectStore/index',
@@ -34,7 +31,7 @@ class App extends Component {
       'pages/bookInfo/index',
     ],
     window: {
-      backgroundColor:'#f4f4f4',
+      backgroundColor: '#f4f4f4',
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
       navigationBarTitleText: 'CirCle30',
@@ -51,7 +48,7 @@ class App extends Component {
         text: "训练",
         iconPath: "./assets/images/ic_exercise@2x.png",
         selectedIconPath: "./assets/images/ic_exercise_on@2x.png"
-      },{
+      }, {
         pagePath: "pages/mine/index",
         text: "我的",
         iconPath: "./assets/images/ic_mine@2x.png",
@@ -61,22 +58,26 @@ class App extends Component {
       selectedColor: '#14d0b4',
       backgroundColor: '#fff',
       borderStyle: 'black'
+    },
+    "permission": {
+      "scope.userLocation": {
+        "desc": "你的位置信息将用于搜索附近的门店"
+      }
     }
   }
+  componentDidShow() {
+  }
 
-  componentDidMount () {}
 
-  componentDidShow () {}
+  componentDidHide() { }
 
-  componentDidHide () {}
+  componentCatchError() { }
 
-  componentCatchError () {}
-
-  componentDidCatchError () {}
+  componentDidCatchError() { }
 
   // 在 App 类中的 render() 函数没有实际作用
   // 请勿修改此函数
-  render () {
+  render() {
     return (
       <Provider store={store}>
         <Index />
