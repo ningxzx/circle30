@@ -1,0 +1,65 @@
+@import "../../varible.less";
+.coupon {
+    position: relative;
+    width: 694px;
+    height: 152px;
+    margin: 0 28px;
+    border-radius: 8px;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: center center;
+    display: flex;
+    .amount {
+        position: relative;
+        width: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 70px;
+        color: #FF747C;
+        .symbol {
+            position: absolute;
+            left: 30px;
+            top: 40px;
+            font-size: 28px;
+            color: #FF747C;
+        }
+    }
+    .detail {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+        padding: 40px 0 40px 48px;
+        .title {
+            font-size: 28px;
+        }
+        .range {
+            font-size: 24px;
+            color: @textLight;
+        }
+    }
+    .useStatus{
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: #FF747C;
+        color: #ffffff;
+        width: 72px;
+        height: 152px;
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+        writing-mode:vertical-lr;
+        font-size: 28px;
+        line-height: 72px;
+        letter-spacing: 6px;
+        text-align: center;
+    }
+}
+
+.coupon-2x {
+    background-image: url('../../assets/images/img_12_quan@2x.png');
+}
+
+.coupon-3x {
+    background-image: url('../../assets/images/img_12_quan@3x.png');
+}
