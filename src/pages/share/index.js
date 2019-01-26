@@ -30,7 +30,7 @@ class Share extends Component {
     const { type } = this.$router.params
     this.setState({
       type,
-      used: type === 'toShare'
+      used: type !== 'toShare'
     })
     Taro.setNavigationBarTitle({
       title: type === 'shareBy' ? '好友邀请' : '邀请好友'

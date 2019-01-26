@@ -14,7 +14,7 @@ class StoreList extends Component {
     ],
     selectIdx: null
   }
-  selectStore(e) {
+  stores(e) {
     const { idx, status } = e.currentTarget.dataset
     if (status) {
       this.setState({
@@ -30,7 +30,7 @@ class StoreList extends Component {
     return (
       <View className="store-list">
         {stores.length ? stores.map((store, i) => {
-          return (<View className={`cell ${store.status ? '' : 'disable'} ${i == selectIdx ? 'selected' : ''}`} key={i} data-idx={i} data-status={store.status} onClick={this.selectStore} >
+          return (<View className={`cell ${store.status ? '' : 'disable'} ${i == selectIdx ? 'selected' : ''}`} key={i} data-idx={i} data-status={store.status} onClick={this.stores} >
             <View className="left-content">
               <Text className="cell-title">{store.title}{!store.status ? <Text className="status-str">暂停预约</Text> : null}</Text>
               <View className="cell-detail">

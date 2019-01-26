@@ -59,6 +59,11 @@ class Store extends Component {
       url: '/pages/book/index'
     })
   }
+  toStudents(){
+    Taro.navigateTo({
+      url: '/pages/students/index'
+    })
+  }
   componentDidMount() {
     const { name } = this.$router.params
     if (name) {
@@ -113,7 +118,7 @@ class Store extends Component {
             <Text><Text className="icon-ic_address iconfont"></Text>{address}</Text>
             <Text className="icon-ic_more iconfont"></Text>
           </View>
-          <View className="students">
+          <View className="students" onClick={this.toStudents}>
             <View className="period-avatars-wrapper">
               {avatars.slice(0, 3).map((src, i) => {
                 return <View className="period-avatars" key={i}><Image className="mini-avatar" src={src}></Image></View>

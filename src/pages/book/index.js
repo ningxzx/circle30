@@ -22,7 +22,7 @@ class Book extends Component {
         coupons: 1,
         discount: null,
         selectPeriodIdx: null,
-        amount:60
+        amount: 60
     }
 
     config = {
@@ -32,15 +32,21 @@ class Book extends Component {
     componentWillReceiveProps(nextProps) {
         console.log(this.props, nextProps)
     }
-    jumToStores(){
+    jumToStores() {
         Taro.navigateTo({
-            url: '/pages/selectStore/index'
-          })
+            url: '/pages/stores/index'
+        })
     }
-    jumToCoupons(){
+    jumToCoupons() {
         Taro.navigateTo({
             url: '/pages/coupons/index'
-          })
+        })
+    }
+    toPay() {
+        // 支付逻辑
+        Taro.navigateTo({
+            url: '/pages/bookStatus/index'
+        })
     }
     selectPeriod(e) {
         this.setState({
@@ -70,7 +76,7 @@ class Book extends Component {
                             <Text>{x.period}</Text>
                             <View className="period-detail">
                                 <View className="period-avatars-wrapper">
-                                    {x.avatars.slice(0, 3).map((src,i) => {
+                                    {x.avatars.slice(0, 3).map((src, i) => {
                                         return <View className="period-avatars" key={i}><Image className="mini-avatar" src={src}></Image></View>
                                     })}
                                 </View>
@@ -82,13 +88,13 @@ class Book extends Component {
                 {coupons ? <View className="coupon-wrapper" onClick={this.jumToCoupons}>
                     <Text>优惠券</Text>
                     <Text>
-                        <Text className={`coupon-text {discount?'discount':'coupon-num'}`}>{!discount?`${coupons}个可用`:`-￥${discount}`}</Text>
+                        <Text className={`coupon-text {discount?'discount':'coupon-num'}`}>{!discount ? `${coupons}个可用` : `-￥${discount}`}</Text>
                         <Text className="icon-ic_more iconfont"></Text>
                     </Text>
                 </View> : null}
                 <View className="footer">
                     <Text className="amount">￥{amount}</Text>
-                    <View className="pay-button"> 立即支付</View>
+                    <View className="pay-button" onClick={this.toPay}> 立即支付</View>
                 </View>
             </View>
         )

@@ -10,8 +10,8 @@ class CouponList extends Component {
   }
   state = {
     coupons: [
-      { amount: 30, title: '新用户体验券', range: '所有门店通用' },
-      { amount: 12, title: '邀请好友奖励', range: '所有门店通用' }
+      // { amount: 30, title: '新用户体验券', range: '所有门店通用' },
+      // { amount: 12, title: '邀请好友奖励', range: '所有门店通用' }
     ]
   }
   selectCoupon(e) {
@@ -20,7 +20,7 @@ class CouponList extends Component {
   render() {
     const { coupons } = this.state
     return (
-      <View className="coupon-list">
+      <View className={`coupon-list ${!coupons.length?'no-coupon':''}`}>
         {coupons.length ? coupons.map((coupon, i) => {
           return <Coupon className="coupon" coupon={coupon} key={i}></Coupon>
         }) : <View className="no-coupon-wrapper" ><Image className="no-coupon" src="cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_12_wuquan@2x.png"></Image><View className="no-coupon-text">暂无优惠券</View></View>}

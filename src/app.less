@@ -25,7 +25,7 @@ text {
         .card-title-text {
             margin-left: 15px;
         }
-        .verticalIcon{
+        .verticalIcon {
             display: inline-block;
             width: 10px;
             height: 32px;
@@ -38,10 +38,30 @@ text {
 .card:last-child {
     margin-bottom: 20px;
 }
-.icon-ic_more{
+
+.icon-ic_more {
     color: @fontColor;
 }
 
+// 通用按钮样式
+.circle-btn {
+    height: 88px;
+    width: 670px;
+    background: @mainColor;
+    border-radius: 44px;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    line-height: 1;
+    box-sizing: border-box;
+}
+.circle-btn.sub-btn{
+    color:@textHeavy;
+    background-color: #f8f8f8;
+    border: 1px solid @borderColor;
+}
 @font-face {
     font-family: "iconfont";
     src: url('//at.alicdn.com/t/font_1010147_bvc4fwl6rga.eot?t=1548077740402');
