@@ -1,0 +1,42 @@
+.share {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #584F5F;
+    .logo-wrapper {
+        position: relative;
+        width: 100%;
+        height: 290px;
+        background-color: #fff;
+        image {
+            position: absolute;
+            z-index: 100;
+            width: 110px;
+            height: 200px;
+            margin: 50px auto 36px;
+            left: 50%;
+            margin-left: -55px;
+        }
+        .circle {
+            position: absolute;
+            content: " ";
+            display: block;
+            bottom: -80px;
+            left: -10%;
+            height: 260px;
+            width: 120%;
+            border-bottom-left-radius: 50%;
+            border-bottom-right-radius: 50%;
+            background-color: #fff;
+        }
+    }
+    .content{
+        position: relative;
+        
+        .avatar{
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+        }
+    }
+}

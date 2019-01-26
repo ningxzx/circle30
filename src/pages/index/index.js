@@ -5,7 +5,6 @@ import { WeekDate } from '../../components'
 import { wxLogin } from '../../utils/helper'
 import './index.less'
 
-@wxLogin
 @connect(({ global }) => ({
   global
 }))

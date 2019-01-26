@@ -2,11 +2,6 @@ import Taro, { Component } from '@tarojs/taro'
 import { login, setUserInfo } from '../actions/user'
 import { connect } from '@tarojs/redux'
 export const wxLogin = (WrappedComponent) => {
-    @connect(() => { }, (dispatch) => ({
-        login(param) {
-            dispatch(login(param))
-        }
-    }))
     class LoginWrapper extends Component {
         // async componentDidMount() {
         //     try {
@@ -23,11 +18,6 @@ export const wxLogin = (WrappedComponent) => {
     return LoginWrapper
 }
 export const getUserInfo = (WrappedComponent) => {
-    @connect(() => { }, (dispatch) => ({
-        login(param) {
-            dispatch(login(param))
-        }
-    }))
     class userInfoWrapper extends Component {
         componentDidMount() {
             const { openId,unionId } = Taro.getStorageSync()

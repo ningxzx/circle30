@@ -24,7 +24,6 @@ class StoreList extends Component {
     Taro.navigateTo({
       url: '/pages/store/index'
     })
-    this.props.changeDate()
   }
   render() {
     const { stores, selectIdx } = this.state

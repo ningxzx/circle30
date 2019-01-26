@@ -17,6 +17,7 @@ class App extends Component {
   config = {
     pages: [
       'pages/share/index',
+      'pages/selectStore/index',
       'pages/index/index',
       'pages/login/index',
       'pages/store/index',
@@ -26,7 +27,6 @@ class App extends Component {
       'pages/mine/index',
       'pages/students/index',
       'pages/project/index',
-      'pages/selectStore/index',
       'pages/bookStatus/index',
       'pages/bookInfo/index',
     ],
