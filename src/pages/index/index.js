@@ -24,7 +24,13 @@ class Index extends Component {
   config = {
     navigationBarTitleText: 'CirCle30'
   }
-
+  scan() {
+    Taro.scanCode({
+      onlyFromCamera: true
+    }).then(res => {
+      console.log(res)
+    })
+  }
   componentWillReceiveProps(nextProps) {
     console.log(this.props, nextProps)
   }
@@ -36,13 +42,19 @@ class Index extends Component {
       url: '/pages/book/index'
     })
   }
+  jumpToStore(e) {
+    const title = e.currentTarget.dataset.title
+    Taro.navigateTo({
+      url: `/pages/store/index?name=${title}`
+    })
+  }
   render() {
     const { stores, cources } = this.state
     return (
       <View className='index'>
         <View className="header">
           <View className="book-btn" onClick={this.jumpToBook}>预约训练</View>
-          <View className="sign">
+          <View className="sign" onClick={this.scan}>
             <Text className="icon-ic__qiandao iconfont sign-icon"></Text>
             <Text className="sign-text">扫码签到</Text>
           </View>
@@ -79,7 +91,7 @@ class Index extends Component {
           </View>
           <View className="store-list">
             {stores.length ? stores.map((store, i) => {
-              return (<View className="cell" key={i}>
+              return (<View className="cell" key={i} data-title={store.title} onClick={this.jumpToStore}>
                 <View className="left-content">
                   <Text className="cell-title">{store.title}</Text>
                   <View className="cell-detail">

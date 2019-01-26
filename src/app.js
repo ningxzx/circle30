@@ -16,11 +16,11 @@ class App extends Component {
 
   config = {
     pages: [
+      'pages/index/index',
+      'pages/store/index',
       'pages/share/index',
       'pages/selectStore/index',
-      'pages/index/index',
       'pages/login/index',
-      'pages/store/index',
       'pages/coupons/index',
       'pages/book/index',
       'pages/exercise/index',

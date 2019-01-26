@@ -1,0 +1,163 @@
+@import '../../varible.less';
+.store {
+    .store-banner{
+        height: 400px;
+        image{
+            width: 750px;
+            height: 400px;
+        }
+    }
+    .store-info {
+        margin-bottom: 20px;
+        background-color: #fff;
+        &>view {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid @lineColor;
+            font-size: 24px;
+            margin: 0 28px;
+            box-sizing: border-box;
+        }
+        view:last-child {
+            border-bottom: 0;
+        }
+        view.name {
+            margin: 0;
+            padding: 0 28px;
+            font-size: 36px;
+            height: 116px;
+        }
+        .office-hours,
+        .tel,
+        .location {
+            height: 104px;
+        }
+        .students {
+            position: relative;
+            height: 140px;
+            .period-avatars {
+                position: absolute;
+                width: 70px;
+                height: 70px;
+                top: 50%;
+                margin-top: -35px;
+                border-radius: 35px;
+                background-color: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                image {
+                    width: 60px;
+                    height: 60px;
+                    border-radius: 30px;
+                }
+            }
+            .period-avatars:last-child {
+                left: 96px;
+                z-index: 1;
+            }
+            .period-avatars:nth-child(2) {
+                left: 48px;
+                z-index: 5;
+            }
+            .period-avatars:first-child {
+                left: 0;
+                z-index: 10;
+            }
+        }
+        .description {
+            padding: 30px 0;
+            line-height: 34px;
+        }
+        view.description {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            align-items: flex-start;
+        }
+        view Text:first-child .iconfont {
+            margin-right: 18px;
+        }
+    }
+    .exercise-list {
+        position: relative;
+        padding: 0 28px;
+        box-sizing: border-box;
+        background-color: #fff;
+        .gap {
+            position: absolute;
+            left: 0;
+            height: 20px;
+            width: 100%;
+            background-image: linear-gradient(-180deg, #F5F5F5 0%, rgba(245, 245, 245, 0.00) 100%);
+        }
+    }
+    .cell {
+        height: 180px;
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #fff;
+        color: @textHeavy;
+        font-size: 28px;
+        .exercise-info {
+            height: 100%;
+            padding: 50px 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+            .exercise-name {
+                font-size: 36px;
+                line-height: 36px;
+            }
+            .exercise-detail {
+                font-size: 24px;
+                line-height: 24px;
+                text {
+                    color: @textLight;
+                    margin-right: 10px;
+                }
+            }
+        }
+        .icon-ic_more {
+            color: @fontMoreColor;
+        }
+    }
+    .cell+.cell {
+        border-top: 1px solid @lineColor;
+    }
+    .blank-wrapper {
+        height: 290px;
+        display: flex;
+        flex-direction: column;
+        padding: 40px 0;
+        box-sizing: border-box;
+        align-items: center;
+        justify-content: space-between;
+        image {
+            width: 170px;
+            height: 170px;
+        }
+        text {
+            font-size: 24px;
+            color: @textLight;
+        }
+    }
+    .book-btn {
+        width: 100%;
+        height: 120px;
+        background-color: @mainColor;
+        color: #fff;
+        font-size: 34px;
+        margin-top: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
