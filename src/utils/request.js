@@ -41,7 +41,7 @@ export default {
         let { url, data } = params
         let contentType = 'application/json'
         contentType = params.contentType || contentType
-
+        Taro.showNavigationBarLoading()
         const option = {
             isShowLoading: false,
             loadingText: '正在加载',
@@ -50,6 +50,7 @@ export default {
             method: method,
             header: { 'content-type': contentType},
             success(res) {
+                Taro.hideNavigationBarLoading()
                 if (res.statusCode === HTTP_STATUS.NOT_FOUND) {
                     return logError('api', '请求资源不存在')
                 } else if (res.statusCode === HTTP_STATUS.BAD_GATEWAY) {
@@ -61,6 +62,7 @@ export default {
                 }
             },
             error(e) {
+                Taro.hideNavigationBarLoading()
                 logError('api', '请求接口出现问题', e)
             }
         }

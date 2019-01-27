@@ -27,26 +27,29 @@
                     font-size: 40px;
                 }
             }
-            .bookStatus {
-                height: 56px;
-                line-height: 56px;
-                text-align: center;
-                width: 136px;
-                border-radius: 28px;
-                font-size: 26px;
-                margin-top: 39px;
-            }
             .bookStatus.arrived {
-                border: 1px solid @mainColor;
-                color: @mainColor;
+                width: 100px;
+                height: 77px;
+                padding-top: 22px;
+                box-sizing: border-box;
+                font-size: 24px;
+                line-height: 1;
+                color: #fff;
+                text-align: center;
+                background-image: url('../../assets/images/img_yixunlian@2x.png');
+                background-repeat: no-repeat;
+                background-size: 100% 100%;
             }
+            .bookStatus.outdate,
             .bookStatus.canceled {
-                border: 1px solid @textLight;
+                margin-top: 44px;
+                width: 100px;
+                height: 44px;
+                font-size: 24px;
+                line-height: 44px;
+                background: #e5e5e5;
+                text-align: center;
                 color: @textLight;
-            }
-            .bookStatus.outdate {
-                border: 1px solid @textNormal;
-                color: @textNormal;
             }
         }
     }
@@ -56,34 +59,75 @@
         box-sizing: border-box;
         border-bottom: 1px solid @lineColor;
         .title {
+            display: block;
             margin-bottom: 20px;
-            height: 26px;
-            text {
-                font-size: 26px;
-                color: @textNormal;
-            }
+            font-size: 26px;
+            line-height: 26px;
+            color: @textNormal;
         }
         .content {
-            display: flex;;
+            display: flex;
             justify-content: space-between;
-            .left-content{
-                display: flex;
+            height: 110px;
+            .icon-ic_more {
+                margin-top: 40px;
             }
-            .address-info{
+            .left-content {
+                display: flex;
+                .icon-ic__add {
+                    margin-right: 16px;
+                    color: #000;
+                }
+            }
+            .address-info {
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
-                Text{
-                    margin-top: 20px;
+                Text {
                     width: 540px;
                 }
             }
-            .store-name{
+            .store-name {
                 font-size: 30px;
             }
-            .address{
+            .address {
                 font-size: 24px;
-                color:@textLight;
+                line-height: 32px;
+                color: @textLight;
+            }
+        }
+    }
+    .students-info {
+        height: 248px;
+        padding: 40px 0;
+        box-sizing: border-box;
+        .title {
+            display: block;
+            margin-bottom: 20px;
+            font-size: 26px;
+            line-height: 26px;
+            color: @textNormal;
+        }
+        .student-wrapper {
+            display: flex;
+            height: 122px;
+            .student {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                margin-right: 30px;
+                image {
+                    width: 80px;
+                    height: 80px;
+                    background-repeat: 40px;
+                }
+                text {
+                    width: 90px;
+                    font-size: 22px;
+                    overflow:hidden;
+                    text-overflow:ellipsis;
+                    white-space:nowrap
+                }
             }
         }
     }

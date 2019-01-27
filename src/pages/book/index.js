@@ -53,6 +53,11 @@ class Book extends Component {
             selectPeriodIdx: e.currentTarget.dataset.idx
         })
     }
+    getPhoneNumber(e) {
+        console.log(e.detail.errMsg)
+        console.log(e.detail.iv)
+        console.log(e.detail.encryptedData)
+    }
     render() {
         const { store, tel, list, selectPeriodIdx } = this.state
         return (
@@ -64,7 +69,7 @@ class Book extends Component {
                     </View>
                     <View className="book-info">
                         <Text>预约手机号</Text>
-                        {tel ? <Text>{tel}</Text> : <Button className="getUserPhoneBtn" onGetPhoneNumber={this.getPhoneNumber} openType="bindgetphonenumber">点击验证手机号</Button>}
+                        {tel ? <Text>{tel}</Text> : <Button className="getUserPhoneBtn" onGetPhoneNumber={this.getPhoneNumber} openType="getPhoneNumber">点击验证手机号</Button>}
                     </View>
                 </View>
                 <WeekDate></WeekDate>

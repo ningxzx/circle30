@@ -3,8 +3,25 @@ import { login, setUserInfo } from '../actions/user'
 export const wxLogin = (Component) => {
     class LoginWrapper extends Component {
         componentWillMount() {
-            console.log('willMount')
-            Taro.checkSession().then().catch()
+            const unionId = Taro.getStorageSync('unionId')
+            const openId = Taro.getStorageSync('openId')
+            const userId = Taro.getStorageSync('userId')
+            if (!openId) {
+                Taro.login().then(res => {
+                    if (res.errMsg === 'login:ok') {
+                        const { code } = res
+                        login({ code }).then(res => {
+
+                        })
+                    }
+                })
+            }
+            if (!unionId) {
+
+            }
+            if (userId) {
+
+            }
             if (super.componentWillMount) {
                 super.componentWillMount();
             }

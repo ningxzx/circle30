@@ -20,7 +20,13 @@ class BookInfo extends Component {
       { name: '引体向上', body: '全身', type: '动态保持' }
     ],
     // unArrived-训练未开始，arrived-已训练，canceled-已取消,outdate-已过期
-    type: 'canceled'
+    type: 'arrived',
+    users: [
+      { avatarUrl: 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', name: '刘二狗' },
+      { avatarUrl: 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', name: '刘三狗子' },
+      { avatarUrl: 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', name: '哈哈哈哈' },
+      { avatarUrl: 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', name: '合适的话就我' },
+    ]
   }
   config = {
     navigationBarTitleText: 'CirCle30'
@@ -43,7 +49,7 @@ class BookInfo extends Component {
   componentDidHide() { }
 
   render() {
-    const { cources, type } = this.state
+    const { cources, type, users } = this.state
     return (
       <View className='bookInfo'>
         <View class="book-info-detail">
@@ -59,10 +65,10 @@ class BookInfo extends Component {
             </View>) : <View className={`bookStatus ${type}`}>{BOOK_TYPES[type]}</View>}
           </View>
           <View className="store-info">
-            <View className="title"><Text>预约门店</Text></View>
+            <Text class="title">预约门店</Text>
             <View className="content">
               <View className="left-content">
-                <Text className="icon-ic_add iconfont"></Text>
+                <Text className="icon-ic__add iconfont"></Text>
                 <View className="address-info">
                   <Text className="store-name">优客联邦一期店</Text>
                   <Text class="address">成都市武侯区佳灵路222号优客联邦一期2栋5单元1601室 宽度540px 行距12px</Text>
@@ -71,13 +77,18 @@ class BookInfo extends Component {
               <Text className="icon-ic_more iconfont"></Text>
             </View>
           </View>
-          <View className="course-info">
-            <View className="book-time">
-              <Text>训练时间</Text>
-              <Text className="date">2018年12月21日<Text>星期四</Text></Text>
-              <Text className="time">19：00-19：30</Text>
+          <View className="students-info">
+            <Text className="title">预约学员</Text>
+            <View className="student-wrapper">
+              {
+                users.map(user => {
+                  return <View class="student">
+                    <Image src={user.avatarUrl} />
+                    <Text>{user.name}</Text>
+                  </View>
+                })
+              }
             </View>
-            {type == 'unArrived' ? <View></View> : type == "arrived" ? <View></View> : <View></View>}
           </View>
         </View>
         <View className="card">
