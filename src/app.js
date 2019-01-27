@@ -1,7 +1,8 @@
 import '@tarojs/async-await'
 import Taro, { Component } from '@tarojs/taro'
 import { Provider, connect } from '@tarojs/redux'
-import configStore from './store'
+import { set as setGlobalData, get as getGlobalData } from './utils/globalData'
+
 
 import './app.less'
 
@@ -11,13 +12,12 @@ import './app.less'
 //   require('nerv-devtools')
 // }
 
-const store = configStore()
 class App extends Component {
 
   config = {
     pages: [
-      'pages/bookInfo/index',
       'pages/index/index',
+      'pages/bookInfo/index',
       'pages/students/index',
       'pages/bookStatus/index',
       'pages/store/index',
@@ -65,7 +65,12 @@ class App extends Component {
       }
     }
   }
-  componentDidShow() {
+  componentDidMount() {
+    // 获取环境数据
+    Taro.getSystemInfo().then(res=>{
+      setGlobalData(res)
+    })
+
   }
 
 
@@ -79,7 +84,7 @@ class App extends Component {
   // 请勿修改此函数
   render() {
     return (
-      <Provider store={store}>
+      <Provider>
         <Index />
       </Provider>
     )

@@ -1,21 +1,12 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Image } from '@tarojs/components'
 import { login, setUserInfo } from '../../actions/user'
+import { wxLogin } from '../../utils/helper'
+import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 import { connect } from '@tarojs/redux'
 
 import './index.less'
-
-
-@connect(({ global, user }) => ({
-  global, user
-}), (dispatch) => ({
-  login(param) {
-    dispatch(login(param))
-  },
-  setUserInfo(param) {
-    dispatch(setUserInfo(param))
-  }
-}))
+// @wxLogin
 class Login extends Component {
   config = {
     navigationBarTitleText: '登录'
@@ -49,7 +40,8 @@ class Login extends Component {
   }
 
   render() {
-    const avatarUrl = this.props.user.avatarUrl || ''
+    const ratio = getGlobalData('pixelRatio') === 3 ? '3' : '2'
+    const avatarUrl = `cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/default_icon@${ratio}x.png`
     return (
       <View className='login'>
         <Image src={avatarUrl} className="avatar"></Image>

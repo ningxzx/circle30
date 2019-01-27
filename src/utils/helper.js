@@ -1,49 +1,85 @@
-import Taro, { Component } from '@tarojs/taro'
+import Taro from '@tarojs/taro'
 import { login, setUserInfo } from '../actions/user'
-import { connect } from '@tarojs/redux'
-export const wxLogin = (WrappedComponent) => {
+export const wxLogin = (Component) => {
     class LoginWrapper extends Component {
-        // async componentDidMount() {
-        //     try {
-        //         await Taro.checkSession()
-        //     } catch (error) {
-        //         const code = await wxLogin()
-        //         login({ code })
-        //     }
-        // }
+        componentWillMount() {
+            console.log('willMount')
+            Taro.checkSession().then().catch()
+            if (super.componentWillMount) {
+                super.componentWillMount();
+            }
+        }
         render() {
-            return <WrappedComponent {...this.props} />
+            return super.render();
         }
     }
     return LoginWrapper
 }
-export const getUserInfo = (WrappedComponent) => {
-    class userInfoWrapper extends Component {
-        componentDidMount() {
-            const { openId,unionId } = Taro.getStorageSync()
-            Taro.getSetting().then(res => {
-                if (res.authSetting['scope.userInfo']) {
-                    // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
-                    wx.getUserInfo({
-                        success: res => {
-                            // 可以将 res 发送给后台解码出 unionId
-                            setUserInfo(res.userInfo)
-                            // register(res)
-                            // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-                            // 所以此处加入 callback 以防止这种情况
-                            if (this.userInfoReadyCallback) {
-                                this.userInfoReadyCallback(res)
-                            }
-                        }
-                    })
+export function withShare(opts = {}) {
+
+    // 设置默认
+    const defalutPath = 'pages/index/index?';
+    const defalutTitle = '默认标题';
+    const defaultImageUrl = defaultShareImg;
+
+    return function demoComponent(Component) {
+        class WithShare extends Component {
+            async componentWillMount() {
+                wx.showShareMenu({
+                    withShareTicket: true
+                });
+
+                if (super.componentWillMount) {
+                    super.componentWillMount();
                 }
-            })
+            }
+
+            // 点击分享的那一刻会进行调用
+            onShareAppMessage() {
+                const { userInfo } = this.props;
+
+                let { title, imageUrl, path = null } = opts;
+
+                // 从继承的组件获取配置
+                if (this.$setSharePath && typeof this.$setSharePath === 'function') {
+                    path = this.$setSharePath();
+                }
+
+                // 从继承的组件获取配置
+                if (this.$setShareTitle && typeof this.$setShareTitle === 'function') {
+                    title = this.$setShareTitle();
+                }
+
+                // 从继承的组件获取配置
+                if (
+                    this.$setShareImageUrl &&
+                    typeof this.$setShareImageUrl === 'function'
+                ) {
+                    imageUrl = this.$setShareImageUrl();
+                }
+
+                if (!path) {
+                    path = defalutPath;
+                }
+
+                // 每条分享都补充用户的分享id
+                // 如果path不带参数，分享出去后解析的params里面会带一个{''： ''}
+                const sharePath = `${path}&shareFromUser=${userInfo.shareId}`;
+
+                return {
+                    title: title || defalutTitle,
+                    path: sharePath,
+                    imageUrl: imageUrl || defaultImageUrl
+                };
+            }
+
+            render() {
+                return super.render();
+            }
         }
-        render() {
-            return <WrappedComponent {...this.props} />
-        }
-    }
-    return userInfoWrapper
+
+        return WithShare;
+    };
 }
 
 // componentDidMount() {

@@ -1,18 +1,16 @@
 import { ComponentClass } from 'react'
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
-import { connect } from '@tarojs/redux'
+import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
+
 import './index.less'
-@connect(({ global }) => ({
-    global
-}))
 class Coupon extends Component {
     static defaultProps = {
         coupon: {},
         used: false
     }
     render() {
-        const { global: { pixelRatio } } = this.props
+        const pixelRatio = getGlobalData('pixelRatio')
         const { coupon: { amount, title, range }, used } = this.props
         return (
             <View className={`coupon ${pixelRatio == 3 ? 'coupon-3x' : 'coupon-2x'}`} >

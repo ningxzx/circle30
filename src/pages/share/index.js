@@ -1,11 +1,8 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
-import { connect } from '@tarojs/redux'
+import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 import { Coupon } from '../../components'
 import './index.less'
-@connect(({ global, user }) => ({
-  global, user
-}))
 class Share extends Component {
   state = {
     coupon: {
@@ -42,7 +39,7 @@ class Share extends Component {
   componentDidHide() { }
 
   render() {
-    const { global: { pixelRatio } } = this.props
+    const pixelRatio = getGlobalData('pixelRatio')
     const { coupon, type, used } = this.state
     const ratio = pixelRatio === 3 ? '3' : '2'
     return (
@@ -63,7 +60,7 @@ class Share extends Component {
           <Text className="subTitle">代金券将会自动发放至你的账户中</Text>
         </View>)}
         <Coupon used={used} coupon={coupon}></Coupon>
-        <View className="gotoBook">{type==='shareBy'?'立即预约训练':'立即邀请好友'}</View>
+        <View className="gotoBook">{type === 'shareBy' ? '立即预约训练' : '立即邀请好友'}</View>
       </View>
     )
   }

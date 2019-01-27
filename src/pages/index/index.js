@@ -1,13 +1,10 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
-import { connect } from '@tarojs/redux'
 import { WeekDate } from '../../components'
 import { wxLogin } from '../../utils/helper'
+import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 import './index.less'
-
-@connect(({ global }) => ({
-  global
-}))
+@wxLogin
 class Index extends Component {
   state = {
     chooseDate: 0,
@@ -34,8 +31,9 @@ class Index extends Component {
   componentWillReceiveProps(nextProps) {
     console.log(this.props, nextProps)
   }
-  componentWillMount() {
-    Taro.getLocation().then()
+  componentDidMount() {
+    // Taro.getLocation().then()
+    // 登录验证逻辑，如果当前缓存有open_id,user_id,union_id即视为登录状态，否则
   }
   toProject(e){
     const title = e.currentTarget.dataset.title

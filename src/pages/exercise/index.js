@@ -1,12 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Swiper, Text } from '@tarojs/components'
-import { connect } from '@tarojs/redux'
+import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 import './index.less'
-
-
-@connect(({ counter }) => ({
-  counter
-}))
 class Exercise extends Component {
   constructor() {
     this.state = {

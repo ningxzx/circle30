@@ -1,27 +1,23 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
-import { connect } from '@tarojs/redux'
+import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
+
 import './index.less'
-
-@connect(({ global }) => ({
-  global
-}))
 class Mine extends Component {
-
   config = {
     navigationBarTitleText: '个人中心'
   }
-  toExercise(){
+  toExercise() {
     Taro.switchTab({
       url: '/pages/exercise/index'
     })
   }
-  toCoupons(){
+  toCoupons() {
     Taro.navigateTo({
       url: '/pages/coupons/index'
     })
   }
-  toShare(){
+  toShare() {
     Taro.navigateTo({
       url: '/pages/share/index?type=toShare'
     })
@@ -37,7 +33,7 @@ class Mine extends Component {
   componentDidHide() { }
 
   render() {
-    const { global: { pixelRatio } } = this.props
+    const pixelRatio = getGlobalData('pixelRatio')
     return (
       <View>
         <View className="avatar-wrapper">
@@ -54,7 +50,7 @@ class Mine extends Component {
             <Text className="icon-ic_more iconfont"></Text>
           </View>
         </View>
-        <View className={`share-img ${pixelRatio == 3 ? 'share-img-3x' : 'share-img-2x'}`}  onClick={this.toShare}></View>
+        <View className={`share-img ${pixelRatio == 3 ? 'share-img-3x' : 'share-img-2x'}`} onClick={this.toShare}></View>
       </View>
     )
   }
