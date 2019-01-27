@@ -1,0 +1,161 @@
+@import '../../varible.less';
+.bookInfo {
+    .book-info-detail {
+        margin-bottom: 20px;
+        padding: 0 28px;
+        background-color: #fff;
+        .course-info {
+            height: 212px;
+            padding: 40px 0;
+            box-sizing: border-box;
+            border-bottom: 1px solid @lineColor;
+            display: flex;
+            justify-content: space-between;
+            .book-time {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                text {
+                    font-size: 26px;
+                    color: @textNormal;
+                }
+                .week {
+                    margin-left: 10px;
+                }
+                .time {
+                    color: @textHeavy;
+                    font-size: 40px;
+                }
+            }
+            .bookStatus {
+                height: 56px;
+                line-height: 56px;
+                text-align: center;
+                width: 136px;
+                border-radius: 28px;
+                font-size: 26px;
+                margin-top: 39px;
+            }
+            .bookStatus.arrived {
+                border: 1px solid @mainColor;
+                color: @mainColor;
+            }
+            .bookStatus.canceled {
+                border: 1px solid @textLight;
+                color: @textLight;
+            }
+            .bookStatus.outdate {
+                border: 1px solid @textNormal;
+                color: @textNormal;
+            }
+        }
+    }
+    .store-info {
+        height: 236px;
+        padding: 40px 0;
+        box-sizing: border-box;
+        border-bottom: 1px solid @lineColor;
+        .title {
+            margin-bottom: 20px;
+            height: 26px;
+            text {
+                font-size: 26px;
+                color: @textNormal;
+            }
+        }
+        .content {
+            display: flex;;
+            justify-content: space-between;
+            .left-content{
+                display: flex;
+            }
+            .address-info{
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                Text{
+                    margin-top: 20px;
+                    width: 540px;
+                }
+            }
+            .store-name{
+                font-size: 30px;
+            }
+            .address{
+                font-size: 24px;
+                color:@textLight;
+            }
+        }
+    }
+    .exercise-list {
+        position: relative;
+        padding: 0 28px;
+        box-sizing: border-box;
+        background-color: #fff;
+    }
+    .cell {
+        height: 180px;
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #fff;
+        color: @textHeavy;
+        font-size: 28px;
+        .exercise-info {
+            height: 100%;
+            padding: 50px 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+            .exercise-name {
+                font-size: 36px;
+                line-height: 36px;
+            }
+            .exercise-detail {
+                font-size: 24px;
+                line-height: 24px;
+                text {
+                    color: @textLight;
+                    margin-right: 10px;
+                }
+            }
+        }
+        .icon-ic_more {
+            color: @fontColor;
+        }
+    }
+    .cell+.cell {
+        border-top: 1px solid @lineColor;
+    }
+    .order-wrapper {
+        margin-top: 20px;
+        padding: 40px 28px;
+        background-color: #fff;
+        &>view {
+            display: flex;
+            justify-content: space-between;
+            font-size: 24px;
+            height: 48px;
+            line-height: 48;
+        }
+    }
+    .sign {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        height: 88px;
+        padding-top: 10px;
+        box-sizing: border-box;
+        .sign-icon {
+            font-size: 38px;
+            color: @textNormal;
+        }
+        .sign-text {
+            font-size: 20px;
+        }
+    }
+}

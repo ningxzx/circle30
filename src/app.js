@@ -16,6 +16,7 @@ class App extends Component {
 
   config = {
     pages: [
+      'pages/bookInfo/index',
       'pages/index/index',
       'pages/students/index',
       'pages/bookStatus/index',
@@ -28,7 +29,6 @@ class App extends Component {
       'pages/exercise/index',
       'pages/mine/index',
       'pages/project/index',
-      'pages/bookInfo/index',
     ],
     window: {
       backgroundColor: '#f4f4f4',
