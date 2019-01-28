@@ -2,7 +2,7 @@
 	"miniprogramRoot": "dist/",
 	"projectname": "circle30",
 	"description": "circle30 gym",
-	"appid": "wx880c53e9a6239e51",
+	"": "wx880c53e9a6239e51",
 	"setting": {
 		"urlCheck": true,
 		"es6": false,
@@ -11,6 +11,7 @@
 		"newFeature": true
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.4.4",
+	"libVersion": "2.5.1",
+	"appid": "wx880c53e9a6239e51",
 	"condition": {}
 }

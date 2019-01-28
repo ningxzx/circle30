@@ -14,29 +14,18 @@ class Login extends Component {
 
   componentWillReceiveProps(nextProps) {
   }
-  componentDidMount() {
-    wx.getSetting({
-      success: res => {
-        if (res.authSetting['scope.userInfo']) {
-          // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
-          wx.getUserInfo({
-            success: res => {
-              // 可以将 res 发送给后台解码出 unionId
-              setUserInfo(res.userInfo)
-              // register(res)
-              // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-              // 所以此处加入 callback 以防止这种情况
-              if (this.userInfoReadyCallback) {
-                this.userInfoReadyCallback(res)
-              }
-            }
-          })
-        }
-      }
-    })
+  async componentDidMount() {
+    const res = await Taro.getSetting()
+    if(res.authSetting['scope.userInfo']){
+      const res =await Taro.getUserInfo()
+      this.handleUserInfo(res.userInfo)
+    }
   }
   getUserInfo(e) {
-    console.log(e.detail.userInfo)
+    this.handleUserInfo(e.detail.userInfo)
+  }
+  handleUserInfo(info){
+    console.log(info)
   }
 
   render() {
@@ -47,7 +36,7 @@ class Login extends Component {
         <Image src={avatarUrl} className="avatar"></Image>
         <Text className="login-title">登录</Text>
         <Text className="login-tips">请允许微信授权以获取你的身份信息</Text>
-        <Button className="login-btn" open-type="getUserInfo" onGetUserInfo="getUserInfo">立即登录</Button>
+        <Button className="login-btn" open-type="getUserInfo" onGetUserInfo={this.getUserInfo}>立即登录</Button>
       </View>
     )
   }

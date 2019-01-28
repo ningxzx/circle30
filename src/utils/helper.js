@@ -1,27 +1,117 @@
 import Taro from '@tarojs/taro'
-import { login, setUserInfo } from '../actions/user'
-export const wxLogin = (Component) => {
+import { login, getUser, getUnionId, register } from '../actions/user'
+
+// 获取微信登录凭证
+export const wxLogin = async () => {
+    try {
+        const res = await Taro.login()
+        return res.code
+    } catch (error) {
+        console.log('微信获取临时凭据失败')
+    }
+}
+// 获取微信登录凭证
+export const getSession = async () => {
+    try {
+        const code = await wxLogin()
+        const res = await login({ code })
+        return res.data
+    } catch (error) {
+        console.log('换取客户微信session失败')
+    }
+}
+// 获取unionid
+export const getUserInfo = async (session_key) => {
+    try {
+        const settingRes = await Taro.getSetting()
+        if (settingRes.authSetting['scope.userInfo']) {
+            const res = await Taro.getUserInfo()
+            const { iv, encryptedData } = res
+            const unionidRes = await getUnionId({ session: session_key, iv, encrypted: encryptedData })
+            return unionidRes.data
+        } else {
+            Taro.navigateTo({
+                url: '/pages/login/index'
+            })
+            return false
+        }
+    } catch (error) {
+        console.log('换取unionid失败')
+    }
+}
+
+const saveUserInfo = (info) => {
+    const { avatarUrl, unionId, province, language, country, city, nickName, gender } = info
+    Taro.setStorageSync('unionid', unionId)
+    Taro.setStorageSync('avatarUrl', avatarUrl)
+    Taro.setStorageSync('province', province)
+    Taro.setStorageSync('language', language)
+    Taro.setStorageSync('country', country)
+    Taro.setStorageSync('city', city)
+    Taro.setStorageSync('nickName', nickName)
+    Taro.setStorageSync('gender', gender)
+}
+
+const getUserId = async (info, users, unionid) => {
+    if (users.length) {
+        return users[0]._id.$oid
+    } else {
+        const param = { username: info.nickName, avatar: info.avatarUrl, unionid }
+        const res = await register(param)
+        return res._id.$oid
+    }
+
+}
+const emitUserid = async (unionid, openid, session_key) => {
+    if (unionid) {
+        const users = await getUser({ unionid, openid })
+        const nickName = Taro.getStorageSync('nickName')
+        const avatarUrl = Taro.getStorageSync('avatarUrl')
+        return  getUserId({ nickName, avatarUrl }, users, unionid)
+    } else {
+        const info = await getUserInfo(session_key)
+        if (info) {
+            const { unionId } = info
+            saveUserInfo(info)
+            const users = await getUser({ unionid: unionId, openid })
+            return getUserId(info, users, unionid)
+        }
+    }
+}
+export const userLogin = async () => {
+    try {
+        await Taro.checkSession()
+        if (!Taro.getStorageSync('user_id')) {
+            throw new Error('本地没有缓存UserId')
+        }
+    } catch (error) {
+        const openid = Taro.getStorageSync('openid')
+        const unionid = Taro.getStorageSync('unionid')
+        const session_key = Taro.getStorageSync('session_key')
+        if (openid) {
+            const id = emitUserid(unionid, openid, session_key)
+            Taro.setStorageSync('user_id',id)
+        } else {
+            const session = await getSession()
+            const { openid, session_key, unionid } = session
+            Taro.setStorageSync('openid', openid)
+            Taro.setStorageSync('session_key', session_key)
+            const id = emitUserid(unionid, openid, session_key)
+            Taro.setStorageSync('user_id',id)
+        }
+    }
+}
+
+/**
+ * 登录态检查
+ * openid
+ * unionid
+ * userid
+ */
+export const connectLogin = (Component) => {
     class LoginWrapper extends Component {
-        componentWillMount() {
-            const unionId = Taro.getStorageSync('unionId')
-            const openId = Taro.getStorageSync('openId')
-            const userId = Taro.getStorageSync('userId')
-            if (!openId) {
-                Taro.login().then(res => {
-                    if (res.errMsg === 'login:ok') {
-                        const { code } = res
-                        login({ code }).then(res => {
-
-                        })
-                    }
-                })
-            }
-            if (!unionId) {
-
-            }
-            if (userId) {
-
-            }
+        async componentWillMount() {
+            await userLogin()
             if (super.componentWillMount) {
                 super.componentWillMount();
             }
@@ -115,7 +205,7 @@ export function withShare(opts = {}) {
     //       // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
     //       wx.getUserInfo({
     //         success: res => {
-    //           // 可以将 res 发送给后台解码出 unionId
+    //           // 可以将 res 发送给后台解码出 unionid
     //           setUserInfo(res.userInfo)
     //           // register(res)
     //           // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回

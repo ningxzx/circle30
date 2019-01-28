@@ -1,10 +1,10 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
 import { WeekDate } from '../../components'
-import { wxLogin } from '../../utils/helper'
+import { connectLogin } from '../../utils/helper'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 import './index.less'
-@wxLogin
+@connectLogin
 class Index extends Component {
   state = {
     chooseDate: 0,

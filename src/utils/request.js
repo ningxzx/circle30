@@ -14,7 +14,12 @@ export const HTTP_STATUS = {
 
 export const base = "https://stage.circle30.com/api"
 
-
+/**
+ * 错误发送接口
+ * @param {} name 
+ * @param {*} action 
+ * @param {*} info 
+ */
 export const logError = (name, action, info) => {
     if (!info) {
         info = 'empty'
