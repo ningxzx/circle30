@@ -33,12 +33,14 @@ class Mine extends Component {
   componentDidHide() { }
 
   render() {
-    const pixelRatio = getGlobalData('pixelRatio')
+    const pixelRatio = getGlobalData('pixelRatio') === 3 ? '3' : '2'
+    const avatarUrl = Taro.getStorageSync('avatarUrl')
+    const nickName = Taro.getStorageSync('nickName')
     return (
       <View>
         <View className="avatar-wrapper">
-          <View className={`avatar ${pixelRatio == 3 ? 'avatar-3x' : 'avatar-2x'}`}></View>
-          <Text>刘二狗</Text>
+          <View className='avatar' style={{backgroundImage:`url(${avatarUrl})`}}></View>
+          <Text>{nickName}</Text>
         </View>
         <View>
           <View className="cell" onClick={this.toExercise}>

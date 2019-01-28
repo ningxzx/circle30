@@ -72,7 +72,9 @@ class Book extends Component {
                         {tel ? <Text>{tel}</Text> : <Button className="getUserPhoneBtn" onGetPhoneNumber={this.getPhoneNumber} openType="getPhoneNumber">点击验证手机号</Button>}
                     </View>
                 </View>
-                <WeekDate></WeekDate>
+                <View className="date-wrapper">
+                    <WeekDate></WeekDate>
+                </View>
                 <View className="period-wrapper">
                     {list.map((x, i) => {
                         const statusText = x.joined ? '您已预约' : x.full ? '满员' : `${x.num || '无'}人预约`

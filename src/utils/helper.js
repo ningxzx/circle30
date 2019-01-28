@@ -40,9 +40,11 @@ export const getUserInfo = async (session_key) => {
     }
 }
 
-const saveUserInfo = (info) => {
+export const saveUserInfo = (info) => {
     const { avatarUrl, unionId, province, language, country, city, nickName, gender } = info
-    Taro.setStorageSync('unionid', unionId)
+    if (unionId) {
+        Taro.setStorageSync('unionid', unionId)
+    }
     Taro.setStorageSync('avatarUrl', avatarUrl)
     Taro.setStorageSync('province', province)
     Taro.setStorageSync('language', language)
@@ -56,26 +58,36 @@ const getUserId = async (info, users, unionid) => {
     if (users.length) {
         return users[0]._id.$oid
     } else {
-        const param = { username: info.nickName, avatar: info.avatarUrl, unionid }
-        const res = await register(param)
-        return res._id.$oid
+        try {
+            const param = { username: info.nickName, avatar: info.avatarUrl, unionid }
+            const res = await register(param)
+            if (res) {
+                return res._id.$oid
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
 
 }
 const emitUserid = async (unionid, openid, session_key) => {
-    if (unionid) {
-        const users = await getUser({ unionid, openid })
-        const nickName = Taro.getStorageSync('nickName')
-        const avatarUrl = Taro.getStorageSync('avatarUrl')
-        return  getUserId({ nickName, avatarUrl }, users, unionid)
-    } else {
-        const info = await getUserInfo(session_key)
-        if (info) {
-            const { unionId } = info
-            saveUserInfo(info)
-            const users = await getUser({ unionid: unionId, openid })
-            return getUserId(info, users, unionid)
+    try {
+        if (unionid) {
+            const users = await getUser({ unionid, openid })
+            const nickName = Taro.getStorageSync('nickName')
+            const avatarUrl = Taro.getStorageSync('avatarUrl')
+            return getUserId({ nickName, avatarUrl }, users, unionid)
+        } else {
+            const info = await getUserInfo(session_key)
+            if (info) {
+                const { unionId } = info
+                saveUserInfo(info)
+                const users = await getUser({ unionid: unionId, openid })
+                return getUserId(info, users, unionid)
+            }
         }
+    } catch (error) {
+        console.log(error)
     }
 }
 export const userLogin = async () => {
@@ -90,14 +102,14 @@ export const userLogin = async () => {
         const session_key = Taro.getStorageSync('session_key')
         if (openid) {
             const id = emitUserid(unionid, openid, session_key)
-            Taro.setStorageSync('user_id',id)
+            Taro.setStorageSync('user_id', id)
         } else {
             const session = await getSession()
             const { openid, session_key, unionid } = session
             Taro.setStorageSync('openid', openid)
             Taro.setStorageSync('session_key', session_key)
             const id = emitUserid(unionid, openid, session_key)
-            Taro.setStorageSync('user_id',id)
+            Taro.setStorageSync('user_id', id)
         }
     }
 }
