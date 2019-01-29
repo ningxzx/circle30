@@ -5,17 +5,21 @@ import { weekDate } from '../../utils/tool'
 
 import './index.less'
 class WeekDate extends Component {
-  state={
-    chooseDate:0
+  constructor(props) {
+    super(props)
   }
-  static defaultProps = {
-    changeDate:()=>{}
+  state = {
+    chooseDate: 0
   }
-  changeDate(e){
+  // static defaultProps = {
+  //   ChangeDate:()=>{}
+  // }
+  changeDate(e) {
+    const val = e.currentTarget.dataset.idx
     this.setState({
-      chooseDate: e.currentTarget.dataset.idx
+      chooseDate: val
     })
-    this.props.changeDate()
+    this.props.onChangeDate(val)
   }
   render() {
     const dates = weekDate()

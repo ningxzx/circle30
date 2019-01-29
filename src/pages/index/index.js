@@ -2,6 +2,9 @@ import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
 import { WeekDate } from '../../components'
 import { connectLogin } from '../../utils/helper'
+import { addDayStr,calDistance } from '../../utils/tool'
+import { getShops } from '../../actions/shop'
+import { getSchedules } from '../../actions/schedule'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 import './index.less'
 @connectLogin
@@ -13,10 +16,9 @@ class Index extends Component {
       { name: '过头蹲', body: '全身', type: '动态保持' },
       { name: '引体向上', body: '全身', type: '动态保持' }
     ],
-    stores: [
-      { title: '优客联邦一期店', desc: '成都市武侯区佳灵路222号优客联邦一期2栋5单元1601室 宽度520px 行距12px@2x', distance: '1.2km' },
-      { title: '优客联邦一期店', desc: '成都市武侯区佳灵路222号优客联邦一期2栋5单元1601室 宽度520px 行距12px@2x', distance: '1.2km' }
-    ]
+    stores: [],
+    authLocation: true,
+    showSubButton: false
   }
   config = {
     navigationBarTitleText: 'CirCle30'
@@ -28,14 +30,64 @@ class Index extends Component {
       console.log(res)
     })
   }
-  componentWillReceiveProps(nextProps) {
-    console.log(this.props, nextProps)
-  }
   componentDidMount() {
-    // Taro.getLocation().then()
-    // 登录验证逻辑，如果当前缓存有open_id,user_id,union_id即视为登录状态，否则
+    this.getLocation()
   }
-  toProject(e){
+  getLocation() {
+    Taro.getLocation().then(res => {
+      this.setState({
+        authLocation: true
+      })
+      this.getStores(res)
+    }).catch(error => {
+      Taro.getSetting().then(res => {
+        if (res.authSetting['scope.userLocation']) {
+          Taro.getLocation().then(res => {
+            this.setState({
+              authLocation: true
+            })     
+            this.getStores(res)
+          })
+        } else {
+          this.getStores()
+          this.setState({
+            authLocation: false
+          })
+        }
+      })
+    })
+  }
+  // 默认选择天府广场
+  getStores(location = { "latitude": 104.072329, "longitude": 30.66342 }) {
+    const { latitude, longitude } = location
+    getShops({
+      latitude,
+      longitude,
+      status: 'enable'
+    }).then(res => {
+      const list = res.data.map(shop => {
+        const { title, address, location: { lat, lng } } = shop
+        const distance = calDistance(latitude, longitude, lat, lng)
+        return {
+          title,
+          address,
+          distance
+        }
+      })
+      this.setState({
+        stores: list
+      })
+    })
+  }
+  getDateSchedules(days){
+    const str = addDayStr(days)
+    getSchedules({
+      date:str
+    }).then(res=>{
+      console.log(res)
+    })
+  }
+  toProject(e) {
     const title = e.currentTarget.dataset.title
     Taro.navigateTo({
       url: `/pages/project/index?name=${title}`
@@ -52,10 +104,24 @@ class Index extends Component {
       url: `/pages/store/index?name=${title}`
     })
   }
+  onPageScroll(scroll) {
+    const { scrollTop } = scroll
+    const { showSubButton } = this.state
+    if (scrollTop > 55 && !showSubButton) {
+      this.setState({
+        showSubButton: true
+      })
+    }
+    if (scrollTop < 58 && showSubButton) {
+      this.setState({
+        showSubButton: false
+      })
+    }
+  }
   render() {
-    const { stores, cources } = this.state
+    const { stores, cources, authLocation, showSubButton } = this.state
     return (
-      <View className='index'>
+      <View className='index' >
         <View className="header">
           <View className="book-btn" onClick={this.jumpToBook}>预约训练</View>
           <View className="sign" onClick={this.scan}>
@@ -68,7 +134,7 @@ class Index extends Component {
             <Text className="icon-ic__plan iconfont"></Text>
             <Text className="card-title-text">训练计划</Text>
           </View>
-          <WeekDate />
+          <WeekDate onChangeDate={this.getDateSchedules} test="test"/>
         </View>
         <View className="exercise-list">
           <View className="gap"></View>
@@ -92,6 +158,7 @@ class Index extends Component {
           <View className="card-title">
             <Text className="icon-ic__shop iconfont"></Text>
             <Text className="card-title-text">附近门店</Text>
+            {authLocation ? null : <Button open-type="openSetting" className="authLocationTip" bindopensetting={this.getLocation}>定位有误？点击授权</Button>}
           </View>
           <View className="store-list">
             {stores.length ? stores.map((store, i) => {
@@ -99,7 +166,7 @@ class Index extends Component {
                 <View className="left-content">
                   <Text className="cell-title">{store.title}</Text>
                   <View className="cell-detail">
-                    <Text>{store.desc}</Text>
+                    <Text>{store.address}</Text>
                   </View>
                 </View>
                 <View className="right-content">
@@ -110,6 +177,7 @@ class Index extends Component {
             }) : null}
           </View>
         </View>
+        {showSubButton ? <View className="sub-book-btn" onClick={this.jumpToBook}>立即预约</View> : null}
       </View >
     )
   }

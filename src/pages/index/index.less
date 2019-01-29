@@ -1,5 +1,6 @@
 @import '../../varible.less';
 .index {
+    position: relative;
     .header {
         height: 132px;
         width: 750px;
@@ -88,6 +89,7 @@
         border-top: 1px solid @lineColor;
     }
     .store-list {
+        min-height: 100px;
         .cell {
             height: 190px;
             .left-content {
@@ -124,7 +126,7 @@
         height: 290px;
         display: flex;
         flex-direction: column;
-        padding: 40px 0 ;
+        padding: 40px 0;
         box-sizing: border-box;
         align-items: center;
         justify-content: space-between;
@@ -136,5 +138,31 @@
             font-size: 24px;
             color: @textLight;
         }
+    }
+    .authLocationTip {
+        position: absolute;
+        right: 0;
+        font-size: 24px;
+        color: @mainColor;
+        background-color: transparent;
+    }
+    .authLocationTip:after {
+        border: none;
+    }
+    .sub-book-btn {
+        position: fixed;
+        right: 28px;
+        bottom: 134px;
+        width: 100px;
+        height: 100px;
+        box-sizing: border-box;
+        padding: 0 26px;
+        border-radius: 50px;
+        background-color: @mainColor;
+        color: #fff;
+        font-size: 24px;
+        line-height: 26px;
+        display: flex;
+        align-items: center;
     }
 }

@@ -4,6 +4,7 @@ import { Provider, connect } from '@tarojs/redux'
 import { set as setGlobalData, get as getGlobalData } from './utils/globalData'
 
 
+
 import './app.less'
 
 // 如果需要在 h5 环境中开启 React Devtools
