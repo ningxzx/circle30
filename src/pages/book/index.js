@@ -1,9 +1,12 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Image } from '@tarojs/components'
-import { connect } from '@tarojs/redux'
+import { connectLogin } from '../../utils/helper'
 import { WeekDate } from '../../components'
-import './index.less'
+import { getCoupons } from '../../actions/coupons'
+import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 
+import './index.less'
+@connectLogin
 class Book extends Component {
     state = {
         store: '优客联邦一期',
@@ -19,10 +22,11 @@ class Book extends Component {
             { avatars: [], num: 0, period: '12:00-13:00', joined: false, full: false },
             { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png',], num: 5, period: '12:00-13:00', joined: false, full: false },
         ],
-        coupons: 1,
-        discount: null,
+        couponsNum: 1,
+        amount: null,
+        couponId: null,
         selectPeriodIdx: null,
-        amount: 60
+        total: 60
     }
 
     config = {
@@ -31,6 +35,28 @@ class Book extends Component {
 
     componentWillReceiveProps(nextProps) {
         console.log(this.props, nextProps)
+    }
+    componentDidShow() {
+        // 折扣数，折扣id
+        const { amount, couponId } = getGlobalData('SelectCoupon') || {}
+        if (!amount) {
+            this.getUserCoupons()
+        } else {
+            this.setState({
+                amount,
+                couponId
+            })
+        }
+    }
+    getUserCoupons() {
+        let user_id = Taro.getStorageSync('user_id')
+        getCoupons({
+            user_id,
+            used: 0
+        }).then(res => {
+            // const couponsNum = res.data.length
+            // this.setState({ couponsNum })
+        })
     }
     jumToStores() {
         Taro.navigateTo({
@@ -92,15 +118,15 @@ class Book extends Component {
                         </View>)
                     })}
                 </View>
-                {coupons ? <View className="coupon-wrapper" onClick={this.jumToCoupons}>
+                {couponsNum || amount ? <View className="coupon-wrapper" onClick={this.jumToCoupons}>
                     <Text>优惠券</Text>
                     <Text>
-                        <Text className={`coupon-text {discount?'discount':'coupon-num'}`}>{!discount ? `${coupons}个可用` : `-￥${discount}`}</Text>
+                        <Text className={`coupon-text {amount?'amount':'coupon-num'}`}>{!amount ? `${couponsNum}个可用` : `-￥${amount}`}</Text>
                         <Text className="icon-ic_more iconfont"></Text>
                     </Text>
                 </View> : null}
                 <View className="footer">
-                    <Text className="amount">￥{amount}</Text>
+                    <Text className="amount">￥{total}</Text>
                     <View className="pay-button" onClick={this.toPay}> 立即支付</View>
                 </View>
             </View>

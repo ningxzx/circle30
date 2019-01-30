@@ -11,11 +11,7 @@ import './index.less'
 class Index extends Component {
   state = {
     chooseDate: 0,
-    cources: [
-      { name: '划船', body: '全身', type: '动态保持' },
-      { name: '过头蹲', body: '全身', type: '动态保持' },
-      { name: '引体向上', body: '全身', type: '动态保持' }
-    ],
+    schedules: [],
     stores: [],
     authLocation: true,
     showSubButton: false
@@ -32,6 +28,7 @@ class Index extends Component {
   }
   componentDidMount() {
     this.getLocation()
+    this.getDateSchedules()
   }
   getLocation() {
     Taro.getLocation().then(res => {
@@ -79,12 +76,15 @@ class Index extends Component {
       })
     })
   }
-  getDateSchedules(days){
+  getDateSchedules(days=0){
     const str = addDayStr(days)
     getSchedules({
       date:str
     }).then(res=>{
-      console.log(res)
+      let schedules = res.data
+      this.setState({
+        schedules
+      })
     })
   }
   toProject(e) {
@@ -119,7 +119,7 @@ class Index extends Component {
     }
   }
   render() {
-    const { stores, cources, authLocation, showSubButton } = this.state
+    const { stores, schedules, authLocation, showSubButton } = this.state
     return (
       <View className='index' >
         <View className="header">
@@ -138,7 +138,7 @@ class Index extends Component {
         </View>
         <View className="exercise-list">
           <View className="gap"></View>
-          {cources.length ? cources.map((cource, i) => {
+          {schedules.length ? schedules.map((cource, i) => {
             return (<View className="cell" key={i} onClick={this.toProject} data-title={cource.name}>
               <View className="exercise-info">
                 <Text className="exercise-name">{cource.name}</Text>

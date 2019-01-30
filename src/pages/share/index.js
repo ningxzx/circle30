@@ -8,7 +8,7 @@ class Share extends Component {
     coupon: {
       amount: 30,
       title: '新用户体验券',
-      range: '所有门店通用'
+      description: '所有门店通用'
     },
     // toShare-发出邀请,shareBy-接收邀请
     type: 'toShare',
