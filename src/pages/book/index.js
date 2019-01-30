@@ -3,30 +3,31 @@ import { View, Button, Text, Image } from '@tarojs/components'
 import { connectLogin } from '../../utils/helper'
 import { WeekDate } from '../../components'
 import { getCoupons } from '../../actions/coupons'
+import { decryptData, putUser } from '../../actions/user'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 
 import './index.less'
 @connectLogin
 class Book extends Component {
     state = {
-        store: '优客联邦一期',
-        tel: '',
+        storeTitle: '优客联邦一期',
+        phoneNumber: Taro.getStorageSync('phoneNumber'),
         list: [
-            { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png'], num: 5, period: '12:00-13:00', joined: false, full: false },
-            { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png',], num: 5, period: '12:00-13:00', joined: false, full: true },
-            { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png',], num: 2, period: '12:00-13:00', joined: true, full: false },
-            { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png',], num: 1, period: '12:00-13:00', joined: false, full: false },
-            { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png',], num: 5, period: '12:00-13:00', joined: false, full: false },
-            { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png',], num: 5, period: '12:00-13:00', joined: false, full: false },
-            { avatars: [], num: 0, period: '12:00-13:00', joined: false, full: false },
-            { avatars: [], num: 0, period: '12:00-13:00', joined: false, full: false },
-            { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png',], num: 5, period: '12:00-13:00', joined: false, full: false },
+            // { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png'], num: 5, period: '12:00-13:00', joined: false, full: false },
+            // { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png',], num: 5, period: '12:00-13:00', joined: false, full: true },
+            // { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png',], num: 2, period: '12:00-13:00', joined: true, full: false },
+            // { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png',], num: 1, period: '12:00-13:00', joined: false, full: false },
+            // { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png',], num: 5, period: '12:00-13:00', joined: false, full: false },
+            // { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png',], num: 5, period: '12:00-13:00', joined: false, full: false },
+            // { avatars: [], num: 0, period: '12:00-13:00', joined: false, full: false },
+            // { avatars: [], num: 0, period: '12:00-13:00', joined: false, full: false },
+            // { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png',], num: 5, period: '12:00-13:00', joined: false, full: false },
         ],
         couponsNum: 1,
         amount: null,
         couponId: null,
         selectPeriodIdx: null,
-        total: 60
+        total: 0
     }
 
     config = {
@@ -47,15 +48,22 @@ class Book extends Component {
                 couponId
             })
         }
+        const { storeId, storeTitle } = this.$router.params
+        if (storeId) {
+            this.setState({
+                storeId, storeTitle
+            })
+        }
+
     }
     getUserCoupons() {
-        let user_id = Taro.getStorageSync('user_id')
+        const user_id = Taro.getStorageSync('user_id')
         getCoupons({
             user_id,
             used: 0
         }).then(res => {
-            // const couponsNum = res.data.length
-            // this.setState({ couponsNum })
+            const couponsNum = res.data.length
+            this.setState({ couponsNum })
         })
     }
     jumToStores() {
@@ -80,29 +88,50 @@ class Book extends Component {
         })
     }
     getPhoneNumber(e) {
-        console.log(e.detail.errMsg)
-        console.log(e.detail.iv)
-        console.log(e.detail.encryptedData)
+        const { iv, encryptedData } = e.detail
+        const session_key = Taro.getStorageSync('session_key')
+        decryptData({
+            encrypted: encryptedData,
+            iv,
+            session: session_key
+        }).then(res => {
+            const { phoneNumber } = res.data
+            const unionid = Taro.getStorageSync('unionid')
+            const avatar = Taro.getStorageSync('avatarUrl')
+            const username = Taro.getStorageSync('nickName')
+            const user_id = Taro.getStorageSync('user_id')
+            this.setState({
+                phoneNumber
+            })
+            Taro.setStorageSync('phoneNumber', phoneNumber)
+            putUser({
+                user_id,
+                unionid,
+                phone: phoneNumber,
+                avatar,
+                username
+            })
+        })
     }
     render() {
-        const { store, tel, list, selectPeriodIdx } = this.state
+        const { storeTitle, phoneNumber, list, selectPeriodIdx } = this.state
         return (
             <View className='book'>
                 <View className="book-info-wrapper">
                     <View className="book-info" onClick={this.jumToStores}>
                         <Text>门店</Text>
-                        <Text>{store} <Text className="icon-ic_more iconfont" ></Text></Text>
+                        <Text>{storeTitle} <Text className="icon-ic_more iconfont" ></Text></Text>
                     </View>
                     <View className="book-info">
                         <Text>预约手机号</Text>
-                        {tel ? <Text>{tel}</Text> : <Button className="getUserPhoneBtn" onGetPhoneNumber={this.getPhoneNumber} openType="getPhoneNumber">点击验证手机号</Button>}
+                        <Button className="getUserPhoneBtn" onGetPhoneNumber={this.getPhoneNumber} openType="getPhoneNumber">{phoneNumber ? <Text>{phoneNumber}</Text> : '点击获取手机号'}</Button>
                     </View>
                 </View>
                 <View className="date-wrapper">
                     <WeekDate></WeekDate>
                 </View>
                 <View className="period-wrapper">
-                    {list.map((x, i) => {
+                    {list.length ? list.map((x, i) => {
                         const statusText = x.joined ? '您已预约' : x.full ? '满员' : `${x.num || '无'}人预约`
                         const statusClass = x.joined ? 'joined' : x.full || !x.num ? 'full' : ''
                         return (<View key={i} data-idx={i} className={`period ${x.joined || x.full ? 'disable' : selectPeriodIdx == i ? 'selected' : ''}`} onClick={this.selectPeriod}>
@@ -116,7 +145,9 @@ class Book extends Component {
                                 <Text className={`${statusClass} status-text`}>{statusText}</Text>
                             </View>
                         </View>)
-                    })}
+                    }) : <View className="blank-wrapper" ><Image src="cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_noplan@2x.png" />
+                            <Text>暂无训练计划</Text>
+                        </View>}
                 </View>
                 {couponsNum || amount ? <View className="coupon-wrapper" onClick={this.jumToCoupons}>
                     <Text>优惠券</Text>

@@ -2,7 +2,7 @@ import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
 import { WeekDate } from '../../components'
 import { connectLogin } from '../../utils/helper'
-import { addDayStr,calDistance } from '../../utils/tool'
+import { addDayStr, calDistance } from '../../utils/tool'
 import { getShops } from '../../actions/shop'
 import { getSchedules } from '../../actions/schedule'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
@@ -26,7 +26,7 @@ class Index extends Component {
       console.log(res)
     })
   }
-  componentDidMount() {
+  componentDidShow() {
     this.getLocation()
     this.getDateSchedules()
   }
@@ -42,7 +42,7 @@ class Index extends Component {
           Taro.getLocation().then(res => {
             this.setState({
               authLocation: true
-            })     
+            })
             this.getStores(res)
           })
         } else {
@@ -57,18 +57,20 @@ class Index extends Component {
   // 默认选择天府广场
   getStores(location = { "latitude": 104.072329, "longitude": 30.66342 }) {
     const { latitude, longitude } = location
+    setGlobalData({ latitude, longitude })
     getShops({
       latitude,
       longitude,
       status: 'enable'
     }).then(res => {
       const list = res.data.map(shop => {
-        const { title, address, location: { lat, lng } } = shop
+        const { title, address, location: { lat, lng }, ...rest } = shop
         const distance = calDistance(latitude, longitude, lat, lng)
         return {
           title,
           address,
-          distance
+          distance,
+          ...rest
         }
       })
       this.setState({
@@ -76,11 +78,11 @@ class Index extends Component {
       })
     })
   }
-  getDateSchedules(days=0){
+  getDateSchedules(days = 0) {
     const str = addDayStr(days)
     getSchedules({
-      date:str
-    }).then(res=>{
+      date: str
+    }).then(res => {
       let schedules = res.data
       this.setState({
         schedules
@@ -94,14 +96,19 @@ class Index extends Component {
     })
   }
   jumpToBook() {
-    Taro.navigateTo({
-      url: '/pages/book/index'
-    })
+    const store = this.state.stores[0]
+    if (store) {
+      const { _id: { $oid }, title } = store 
+      Taro.navigateTo({
+        url: `/pages/book/index?storeId=${$oid}&storeTitle=${title}`
+      })
+    }
   }
   jumpToStore(e) {
-    const title = e.currentTarget.dataset.title
+    const store = e.currentTarget.dataset.store
+    const { _id: { $oid }, title } = store 
     Taro.navigateTo({
-      url: `/pages/store/index?name=${title}`
+      url: `/pages/store/index?id=${$oid}&title=${title}`
     })
   }
   onPageScroll(scroll) {
@@ -134,7 +141,7 @@ class Index extends Component {
             <Text className="icon-ic__plan iconfont"></Text>
             <Text className="card-title-text">训练计划</Text>
           </View>
-          <WeekDate onChangeDate={this.getDateSchedules} test="test"/>
+          <WeekDate onChangeDate={this.getDateSchedules} test="test" />
         </View>
         <View className="exercise-list">
           <View className="gap"></View>
@@ -162,7 +169,7 @@ class Index extends Component {
           </View>
           <View className="store-list">
             {stores.length ? stores.map((store, i) => {
-              return (<View className="cell" key={i} data-title={store.title} onClick={this.jumpToStore}>
+              return (<View className="cell" key={i} data-store={store} onClick={this.jumpToStore}>
                 <View className="left-content">
                   <Text className="cell-title">{store.title}</Text>
                   <View className="cell-detail">

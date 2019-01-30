@@ -1,5 +1,7 @@
 @import "../../varible.less";
 .book {
+    position: relative;
+    height: 100%;
     .book-info-wrapper {
         margin-bottom: 20px;
         background: #ffffff;
@@ -11,7 +13,7 @@
             align-items: center;
             justify-content: space-between;
             .icon-ic_more {
-                margin-left: 10px;
+                margin-left: 20px;
             }
         }
         .book-info+.book-info {
@@ -24,6 +26,9 @@
             background-color: transparent;
             margin: 0;
         }
+        .getUserPhoneBtn:after{
+            border:none;
+        }
     }
     .date-wrapper{
         padding: 0 28px;
@@ -32,8 +37,10 @@
     .period-wrapper {
         margin-top: 20px;
         width: 750px;
+        min-height: 560px;
         box-sizing: border-box;
         padding: 0 28px;
+        overflow: hidden;
         .period {
             width: 337px;
             float: left;
@@ -109,6 +116,9 @@
             background: #ecfffc;
             border: 1px solid @mainColor;
         }
+        .blank-wrapper{
+            margin-top: 140px;
+        }
     }
     .period-wrapper:after {
         content: "";
@@ -116,7 +126,12 @@
         clear: both;
     }
     .coupon-wrapper {
+        position: absolute;
+        left: 0;
+        bottom: 120px;
         display: flex;
+        width: 100%;
+        box-sizing: border-box;
         align-items: center;
         justify-content: space-between;
         height: 110px;
@@ -135,8 +150,12 @@
         }
     }
     .footer{
+        position: absolute;
+        left: 0;
+        bottom: 0;
         height: 120px;
         display: flex;
+        width: 100%;
         .amount{
             height: 120px;
             width: 310px;

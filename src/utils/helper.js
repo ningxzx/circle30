@@ -1,5 +1,5 @@
 import Taro from '@tarojs/taro'
-import { login, getUser, getUnionId, register } from '../actions/user'
+import { login, getUser, decryptData, register } from '../actions/user'
 import { APP_ID } from '../constants/app.js'
 
 
@@ -29,7 +29,7 @@ export const getUserInfo = async (session_key) => {
         if (settingRes.authSetting['scope.userInfo']) {
             const res = await Taro.getUserInfo()
             const { iv, encryptedData } = res
-            const unionidRes = await getUnionId({ session: session_key, iv, encrypted: encryptedData })
+            const unionidRes = await decryptData({ session: session_key, iv, encrypted: encryptedData })
             return unionidRes.data
         } else {
             Taro.navigateTo({
@@ -58,7 +58,7 @@ export const saveUserInfo = (info) => {
 
 const getUserId = async (info, users, unionid, openid) => {
     if (users.length) {
-        return users[0]._id.$oid
+        return users[0]._id&&users[0]._id.$oid
     } else {
         try {
             const param = {
@@ -70,7 +70,7 @@ const getUserId = async (info, users, unionid, openid) => {
                 ]
             }
             const res = await register(param)
-            if (res) {
+            if (res&&res._id) {
                 return res._id.$oid
             }
         } catch (error) {
@@ -213,34 +213,3 @@ export function withShare(opts = {}) {
         return WithShare;
     };
 }
-
-// componentDidMount() {
-//     const { global: { appid }, login, setUserInfo } = this.props
-//     wx.login({
-//       success: res => {
-//         if (res.errMsg === 'login:ok') {
-//           const { code } = res
-//           login({ code, appid })
-//         }
-//       }
-//     })
-    // wx.getSetting({
-    //   success: res => {
-    //     if (res.authSetting['scope.userInfo']) {
-    //       // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
-    //       wx.getUserInfo({
-    //         success: res => {
-    //           // 可以将 res 发送给后台解码出 unionid
-    //           setUserInfo(res.userInfo)
-    //           // register(res)
-    //           // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-    //           // 所以此处加入 callback 以防止这种情况
-    //           if (this.userInfoReadyCallback) {
-    //             this.userInfoReadyCallback(res)
-    //           }
-    //         }
-    //       })
-    //     }
-    //   }
-    // })
-//   }

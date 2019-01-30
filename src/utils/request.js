@@ -1,4 +1,6 @@
 import Taro from '@tarojs/taro'
+import { format } from 'date-fns'
+
 
 export const HTTP_STATUS = {
     SUCCESS: 200,
@@ -30,7 +32,7 @@ export const logError = (name, action, info) => {
     } catch (e) {
         console.error('not support getSystemInfoSync api', err.message)
     }
-    let time = formatTime(new Date())
+    let time = format(new Date())
     console.error(time, name, action, info, device)
     // 如果使用了 第三方日志自动上报
     // if (typeof action !== 'object') {
@@ -57,6 +59,7 @@ export default {
             success(res) {
                 Taro.hideNavigationBarLoading()
                 if (res.statusCode === HTTP_STATUS.NOT_FOUND) {
+                    console.log( base + url)
                     return logError('api', '请求资源不存在')
                 } else if (res.statusCode === HTTP_STATUS.BAD_GATEWAY) {
                     return logError('api', '服务端出现了问题')
@@ -80,5 +83,13 @@ export default {
     post: function (url, data, contentType) {
         let params = { url, data, contentType }
         return this.baseOptions(params, 'POST')
+    },
+    put: function (url, data, contentType) {
+        let params = { url, data, contentType }
+        return this.baseOptions(params, 'PUT')
+    },
+    delete: function (url, data, contentType) {
+        let params = { url, data, contentType }
+        return this.baseOptions(params, 'DELETE')
     }
 }

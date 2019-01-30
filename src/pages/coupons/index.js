@@ -11,10 +11,7 @@ class CouponList extends Component {
     navigationBarTitleText: '我的卡券'
   }
   state = {
-    coupons: [
-      { amount: 30, title: '新用户体验券', description: '所有门店通用' },
-      { amount: 12, title: '邀请好友奖励', description: '所有门店通用' }
-    ]
+    coupons: []
   }
   componentDidShow() {
     this.getUserCoupons()

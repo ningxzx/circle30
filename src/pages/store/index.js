@@ -1,45 +1,27 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Swiper, SwiperItem } from '@tarojs/components'
-import { connect } from '@tarojs/redux'
+import { connectLogin } from '../../utils/helper'
 import { WeekDate } from '../../components'
+import { getTheShop } from '../../actions/shop'
 
 import './index.less'
 
-
+@connectLogin
 class Store extends Component {
   state = {
-    info: {
-      "title": "高攀一店",
-      "city": {
-        "index": "028",
-        "title": "成都"
-      },
-      "index": "001",
-      "phone": "82938202",
-      "status": "enable",
-      "location": {
-        "lat": 30.667936,
-        "lng": 104.07418
-      },
-      "service_time": {
-        "open": "06:00",
-        "close": "22:00"
-      },
-      "address": "中国四川省成都市青羊区草市街宏信证券",
-      "description": "高攀最好的健身房，没有之一",
-      "images": [
-        "https://images.circle30.com/shop1.jpg"
-      ],
-      "devices": [
-        {
-          "code": "02800102",
-          "status": 0,
-          "use": 0,
-          "index": 2
-        }
-      ],
-      "order_total": 0
+    id:'',
+    title: "",
+    phone: "",
+    status: "enable",
+    location: {},
+    service_time: {
+      "open": "00:00",
+      "close": "24:00"
     },
+    address: "",
+    description: "",
+    images: [],
+    devices: [],
     cources: [
       { name: '划船', body: '全身', type: '动态保持' },
       { name: '过头蹲', body: '全身', type: '动态保持' },
@@ -50,44 +32,36 @@ class Store extends Component {
   config = {
     navigationBarTitleText: '门店详情'
   }
-
-  componentWillReceiveProps(nextProps) {
-    console.log(this.props, nextProps)
-  }
-  jumpToBook(){
+  jumpToBook() {
+    const { id, title } = this.state
     Taro.navigateTo({
-      url: '/pages/book/index'
+      url: `/pages/book/index?storeId=${id}&storeTitle=${title}`
     })
   }
-  toStudents(){
+  toStudents() {
     Taro.navigateTo({
       url: '/pages/students/index'
     })
   }
-  componentDidMount() {
-    const { name } = this.$router.params
-    if (name) {
-      Taro.setNavigationBarTitle({
-        title: name
-      })
-    }
-
+  componentDidShow() {
+    const { id, title } = this.$router.params
+    Taro.setNavigationBarTitle({
+      title: title
+    })
+    getTheShop({
+      shop_id: id
+    }).then(res => {
+      const { _id: { $oid }, service_time, title, phone, location, images, description, status, address } = res.data
+      this.setState({ id: $oid, service_time, title, phone, location, images, description, status, address })
+    })
   }
-
-  componentDidShow() { }
 
   componentDidHide() { }
 
   render() {
-    const { info: { title, service_time, phone, description, address }, cources } = this.state
+    const { title, service_time, phone, description, address, images } = this.state
     const studentsNum = 123
     const avatars = ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png']
-
-    const bannerImages = [
-      'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_shop@2x.png',
-      'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_shop@2x.png',
-      'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_shop@2x.png'
-    ]
     return (
       <View className='store'>
         <Swiper
@@ -97,7 +71,7 @@ class Store extends Component {
           circular
           indicatorDots
           autoplay>
-          {bannerImages.map(banner => {
+          {images.map(banner => {
             return <SwiperItem>
               <Image src={banner}></Image>
             </SwiperItem>
@@ -153,7 +127,7 @@ class Store extends Component {
               <Text>暂无训练计划</Text>
             </View>}
         </View >
-        <View className="book-btn" onClick={this.jumpToBook}>立即预约</View>
+        <Button className="book-btn" onClick={this.jumpToBook}>立即预约</Button>
       </View>
     )
   }

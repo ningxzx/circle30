@@ -1,28 +1,44 @@
 import { ComponentClass } from 'react'
 import Taro, { Component } from '@tarojs/taro'
-import { View,Text } from '@tarojs/components'
+import { View, Text } from '@tarojs/components'
+import { connectLogin } from '../../utils/helper'
+import { getShops } from '../../actions/shop'
+import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
+import { calDistance } from '../../utils/tool'
+
 import './index.less'
+@connectLogin
 class StoreList extends Component {
   config = {
     navigationBarTitleText: '选择门店'
   }
   state = {
-    stores: [
-      { title: '优客联邦一期店', desc: '成都市武侯区佳灵路222号优客联', distance: '1.2km', status: true },
-      { title: '优客联邦一期店', desc: '成都市武侯区佳灵路222号优客联邦一期2栋5单元1601室 宽度520px 行距12px@2x', distance: '1.2km', status: false },
-      { title: '优客联邦一期店', desc: '成都市武侯区佳灵路222号优客联邦一期2栋5单元1601室 宽度520px 行距12px@2x', distance: '1.2km', status: true }
-    ],
+    stores: [],
     selectIdx: null
   }
-  stores(e) {
+  componentDidShow() {
+    const { latitude, longitude } = getGlobalData(['latitude', 'longitude'])
+    getShops().then(res => {
+      const stores = res.data.map(store => {
+        const { location: { lat, lng } } = store
+        store.distance = calDistance(latitude, longitude, lat, lng)
+        return store
+      })
+      this.setState({
+        stores
+      })
+    })
+  }
+  toStoreInfo(e) {
     const { idx, status } = e.currentTarget.dataset
     if (status) {
       this.setState({
         selectIdx: idx
       })
     }
+    const { _id: { $oid }, title } = this.state.stores[idx]
     Taro.navigateTo({
-      url: '/pages/store/index'
+      url: `/pages/store/index?id=${oid}&title=${title}`
     })
   }
   render() {
@@ -30,11 +46,11 @@ class StoreList extends Component {
     return (
       <View className="store-list">
         {stores.length ? stores.map((store, i) => {
-          return (<View className={`cell ${store.status ? '' : 'disable'} ${i == selectIdx ? 'selected' : ''}`} key={i} data-idx={i} data-status={store.status} onClick={this.stores} >
+          return (<View className={`cell ${store.status == 'enable' ? '' : 'disable'} ${i == selectIdx ? 'selected' : ''}`} key={i} data-idx={i} data-status={store.status} onClick={this.toStoreInfo} >
             <View className="left-content">
-              <Text className="cell-title">{store.title}{!store.status ? <Text className="status-str">暂停预约</Text> : null}</Text>
+              <Text className="cell-title">{store.title}{store.status == 'enable' ? null : <Text className="status-str">暂停预约</Text>}</Text>
               <View className="cell-detail">
-                <Text>{store.desc}</Text>
+                <Text>{store.address}</Text>
               </View>
             </View>
             <View className="right-content">
