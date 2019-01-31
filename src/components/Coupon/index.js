@@ -14,7 +14,7 @@ class Coupon extends Component {
         const { coupon: { amount, title, description }, used} = this.props
         return (
             <View className={`coupon ${pixelRatio == 3 ? 'coupon-3x' : 'coupon-2x'}`}>
-                <View className="amount">{amount}<Text class="symbol">￥</Text></View>
+                <View className="amount">{amount/1000}<Text class="symbol">￥</Text></View>
                 <View className="detail">
                     <Text class="title">{title}</Text>
                     <Text class="range">{description}</Text>

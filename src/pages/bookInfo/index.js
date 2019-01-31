@@ -1,6 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
-import { connect } from '@tarojs/redux'
+import { connectLogin, requestUserId } from '../../utils/helper'
+import { refund, getOrder } from '../../actions/order'
 import './index.less'
 
 
@@ -10,7 +11,7 @@ const BOOK_TYPES = {
   canceled: '已取消',
   outdate: '已过期'
 }
-
+@connectLogin
 class BookInfo extends Component {
 
   state = {
@@ -44,7 +45,12 @@ class BookInfo extends Component {
 
   componentWillUnmount() { }
 
-  componentDidShow() { }
+  componentDidShow() { 
+    const {order_id} = this.$router.params
+    getOrder(order_id).then(res=>{
+      console.log(res.data)
+    })
+  }
 
   componentDidHide() { }
 

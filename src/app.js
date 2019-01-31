@@ -1,6 +1,7 @@
 import '@tarojs/async-await'
-import Taro, { Component } from '@tarojs/taro'
+import Taro, { Component, onSocketClose } from '@tarojs/taro'
 import { Provider, connect } from '@tarojs/redux'
+import { getSystemConfig } from './actions/system'
 import { set as setGlobalData, get as getGlobalData } from './utils/globalData'
 
 
@@ -68,10 +69,13 @@ class App extends Component {
   }
   componentDidMount() {
     // 获取环境数据
-    Taro.getSystemInfo().then(res=>{
+    Taro.getSystemInfo().then(res => {
       setGlobalData(res)
     })
-
+    getSystemConfig().then(res => {
+      const { price: { amount } } = res.data
+      setGlobalData('amount', amount)
+    })
   }
 
 

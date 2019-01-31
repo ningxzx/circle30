@@ -1,36 +1,30 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Image } from '@tarojs/components'
 import { connectLogin, requestUserId } from '../../utils/helper'
-import { addDayStr } from '../../utils/tool'
+import { addDayStr, formatHour } from '../../utils/tool'
 import { WeekDate } from '../../components'
 import { getCoupons } from '../../actions/coupons'
 import { decryptData, putUser } from '../../actions/user'
 import { getSchedules } from '../../actions/schedule'
+import { createOrder, checkoutOrder, createTrasctions } from '../../actions/order'
+import { FULL_NUM } from '../../constants/app'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 
 import './index.less'
 @connectLogin
 class Book extends Component {
     state = {
-        storeId:'',
-        storeTitle: '优客联邦一期',
+        storeId: '',
+        storeTitle: '',
         phoneNumber: Taro.getStorageSync('phoneNumber'),
-        list: [
-            // { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png'], num: 5, period: '12:00-13:00', joined: false, full: false },
-            // { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png',], num: 5, period: '12:00-13:00', joined: false, full: true },
-            // { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png',], num: 2, period: '12:00-13:00', joined: true, full: false },
-            // { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png',], num: 1, period: '12:00-13:00', joined: false, full: false },
-            // { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png',], num: 5, period: '12:00-13:00', joined: false, full: false },
-            // { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png',], num: 5, period: '12:00-13:00', joined: false, full: false },
-            // { avatars: [], num: 0, period: '12:00-13:00', joined: false, full: false },
-            // { avatars: [], num: 0, period: '12:00-13:00', joined: false, full: false },
-            // { avatars: ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png',], num: 5, period: '12:00-13:00', joined: false, full: false },
-        ],
+        courses: [],
         couponsNum: 1,
-        amount: null,
+        amount: 0,
         couponId: null,
         selectPeriodIdx: null,
-        total: 0
+        total: 0,
+        selectDateIndex: 0,
+        scheduleId: ''
     }
 
     config = {
@@ -51,24 +45,41 @@ class Book extends Component {
                 couponId
             })
         }
-        const { storeId, storeTitle } = this.$router.params
+        const { storeId, storeTitle, dateIndex } = this.$router.params
         if (storeId) {
             this.setState({
-                storeId, storeTitle
+                storeId,
+                storeTitle,
+                selectDateIndex: dateIndex
+            }, () => {
+                this.getDateSchedules()
             })
         }
-        this.getDateSchedules(0)
     }
-    getDateSchedules(days = 0) {
+    async getDateSchedules(days = 0) {
+        const user_id = await requestUserId()
         const str = addDayStr(days)
         const shop_id = this.state.storeId
+        this.setState({
+            selectDateIndex: days
+        })
         getSchedules({
             shop_id,
             date: str
         }).then(res => {
-            let schedules = res.data
+            const schedule = res.data[0]
+            let courses = schedule.courses
+            courses.forEach(cource => {
+                cource.startTime = formatHour(cource.start)
+                cource.endTime = formatHour(cource.end)
+                cource.avatars = cource.users.map(x => x.avatar)
+                cource.num = cource.users.length
+                cource.full = cource.num == FULL_NUM
+                cource.joined = cource.users.some(x => x._id.$oid == user_id)
+            });
             this.setState({
-                schedules
+                courses,
+                scheduleId: schedule._id.$oid
             })
         })
     }
@@ -92,15 +103,56 @@ class Book extends Component {
             url: '/pages/coupons/index'
         })
     }
-    toPay() {
-        // 支付逻辑
-        Taro.navigateTo({
-            url: '/pages/bookStatus/index'
+    // 生成订单
+    async toPay() {
+        const user_id = await requestUserId()
+        const { scheduleId, selectPeriodIdx, courses, couponId } = this.state
+        if (selectPeriodIdx===null) {
+            Taro.showToast({
+                title: '请选择一个时间段后再提交',
+                icon: 'none',
+                duration: 2000
+            })
+        } else {
+            const start = courses[selectPeriodIdx]['start']
+            createOrder({
+                user_id,
+                schedule_id: scheduleId,
+                course: start
+            }).then(res => {
+                const { _id: { $oid } } = res.data
+                checkoutOrder({
+                    coupon_id: couponId,
+                    order_id: $oid
+                }).then(res => {
+                    this.pay($oid)
+                })
+            })
+        }
+    }
+    pay(order_id) {
+        const openid = Taro.getStorageSync('openid')
+        createTrasctions({
+            order_id,
+            openid
+        }).then(res => {
+            const param = res.data
+            param.timeStamp  = param.timestamp
+            const {timestamp,...rest} = param
+            Taro.requestPayment(rest).then(res => {
+                this.toBookStatus()
+            }).catch(res=>{
+                Taro.navigateTo({
+                    url: `/pages/bookStatus/index?order_id=${order_id}`
+                })
+            })
         })
     }
     selectPeriod(e) {
+        const { amount } = this.state
         this.setState({
-            selectPeriodIdx: e.currentTarget.dataset.idx
+            selectPeriodIdx: e.currentTarget.dataset.idx,
+            total: (getGlobalData('amount') - amount) / 1000
         })
     }
     async getPhoneNumber(e) {
@@ -110,7 +162,7 @@ class Book extends Component {
             encrypted: encryptedData,
             iv,
             session: session_key
-        }).then(async (res)=>{
+        }).then(async (res) => {
             const { phoneNumber } = res.data
             const unionid = Taro.getStorageSync('unionid')
             const avatar = Taro.getStorageSync('avatarUrl')
@@ -130,7 +182,7 @@ class Book extends Component {
         })
     }
     render() {
-        const { storeTitle, phoneNumber, list, selectPeriodIdx } = this.state
+        const { storeTitle, phoneNumber, courses, selectPeriodIdx } = this.state
         return (
             <View className='book'>
                 <View className="book-info-wrapper">
@@ -144,14 +196,14 @@ class Book extends Component {
                     </View>
                 </View>
                 <View className="date-wrapper">
-                    <WeekDate onChangeDate={this.getDateSchedules}></WeekDate>
+                    <WeekDate selectIndex={selectDateIndex} onChangeDate={this.getDateSchedules}></WeekDate>
                 </View>
                 <View className="period-wrapper">
-                    {list.length ? list.map((x, i) => {
+                    {courses.length ? courses.map((x, i) => {
                         const statusText = x.joined ? '您已预约' : x.full ? '满员' : `${x.num || '无'}人预约`
                         const statusClass = x.joined ? 'joined' : x.full || !x.num ? 'full' : ''
                         return (<View key={i} data-idx={i} className={`period ${x.joined || x.full ? 'disable' : selectPeriodIdx == i ? 'selected' : ''}`} onClick={this.selectPeriod}>
-                            <Text>{x.period}</Text>
+                            <Text>{x.startTime}<Text className="timeGap">-</Text>{x.endTime}</Text>
                             <View className="period-detail">
                                 <View className="period-avatars-wrapper">
                                     {x.avatars.slice(0, 3).map((src, i) => {
@@ -165,6 +217,7 @@ class Book extends Component {
                             <Text>暂无训练计划</Text>
                         </View>}
                 </View>
+                {couponsNum || amount ? <View className="footer-placeholder"></View> : null}
                 {couponsNum || amount ? <View className="coupon-wrapper" onClick={this.jumToCoupons}>
                     <Text>优惠券</Text>
                     <Text>
@@ -172,6 +225,7 @@ class Book extends Component {
                         <Text className="icon-ic_more iconfont"></Text>
                     </Text>
                 </View> : null}
+                <View className="footer-placeholder"></View>
                 <View className="footer">
                     <Text className="amount">￥{total}</Text>
                     <View className="pay-button" onClick={this.toPay}> 立即支付</View>

@@ -1,4 +1,4 @@
-import { addDays, eachDay,format } from 'date-fns'
+import { addDays, eachDay, format } from 'date-fns'
 import Taro, { Component } from '@tarojs/taro'
 
 export function weekDate() {
@@ -16,10 +16,21 @@ export function weekDate() {
     return dates
 }
 
-export function addDayStr(n){
+export function addDayStr(n) {
     const today = new Date();
     const dayFromNow = addDays(today, n);
-    return format(dayFromNow,'YYYYMMDD')
+    return format(dayFromNow, 'YYYY-MM-DD')
+}
+
+/**
+ * 
+ * @param {timestamp} 时间戳 e.g.1548898800
+ */
+export function formatHour(timestamp) {
+    const date = new Date(timestamp*1000);
+    const hour =  ('0'+date.getHours()).slice(-2)
+    const minutes = (date.getMinutes()+'0').slice(0,2)
+    return `${hour}:${minutes}`
 }
 
 // - 小于1km，显示单位m，如321m
@@ -36,9 +47,37 @@ export function calDistance(la1, lo1, la2, lo2) {
         s = s + 'm'
     } else if (s <= 9900) {
         s = Math.round(s / 100) / 10 + 'km'
-    } else{
+    } else {
         s = Math.round(s / 1000) + 'km'
     }
     return s;
 }
 
+const concatArr = arr => arr.reduce((a, b) => a.concat(b), [])
+// 训练去重
+
+export function getUniqueExercise(schedules) {
+    if (!schedules.length) {
+        return []
+    } else {
+        // 后续考虑用typescript实现
+        const lessons = concatArr(schedules.map(schedule => schedule.shop.devices.map(x => x.lesson)))
+        const exercises = []
+        lessons.forEach(x => {
+            const sections = x.sections
+            if (sections && sections.some(sec => sec.exercise)) {
+                exercises.push(x.sections.filter(sec => sec.exercise)[0])
+            }
+        })
+        const hash = {}
+        const uniqueExercises = []
+        exercises.forEach(e => {
+            const id = e.exercise_id
+            if (id && !hash[id]) {
+                uniqueExercises.push(e.exercise)
+                hash[id] = 1
+            }
+        })
+        return uniqueExercises
+    }
+}

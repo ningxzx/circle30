@@ -2,7 +2,7 @@ import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
 import { WeekDate } from '../../components'
 import { connectLogin } from '../../utils/helper'
-import { addDayStr, calDistance } from '../../utils/tool'
+import { addDayStr, calDistance, getUniqueExercise } from '../../utils/tool'
 import { getShops } from '../../actions/shop'
 import { getSchedules } from '../../actions/schedule'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
@@ -11,10 +11,11 @@ import './index.less'
 class Index extends Component {
   state = {
     chooseDate: 0,
-    schedules: [],
+    exercises: [],
     stores: [],
     authLocation: true,
-    showSubButton: false
+    showSubButton: false,
+    selectDateIndex: 0
   }
   config = {
     navigationBarTitleText: 'CirCle30'
@@ -80,33 +81,38 @@ class Index extends Component {
   }
   getDateSchedules(days = 0) {
     const str = addDayStr(days)
+    this.setState({
+      selectDateIndex: days
+    })
     getSchedules({
       date: str
     }).then(res => {
-      let schedules = res.data
+      const exercises = getUniqueExercise(res.data)
       this.setState({
-        schedules
+        exercises
       })
     })
   }
   toProject(e) {
     const title = e.currentTarget.dataset.title
+    const id = e.currentTarget.dataset.id
     Taro.navigateTo({
-      url: `/pages/project/index?name=${title}`
+      url: `/pages/project/index?title=${title}`
     })
   }
   jumpToBook() {
+    const { selectDateIndex } = this.state
     const store = this.state.stores[0]
     if (store) {
-      const { _id: { $oid }, title } = store 
+      const { _id: { $oid }, title } = store
       Taro.navigateTo({
-        url: `/pages/book/index?storeId=${$oid}&storeTitle=${title}`
+        url: `/pages/book/index?storeId=${$oid}&storeTitle=${title}&dateIndex=${selectDateIndex}`
       })
     }
   }
   jumpToStore(e) {
     const store = e.currentTarget.dataset.store
-    const { _id: { $oid }, title } = store 
+    const { _id: { $oid }, title } = store
     Taro.navigateTo({
       url: `/pages/store/index?id=${$oid}&title=${title}`
     })
@@ -141,18 +147,18 @@ class Index extends Component {
             <Text className="icon-ic__plan iconfont"></Text>
             <Text className="card-title-text">训练计划</Text>
           </View>
-          <WeekDate onChangeDate={this.getDateSchedules} />
+          <WeekDate selectIndex={selectDateIndex} onChangeDate={this.getDateSchedules} />
         </View>
         <View className="exercise-list">
           <View className="gap"></View>
-          {schedules.length ? schedules.map((cource, i) => {
-            return (<View className="cell" key={i} onClick={this.toProject} data-title={cource.name}>
+          {exercises.length ? exercises.map((exercise, i) => {
+            return (<View className="cell" key={i} onClick={this.toProject} data-id={exercise._id.$oid} data-title={exercise.title}>
               <View className="exercise-info">
-                <Text className="exercise-name">{cource.name}</Text>
+                <Text className="exercise-name">{exercise.title}</Text>
                 <View className="exercise-detail">
-                  <Text>{cource.body}</Text>
+                  <Text>{exercise.body}</Text>
                   <Text>|</Text>
-                  <Text>{cource.type}</Text>
+                  <Text>{exercise.type}</Text>
                 </View>
               </View>
               <Text className="icon-ic_more iconfont"></Text>

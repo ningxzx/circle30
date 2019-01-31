@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Swiper, SwiperItem } from '@tarojs/components'
 import { connectLogin } from '../../utils/helper'
-import { addDayStr } from '../../utils/tool'
+import { getUniqueExercise, addDayStr } from '../../utils/tool'
 import { WeekDate } from '../../components'
 import { getTheShop, getShopUsers } from '../../actions/shop'
 import { getSchedules } from '../../actions/schedule'
@@ -24,21 +24,17 @@ class Store extends Component {
     images: [],
     studentsNum: 0,
     avatars: [],
-    cources: [
-      { name: '划船', body: '全身', type: '动态保持' },
-      { name: '过头蹲', body: '全身', type: '动态保持' },
-      { name: '引体向上', body: '全身', type: '动态保持' }
-    ],
+    exercises: [],
+    selectDateIndex: 0
   }
 
   config = {
     navigationBarTitleText: '门店详情'
   }
   jumpToBook() {
-    const { id, title } = this.state
-    Taro.setNavigationBarTitle(title)
+    const { id, title,selectDateIndex } = this.state
     Taro.navigateTo({
-      url: `/pages/book/index?storeId=${id}&storeTitle=${title}`
+      url: `/pages/book/index?storeId=${id}&storeTitle=${title}&dateIndex=${selectDateIndex}`
     })
   }
   toStudents() {
@@ -49,37 +45,35 @@ class Store extends Component {
   }
   componentDidMount() {
     const { id, title } = this.$router.params
-    Taro.setNavigationBarTitle({
-      title: title
-    })
-    // 查询门店详情
-    getTheShop({
-      shop_id: id
-    }).then(res => {
-      const { _id: { $oid }, service_time, title, phone, location, images, description, status, address } = res.data
-      this.setState({ id: $oid, service_time, title, phone, location, images, description, status, address })
-    })
-    // 查询预约过的用户
-    getShopUsers({
-      shop_id: id
-    }).then(res => {
-      const studentsNum = res.data.length
-      const avatars = res.data.map(user => {
-        return user.avatar
+    this.setState({
+      id,
+      title
+    }, () => {
+      Taro.setNavigationBarTitle({
+        title: title
       })
-      this.setState({
-        studentsNum,
-        avatars
+      // 查询门店详情
+      getTheShop({
+        shop_id: id
+      }).then(res => {
+        const { _id: { $oid }, service_time, title, phone, location, images, description, status, address } = res.data
+        this.setState({ id: $oid, service_time, title, phone, location, images, description, status, address })
       })
+      // 查询预约过的用户
+      getShopUsers({
+        shop_id: id
+      }).then(res => {
+        const studentsNum = res.data.length
+        const avatars = res.data.map(user => {
+          return user.avatar
+        })
+        this.setState({
+          studentsNum,
+          avatars
+        })
+      })
+      this.getDateSchedules()
     })
-    // 查询训练
-    getSchedules({
-      shop_id: id,
-      date:addDayStr()
-    }).then(res=>{
-
-    })
-
   }
   makePhoneCall() {
     const { phone } = this.state
@@ -94,10 +88,32 @@ class Store extends Component {
       longitude: lng
     })
   }
+  getDateSchedules(days = 0) {
+    const { id } = this.state
+    this.setState({
+      selectDateIndex: days
+    })
+    // 查询训练
+    getSchedules({
+      shop_id: id,
+      date: addDayStr(days)
+    }).then(res => {
+      const exercises = getUniqueExercise(res.data)
+      this.setState({
+        exercises
+      })
+    })
+  }
+  toExerciseDetail(e) {
+    const id = e.currentTarget.dataset.id
+    Taro.navigateTo({
+      url: `/pages/project/index?id=${id}`
+    })
+  }
   componentDidHide() { }
 
   render() {
-    const { title, service_time, phone, description, address, images, studentsNum, avatars } = this.state
+    const { title, service_time, phone, description, address, images, studentsNum, avatars ,selectDateIndex} = this.state
     return (
       <View className='store'>
         <Swiper
@@ -107,8 +123,8 @@ class Store extends Component {
           circular
           indicatorDots
           autoplay>
-          {images.map(banner => {
-            return <SwiperItem>
+          {images.map((banner, i) => {
+            return <SwiperItem key={i}>
               <Image src={banner}></Image>
             </SwiperItem>
           })
@@ -148,18 +164,18 @@ class Store extends Component {
             <Text className="verticalIcon"></Text>
             <Text className="card-title-text">训练计划</Text>
           </View>
-          <WeekDate />
+          <WeekDate selectIndex={selectDateIndex} onChangeDate={this.getDateSchedules} />
         </View>
         <View className="exercise-list">
           <View className="gap"></View>
-          {cources.length ? cources.map((cource, i) => {
-            return (<View className="cell" key={i}>
+          {exercises.length ? exercises.map((exercise, i) => {
+            return (<View className="cell" key={i} data-id={exercise._id.$oid} onClick={this.toExerciseDetail}>
               <View className="exercise-info">
-                <Text className="exercise-name">{cource.name}</Text>
+                <Text className="exercise-name">{exercise.title}</Text>
                 <View className="exercise-detail">
-                  <Text>{cource.body}</Text>
+                  <Text>{exercise.body}</Text>
                   <Text>|</Text>
-                  <Text>{cource.type}</Text>
+                  <Text>{exercise.type}</Text>
                 </View>
               </View>
               <Text className="icon-ic_more iconfont"></Text>
