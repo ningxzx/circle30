@@ -1,11 +1,20 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
-import { connect } from '@tarojs/redux'
+import { connectLogin } from '../../utils/helper'
+import { getExercise } from '../../actions/exercise'
 import './index.less'
-
+@connectLogin
 class Project extends Component {
-  state={
-    name:''
+  state = {
+    title: '',
+    id: '',
+    storeId: '',
+    storeTitle: '',
+    dateIndex: 0,
+    body: '',
+    type: '',
+    cover: '',
+    images: []
   }
   config = {
     navigationBarTitleText: '训练项目介绍'
@@ -18,39 +27,52 @@ class Project extends Component {
   componentWillUnmount() { }
 
   componentDidMount() {
-    const { name } = this.$router.params
-    if (name) {
+    const { title, id, dateIndex, storeId,storeTitle } = this.$router.params
+    this.setState({
+      title,
+      id,
+      storeId,
+      storeTitle,
+      dateIndex
+    }, () => {
       Taro.setNavigationBarTitle({
-        title: name
+        title: title
       })
-      this.setState({
-        name
+      getExercise(id).then(res => {
+        const { images, cover, type, body } = res.data
+        this.setState({
+          images,
+          cover,
+          type,
+          body
+        })
       })
-    }
+    })
   }
   toBook() {
+    const {storeId,dateIndex,storeTitle} = this.state
     Taro.navigateTo({
-      url: '/pages/book/index'
+      url: `/pages/book/index?storeId=${storeId}&storeTitle=${storeTitle}&dateIndex=${dateIndex}`
     })
 
   }
   componentDidHide() { }
 
   render() {
-    const {name} = this.state
+    const { images, cover, type, body, title } = this.state
     return (
       <View className='project'>
-        <Image src="cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_dian@2x.png"></Image>
-        <View className="title">{name}</View>
+        <Image src={cover}></Image>
+        <View className="title">{title}</View>
         <View className="info">
           <View className="type">
             <Text>训练部位</Text>
-            <Text>全身</Text>
+            <Text>{body}</Text>
           </View>
           <Text className="vertical-gap"></Text>
           <View className="type">
             <Text>训练目的</Text>
-            <Text>耐力</Text>
+            <Text>{type}</Text>
           </View>
         </View>
         <View className="card">
@@ -58,8 +80,7 @@ class Project extends Component {
             <Text className="verticalIcon"></Text>
             <Text className="card-title-text">课程说明</Text>
           </View>
-          <Text className="note">课程说明使用图文说明，由后台上传的多张图片拼接 字号24px。课程说明使用图文说明，由后台上传的多张图片拼接 字号24px行。课程说明使用图文说明，由后台上传的多张图片拼接 字号24px。课程说明使用图文说明，由后台上传的多张图片拼接 字号24px行。课程说明使用图文说明，由后台上传的多张图片拼接 字号24px。课程说明使用图文说明，由后台上传的多张图片拼接 字号24px行。</Text>
-          <Image className="project-image" src="cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_dian@2x.png"></Image>
+          {images.map((x,i) => (<Image className="project-image" key={i} src={x}></Image>))}
         </View>
         <Button className="book-btn" onClick={this.toBook}>立即预约</Button>
       </View>

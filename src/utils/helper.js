@@ -59,7 +59,7 @@ export const saveUserInfo = (info) => {
 
 const getUserId = async (info, users, unionid, openid) => {
     if (users.length) {
-        return users[0]._id&&users[0]._id.$oid
+        return users[0]._id && users[0]._id.$oid
     } else {
         try {
             const param = {
@@ -71,7 +71,7 @@ const getUserId = async (info, users, unionid, openid) => {
                 ]
             }
             const res = await register(param)
-            if (res&&res._id) {
+            if (res && res._id) {
                 return res._id.$oid
             }
         } catch (error) {
@@ -87,7 +87,7 @@ const emitUserid = async (unionid, openid, session_key) => {
             const users = res.data
             const nickName = Taro.getStorageSync('nickName')
             const avatarUrl = Taro.getStorageSync('avatarUrl')
-            const userId= await getUserId({ nickName, avatarUrl }, users, unionid, openid)
+            const userId = await getUserId({ nickName, avatarUrl }, users, unionid, openid)
             return userId
         } else {
             const info = await getUserInfo(session_key)
@@ -96,7 +96,7 @@ const emitUserid = async (unionid, openid, session_key) => {
                 saveUserInfo(info)
                 const res = await getUser({ unionid: unionId })
                 const users = res.data
-                const userId= await getUserId(info, users, unionid, openid)
+                const userId = await getUserId(info, users, unionid, openid)
                 return userId
             }
         }
@@ -122,7 +122,7 @@ export const userLogin = async () => {
             const { openid, session_key, unionid } = session
             Taro.setStorageSync('openid', openid)
             Taro.setStorageSync('session_key', session_key)
-            const id =await emitUserid(unionid, openid, session_key)
+            const id = await emitUserid(unionid, openid, session_key)
             Taro.setStorageSync('user_id', id)
         }
     }
@@ -131,9 +131,9 @@ export const userLogin = async () => {
 /**
  * 获取userid请求较慢，因此单独写一个工具函数
  */
-export async function requestUserId (){
+export async function requestUserId() {
     let user_id = Taro.getStorageSync('user_id')
-    if(!user_id){
+    if (!user_id) {
         const res = await getUser({ unionid })
         user_id = res[0]._id.$oid
         Taro.setStorageSync('user_id', user_id)
@@ -162,24 +162,22 @@ export const connectLogin = (Component) => {
     }
     return LoginWrapper
 }
+
+
 export function withShare(opts = {}) {
 
     // 设置默认
-    const defalutPath = 'pages/index/index?';
-    const defalutTitle = '默认标题';
-    const defaultImageUrl = defaultShareImg;
+    const defalutPath = 'pages/index/index';
+    const defalutTitle = 'CirCle30光速燃脂';
+    const defaultImageUrl = 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/微信分享图.png';
 
     return function demoComponent(Component) {
         class WithShare extends Component {
-            async componentWillMount() {
-                wx.showShareMenu({
-                    withShareTicket: true
-                });
-
-                if (super.componentWillMount) {
-                    super.componentWillMount();
-                }
-            }
+            // async componentWillMount() {
+            //     wx.showShareMenu({
+            //         withShareTicket: true
+            //     });
+            // }
 
             // 点击分享的那一刻会进行调用
             onShareAppMessage() {

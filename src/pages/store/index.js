@@ -32,7 +32,7 @@ class Store extends Component {
     navigationBarTitleText: '门店详情'
   }
   jumpToBook() {
-    const { id, title,selectDateIndex } = this.state
+    const { id, title, selectDateIndex } = this.state
     Taro.navigateTo({
       url: `/pages/book/index?storeId=${id}&storeTitle=${title}&dateIndex=${selectDateIndex}`
     })
@@ -98,22 +98,26 @@ class Store extends Component {
       shop_id: id,
       date: addDayStr(days)
     }).then(res => {
+      const schedule = res.data[0]
       const exercises = getUniqueExercise(res.data)
       this.setState({
-        exercises
+        exercises,
+        scheduleId: schedule._id.$oid
       })
     })
   }
   toExerciseDetail(e) {
-    const id = e.currentTarget.dataset.id
+    const exerciseId = e.currentTarget.dataset.id
+    const exerciseTitle = e.currentTarget.dataset.title
+    const { id, selectDateIndex,title } = this.state
     Taro.navigateTo({
-      url: `/pages/project/index?id=${id}`
+      url: `/pages/project/index?id=${exerciseId}&title=${exerciseTitle}&storeId=${id}&dateIndex=${selectDateIndex}&storeTitle=${title}`
     })
   }
   componentDidHide() { }
 
   render() {
-    const { title, service_time, phone, description, address, images, studentsNum, avatars ,selectDateIndex} = this.state
+    const { title, service_time, phone, description, address, images, studentsNum, avatars, selectDateIndex } = this.state
     return (
       <View className='store'>
         <Swiper
@@ -169,7 +173,7 @@ class Store extends Component {
         <View className="exercise-list">
           <View className="gap"></View>
           {exercises.length ? exercises.map((exercise, i) => {
-            return (<View className="cell" key={i} data-id={exercise._id.$oid} onClick={this.toExerciseDetail}>
+            return (<View className="cell" key={i} data-id={exercise._id.$oid} data-title={exercise.title} onClick={this.toExerciseDetail}>
               <View className="exercise-info">
                 <Text className="exercise-name">{exercise.title}</Text>
                 <View className="exercise-detail">

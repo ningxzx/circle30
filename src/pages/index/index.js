@@ -94,10 +94,13 @@ class Index extends Component {
     })
   }
   toProject(e) {
-    const title = e.currentTarget.dataset.title
+    const exerciseTitle = e.currentTarget.dataset.title
     const id = e.currentTarget.dataset.id
+    const { selectDateIndex } = this.state
+    const store = this.state.stores[0]
+    const { _id: { $oid },title} = store
     Taro.navigateTo({
-      url: `/pages/project/index?title=${title}`
+      url: `/pages/project/index?title=${exerciseTitle}&id=${id}&storeId=${$oid}&storeTitle=${title}&dateIndex=${selectDateIndex}`
     })
   }
   jumpToBook() {
@@ -132,7 +135,7 @@ class Index extends Component {
     }
   }
   render() {
-    const { stores, schedules, authLocation, showSubButton } = this.state
+    const { stores, authLocation, showSubButton, exercises } = this.state
     return (
       <View className='index' >
         <View className="header">
