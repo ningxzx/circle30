@@ -1,8 +1,9 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
-import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
-
+import { connectLogin,requestUserId } from '../../utils/helper'
+import { get as getGlobalData } from '../../utils/globalData'
 import './index.less'
+@connectLogin
 class Mine extends Component {
   config = {
     navigationBarTitleText: '个人中心'
@@ -34,7 +35,7 @@ class Mine extends Component {
 
   render() {
     const pixelRatio = getGlobalData('pixelRatio') === 3 ? '3' : '2'
-    const avatarUrl = Taro.getStorageSync('avatarUrl')
+    const avatarUrl = Taro.getStorageSync('avatarUrl')||`cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_logo@${pixelRatio}x.png`
     const nickName = Taro.getStorageSync('nickName')
     return (
       <View>

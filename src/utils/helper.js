@@ -1,6 +1,7 @@
 import Taro from '@tarojs/taro'
 import { login, getUser, decryptData, register } from '../actions/user'
 import { APP_ID } from '../constants/app.js'
+import { func } from 'prop-types';
 
 
 // 获取微信登录凭证
@@ -125,6 +126,20 @@ export const userLogin = async () => {
             Taro.setStorageSync('user_id', id)
         }
     }
+}
+
+/**
+ * 获取userid请求较慢，因此单独写一个工具函数
+ */
+export async function requestUserId (){
+    let user_id = Taro.getStorageSync('user_id')
+    if(!user_id){
+        const res = await getUser({ unionid })
+        user_id = res[0]._id.$oid
+        Taro.setStorageSync('user_id', user_id)
+
+    }
+    return user_id
 }
 
 /**

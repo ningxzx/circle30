@@ -1,8 +1,8 @@
 @import '../../varible.less';
 .store {
-    .store-banner{
+    .store-banner {
         height: 400px;
-        image{
+        image {
             width: 750px;
             height: 400px;
         }
@@ -18,6 +18,13 @@
             font-size: 24px;
             margin: 0 28px;
             box-sizing: border-box;
+            .info-text{
+                .iconfont{
+                    font-size: 24px;
+                    color: @textNormal;
+                }
+                vertical-align: middle;
+            }
         }
         view:last-child {
             border-bottom: 0;
@@ -36,6 +43,9 @@
         .students {
             position: relative;
             height: 140px;
+            .period-avatars-wrapper {
+                position: relative;
+            }
             .period-avatars {
                 position: absolute;
                 width: 70px;
@@ -47,23 +57,35 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                image {
+                .mini-avatar {
                     width: 60px;
                     height: 60px;
                     border-radius: 30px;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    background-size: cover;
                 }
             }
-            .period-avatars:last-child {
-                left: 96px;
-                z-index: 1;
-            }
-            .period-avatars:nth-child(2) {
-                left: 48px;
-                z-index: 5;
-            }
-            .period-avatars:first-child {
-                left: 0;
-                z-index: 10;
+            .period-avatars.show-more-avatar {
+                left: 192px;
+                z-index: 100;
+                .show-more-points {
+                    width: 60px;
+                    height: 60px;
+                    border-radius: 30px;
+                    border: 1px solid @borderColor;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    box-sizing: border-box;
+                    padding: 0 18px;
+                    .point {
+                        background-color: #ccc;
+                        border-radius: 50%;
+                        height: 5px;
+                        width: 5px;
+                    }
+                }
             }
         }
         .description {
@@ -161,7 +183,7 @@
         justify-content: center;
         border-radius: 0;
     }
-    .book-btn:after{
+    .book-btn:after {
         border: none;
     }
 }

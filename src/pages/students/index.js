@@ -1,34 +1,35 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
-import { connect } from '@tarojs/redux'
+import { connectLogin } from '../../utils/helper'
+import { getShopUsers } from '../../actions/shop'
+
 import './index.less'
+@connectLogin
 
 class Students extends Component {
   static defaultProps = {
-    list: [
-      { name: '孙二狗', avatar: 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png' },
-      { name: '孙三狗', avatar: 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png' },
-      { name: '孙四狗', avatar: 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png' }
-    ]
+    list: []
   }
   config = {
     navigationBarTitleText: '学员列表'
   }
-
+  componentDidShow() {
+    const { storeId } = this.$router.params
+    getShopUsers({shop_id:storeId}).then(res=>{
+        this.setState({
+          list:res.data
+        })
+    })
+  }
   render() {
-    // const { list } = this.props
-    const list =  [
-      { name: '孙二狗', avatar: 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png' },
-      { name: '孙三狗', avatar: 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png' },
-      { name: '孙四狗', avatar: 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png' }
-    ]
+    const { list } = this.state
     return (
       <View className='students'>
         {
           list.map((x, i) => {
             return <View className="student-info" key={i}>
               <Image src={x.avatar}></Image>
-              <Text>{x.name}</Text>
+              <Text>{x.username}</Text>
             </View>
           })
         }

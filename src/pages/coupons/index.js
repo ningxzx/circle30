@@ -1,11 +1,12 @@
 import { ComponentClass } from 'react'
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
+import { connectLogin,requestUserId } from '../../utils/helper'
 import { Coupon } from '../../components'
 import { getCoupons } from '../../actions/coupons'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 import './index.less'
-
+@connectLogin
 class CouponList extends Component {
   config = {
     navigationBarTitleText: '我的卡券'
@@ -17,12 +18,12 @@ class CouponList extends Component {
     this.getUserCoupons()
   }
   getUserCoupons() {
-    let user_id = Taro.getStorageSync('user_id')
+    const user_id = await requestUserId()
     getCoupons({
       user_id
     }).then(res => {
-      // const coupons = res.data
-      // this.setState({ coupons })
+      const coupons = res.data
+      this.setState({ coupons })
     })
   }
   selectCoupon(e) {

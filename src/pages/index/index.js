@@ -141,7 +141,7 @@ class Index extends Component {
             <Text className="icon-ic__plan iconfont"></Text>
             <Text className="card-title-text">训练计划</Text>
           </View>
-          <WeekDate onChangeDate={this.getDateSchedules} test="test" />
+          <WeekDate onChangeDate={this.getDateSchedules} />
         </View>
         <View className="exercise-list">
           <View className="gap"></View>

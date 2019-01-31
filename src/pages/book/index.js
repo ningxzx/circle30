@@ -1,15 +1,18 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Image } from '@tarojs/components'
-import { connectLogin } from '../../utils/helper'
+import { connectLogin, requestUserId } from '../../utils/helper'
+import { addDayStr } from '../../utils/tool'
 import { WeekDate } from '../../components'
 import { getCoupons } from '../../actions/coupons'
 import { decryptData, putUser } from '../../actions/user'
+import { getSchedules } from '../../actions/schedule'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 
 import './index.less'
 @connectLogin
 class Book extends Component {
     state = {
+        storeId:'',
         storeTitle: '优客联邦一期',
         phoneNumber: Taro.getStorageSync('phoneNumber'),
         list: [
@@ -54,10 +57,23 @@ class Book extends Component {
                 storeId, storeTitle
             })
         }
-
+        this.getDateSchedules(0)
     }
-    getUserCoupons() {
-        const user_id = Taro.getStorageSync('user_id')
+    getDateSchedules(days = 0) {
+        const str = addDayStr(days)
+        const shop_id = this.state.storeId
+        getSchedules({
+            shop_id,
+            date: str
+        }).then(res => {
+            let schedules = res.data
+            this.setState({
+                schedules
+            })
+        })
+    }
+    async getUserCoupons() {
+        const user_id = await requestUserId()
         getCoupons({
             user_id,
             used: 0
@@ -87,23 +103,23 @@ class Book extends Component {
             selectPeriodIdx: e.currentTarget.dataset.idx
         })
     }
-    getPhoneNumber(e) {
+    async getPhoneNumber(e) {
         const { iv, encryptedData } = e.detail
         const session_key = Taro.getStorageSync('session_key')
         decryptData({
             encrypted: encryptedData,
             iv,
             session: session_key
-        }).then(res => {
+        }).then(async (res)=>{
             const { phoneNumber } = res.data
             const unionid = Taro.getStorageSync('unionid')
             const avatar = Taro.getStorageSync('avatarUrl')
             const username = Taro.getStorageSync('nickName')
-            const user_id = Taro.getStorageSync('user_id')
             this.setState({
                 phoneNumber
             })
             Taro.setStorageSync('phoneNumber', phoneNumber)
+            const user_id = await requestUserId()
             putUser({
                 user_id,
                 unionid,
@@ -128,7 +144,7 @@ class Book extends Component {
                     </View>
                 </View>
                 <View className="date-wrapper">
-                    <WeekDate></WeekDate>
+                    <WeekDate onChangeDate={this.getDateSchedules}></WeekDate>
                 </View>
                 <View className="period-wrapper">
                     {list.length ? list.map((x, i) => {

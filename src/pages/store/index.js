@@ -1,15 +1,16 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Swiper, SwiperItem } from '@tarojs/components'
 import { connectLogin } from '../../utils/helper'
+import { addDayStr } from '../../utils/tool'
 import { WeekDate } from '../../components'
-import { getTheShop } from '../../actions/shop'
-
+import { getTheShop, getShopUsers } from '../../actions/shop'
+import { getSchedules } from '../../actions/schedule'
 import './index.less'
 
 @connectLogin
 class Store extends Component {
   state = {
-    id:'',
+    id: '',
     title: "",
     phone: "",
     status: "enable",
@@ -21,7 +22,8 @@ class Store extends Component {
     address: "",
     description: "",
     images: [],
-    devices: [],
+    studentsNum: 0,
+    avatars: [],
     cources: [
       { name: '划船', body: '全身', type: '动态保持' },
       { name: '过头蹲', body: '全身', type: '动态保持' },
@@ -34,34 +36,68 @@ class Store extends Component {
   }
   jumpToBook() {
     const { id, title } = this.state
+    Taro.setNavigationBarTitle(title)
     Taro.navigateTo({
       url: `/pages/book/index?storeId=${id}&storeTitle=${title}`
     })
   }
   toStudents() {
+    const { id } = this.state
     Taro.navigateTo({
-      url: '/pages/students/index'
+      url: `/pages/students/index?storeId=${id}`
     })
   }
-  componentDidShow() {
+  componentDidMount() {
     const { id, title } = this.$router.params
     Taro.setNavigationBarTitle({
       title: title
     })
+    // 查询门店详情
     getTheShop({
       shop_id: id
     }).then(res => {
       const { _id: { $oid }, service_time, title, phone, location, images, description, status, address } = res.data
       this.setState({ id: $oid, service_time, title, phone, location, images, description, status, address })
     })
-  }
+    // 查询预约过的用户
+    getShopUsers({
+      shop_id: id
+    }).then(res => {
+      const studentsNum = res.data.length
+      const avatars = res.data.map(user => {
+        return user.avatar
+      })
+      this.setState({
+        studentsNum,
+        avatars
+      })
+    })
+    // 查询训练
+    getSchedules({
+      shop_id: id,
+      date:addDayStr()
+    }).then(res=>{
 
+    })
+
+  }
+  makePhoneCall() {
+    const { phone } = this.state
+    Taro.makePhoneCall({
+      phoneNumber: phone
+    })
+  }
+  openMap() {
+    const { location: { lat, lng } } = this.state
+    Taro.openLocation({
+      latitude: lat,
+      longitude: lng
+    })
+  }
   componentDidHide() { }
 
   render() {
-    const { title, service_time, phone, description, address, images } = this.state
-    const studentsNum = 123
-    const avatars = ['cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png', 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_touxiang@2x.png']
+    const { title, service_time, phone, description, address, images, studentsNum, avatars } = this.state
     return (
       <View className='store'>
         <Swiper
@@ -81,22 +117,27 @@ class Store extends Component {
         <View className="store-info ">
           <View className="name">{title}</View>
           <View className="office-hours">
-            <Text>{`${service_time.open} - ${service_time.close}`}</Text>
-
+            <Text className="info-text"><Text className="icon-ic__time iconfont"></Text>{`${service_time.open} - ${service_time.close}`}</Text>
           </View>
-          <View className="tel">
-            <Text><Text className="icon-ic_time iconfont"></Text>{phone}</Text>
+          <View className="tel" onClick={this.makePhoneCall}>
+            <Text className="info-text"><Text className="icon-ic__phone iconfont"></Text>{phone}</Text>
             <Text className="icon-ic_more iconfont"></Text>
           </View>
-          <View className="location">
-            <Text><Text className="icon-ic_address iconfont"></Text>{address}</Text>
+          <View className="location" onClick={this.openMap}>
+            <Text className="info-text"><Text className="icon-ic__shopadd iconfont"></Text>{address}</Text>
             <Text className="icon-ic_more iconfont"></Text>
           </View>
           <View className="students" onClick={this.toStudents}>
             <View className="period-avatars-wrapper">
-              {avatars.slice(0, 3).map((src, i) => {
-                return <View className="period-avatars" key={i}><Image className="mini-avatar" src={src}></Image></View>
+              {avatars.slice(0, 4).map((src, i) => {
+                return <View className="period-avatars" key={i} style={{ left: `${i * 48}rpx`, zIndex: (5 - i) * 100 }}><View className="mini-avatar" style={{ backgroundImage: `url(${src})` }}></View></View>
               })}
+              {avatars.length > 4 ? <View className="period-avatars show-more-avatar" key={i}><View className="show-more-points">
+                <Text className="point"></Text>
+                <Text className="point"></Text>
+                <Text className="point"></Text>
+              </View>
+              </View> : null}
             </View>
             <Text>{`${studentsNum}位学员`}</Text>
           </View>
