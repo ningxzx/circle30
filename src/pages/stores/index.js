@@ -31,15 +31,15 @@ class StoreList extends Component {
   }
   toStoreInfo(e) {
     const { idx, status } = e.currentTarget.dataset
-    if (status) {
+    if (status == 'enable') {
       this.setState({
         selectIdx: idx
       })
+      const { _id: { $oid }, title } = this.state.stores[idx]
+      Taro.navigateTo({
+        url: `/pages/store/index?id=${oid}&title=${title}`
+      })
     }
-    const { _id: { $oid }, title } = this.state.stores[idx]
-    Taro.navigateTo({
-      url: `/pages/store/index?id=${oid}&title=${title}`
-    })
   }
   render() {
     const { stores, selectIdx } = this.state

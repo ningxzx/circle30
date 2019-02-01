@@ -1,14 +1,15 @@
 import { addDays, eachDay, format } from 'date-fns'
 import Taro, { Component } from '@tarojs/taro'
 
+export const WEEK_STR = ['日', '一', '二', '三', '四', '五', '六']
+
 export function weekDate() {
-    const weekStr = ['日', '一', '二', '三', '四', '五', '六']
     const today = new Date();
     const dayAWeekFromNow = addDays(today, 6);
     const thisWeek = eachDay(today, dayAWeekFromNow);
     let dates = thisWeek.map(d => {
         return {
-            week: weekStr[d.getDay()],
+            week: WEEK_STR[d.getDay()],
             date: d.getDate()
         }
     })
@@ -31,6 +32,29 @@ export function formatHour(timestamp) {
     const hour =  ('0'+date.getHours()).slice(-2)
     const minutes = (date.getMinutes()+'0').slice(0,2)
     return `${hour}:${minutes}`
+}
+
+/**
+ * 
+ * @param {timestamp} 时间戳 e.g.1548898800
+ */
+export function formatDate(timestamp) {
+    const date = new Date(timestamp*1000);
+    const nowYear = (new Date()).getFullYear()
+    if(date.getFullYear()===nowYear){
+        return  format(date, 'MM月DD日')
+    } else {
+        return  format(date, 'YYYY年MM月DD日')
+    }
+}
+
+/**
+ * 
+ * @param {timestamp} 时间戳 e.g.1548898800
+ */
+export function formatWeek(timestamp) {
+    const date = new Date(timestamp*1000);
+    return `周${WEEK_STR[date.getDay()]}`
 }
 
 // - 小于1km，显示单位m，如321m

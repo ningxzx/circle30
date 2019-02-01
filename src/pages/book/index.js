@@ -6,6 +6,7 @@ import { WeekDate,PostButton } from '../../components'
 import { getCoupons } from '../../actions/coupons'
 import { decryptData, putUser } from '../../actions/user'
 import { getSchedules } from '../../actions/schedule'
+import { postMessage } from '../../actions/message'
 import { createOrder, checkoutOrder, createTrasctions } from '../../actions/order'
 import { FULL_NUM } from '../../constants/app'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
@@ -140,7 +141,6 @@ class Book extends Component {
             param.timeStamp  = param.timestamp
             const {timestamp,...rest} = param
             Taro.requestPayment(rest).then(res => {
-                console.log(res)
                 Taro.navigateTo({
                     url: `/pages/bookStatus/index?order_id=${order_id}`
                 })
