@@ -28,9 +28,9 @@ class App extends Component {
       'pages/stores/index',
       'pages/login/index',
       'pages/coupons/index',
-      'pages/exercise/index',
+      'pages/order/index',
       'pages/mine/index',
-      'pages/project/index',
+      'pages/exercise/index',
     ],
     window: {
       backgroundColor: '#f4f4f4',
@@ -43,18 +43,18 @@ class App extends Component {
       list: [{
         pagePath: "pages/index/index",
         text: "首页",
-        iconPath: "./assets/images/ic_home@2x.png",
-        selectedIconPath: "./assets/images/ic_home_on@2x.png"
+        iconPath: "./assets/images/ic_home@3x.png",
+        selectedIconPath: "./assets/images/ic_home_on@3x.png"
       }, {
-        pagePath: "pages/exercise/index",
+        pagePath: "pages/order/index",
         text: "训练",
-        iconPath: "./assets/images/ic_exercise@2x.png",
-        selectedIconPath: "./assets/images/ic_exercise_on@2x.png"
+        iconPath: "./assets/images/ic_exercise@3x.png",
+        selectedIconPath: "./assets/images/ic_exercise_on@3x.png"
       }, {
         pagePath: "pages/mine/index",
         text: "我的",
-        iconPath: "./assets/images/ic_mine@2x.png",
-        selectedIconPath: "./assets/images/ic_mine_on@2x.png"
+        iconPath: "./assets/images/ic_mine@3x.png",
+        selectedIconPath: "./assets/images/ic_mine_on@3x.png"
       }],
       color: '#666',
       selectedColor: '#14d0b4',

@@ -140,11 +140,12 @@ class Book extends Component {
             param.timeStamp  = param.timestamp
             const {timestamp,...rest} = param
             Taro.requestPayment(rest).then(res => {
-                this.toBookStatus()
-            }).catch(res=>{
+                console.log(res)
                 Taro.navigateTo({
                     url: `/pages/bookStatus/index?order_id=${order_id}`
                 })
+            }).catch(res=>{
+                
             })
         })
     }

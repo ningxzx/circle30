@@ -1,0 +1,57 @@
+@import '../../varible.less';
+.order{
+    .tabHeaderWrapper{
+        height: 88px;
+        padding: 0 165px;
+        box-sizing: border-box;
+        border-bottom: 1px solid @borderColor;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #fff;
+        .tabHeader{
+            width: 130px;
+            height: 88px;
+            position: relative;
+            font-size: 30px;
+            line-height: 88px;
+            color: @textLight;
+            text-align: center;
+        }
+        .tabHeader.on{
+            color: @textHeavy;
+        }
+        .tabHeader.on:after{
+            position: absolute;
+            content:'';
+            display: block;
+            width: 50px;
+            height: 10px;
+            background: @mainColor;
+            border-radius: 5px;
+            left: 50%;
+            margin-left: -25px;
+            bottom:0px;
+        }
+    }
+    .tabPaneWrapper{
+        background: #ffffff;
+        .order-list-swiper{
+            height: 400px;
+        }
+        .cell{
+            margin: 0 32px 0 28px;
+            height: 172px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+            color: @textHeavy;
+            font-size: 28px;
+        }
+        .cell + .cell{
+            border-top:1px solid @borderColor;
+        }
+    }
+}

@@ -17,7 +17,7 @@ class CouponList extends Component {
   componentDidShow() {
     this.getUserCoupons()
   }
-  getUserCoupons() {
+  async getUserCoupons() {
     const user_id = await requestUserId()
     getCoupons({
       user_id

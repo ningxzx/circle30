@@ -5,4 +5,5 @@ export const checkoutOrder = (({ order_id, coupon_id }) => api.post(`/orders/${o
 export const createTrasctions = (({ order_id, openid }) => api.post(`/orders/${order_id}/transactions
 `, { openid }))
 export const refund = (order_id => api.post(`/orders/${order_id}/refunds`))
-export const getOrder = (order_id => api.post(`/orders/${order_id}`))
+export const getOrder = (order_id => api.get(`/orders/${order_id}`))
+export const getOrders = (params => api.get(`/orders`, params))

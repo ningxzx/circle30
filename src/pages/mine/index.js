@@ -10,7 +10,7 @@ class Mine extends Component {
   }
   toExercise() {
     Taro.switchTab({
-      url: '/pages/exercise/index'
+      url: '/pages/order/index'
     })
   }
   toCoupons() {

@@ -100,7 +100,7 @@ class Index extends Component {
     const store = this.state.stores[0]
     const { _id: { $oid },title} = store
     Taro.navigateTo({
-      url: `/pages/project/index?title=${exerciseTitle}&id=${id}&storeId=${$oid}&storeTitle=${title}&dateIndex=${selectDateIndex}`
+      url: `/pages/exercise/index?title=${exerciseTitle}&id=${id}&storeId=${$oid}&storeTitle=${title}&dateIndex=${selectDateIndex}`
     })
   }
   jumpToBook() {

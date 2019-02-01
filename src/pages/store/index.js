@@ -111,7 +111,7 @@ class Store extends Component {
     const exerciseTitle = e.currentTarget.dataset.title
     const { id, selectDateIndex,title } = this.state
     Taro.navigateTo({
-      url: `/pages/project/index?id=${exerciseId}&title=${exerciseTitle}&storeId=${id}&dateIndex=${selectDateIndex}&storeTitle=${title}`
+      url: `/pages/exercise/index?id=${exerciseId}&title=${exerciseTitle}&storeId=${id}&dateIndex=${selectDateIndex}&storeTitle=${title}`
     })
   }
   componentDidHide() { }

@@ -1,66 +1,89 @@
 import Taro, { Component } from '@tarojs/taro'
-import { View, Swiper, Text } from '@tarojs/components'
-import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
+import { View, Button, Text } from '@tarojs/components'
+import { connectLogin } from '../../utils/helper'
+import { getExercise } from '../../actions/exercise'
 import './index.less'
+@connectLogin
 class Exercise extends Component {
-  constructor() {
-    this.state = {
-      current: 'future'
-    }
+  state = {
+    title: '',
+    id: '',
+    storeId: '',
+    storeTitle: '',
+    dateIndex: 0,
+    body: '',
+    type: '',
+    cover: '',
+    images: []
   }
   config = {
-    navigationBarTitleText: '我的训练'
+    navigationBarTitleText: '训练项目介绍'
   }
 
   componentWillReceiveProps(nextProps) {
     console.log(this.props, nextProps)
   }
-  tapTab(e) {
+
+  componentWillUnmount() { }
+
+  componentDidMount() {
+    const { title, id, dateIndex, storeId,storeTitle } = this.$router.params
     this.setState({
-      current: e.currentTarget.dataset.idx
+      title,
+      id,
+      storeId,
+      storeTitle,
+      dateIndex
+    }, () => {
+      Taro.setNavigationBarTitle({
+        title: title
+      })
+      getExercise(id).then(res => {
+        const { images, cover, type, body } = res.data
+        this.setState({
+          images,
+          cover,
+          type,
+          body
+        })
+      })
     })
   }
-  pagechange(e) {
-    if ("touch" === e.detail.source) {
-      let currentPageIndex = this.data.currentIndex
-      currentPageIndex = (currentPageIndex + 1) % 2
-      this.setData({
-        currentIndex: currentPageIndex
-      })
-    }
+  toBook() {
+    const {storeId,dateIndex,storeTitle} = this.state
+    Taro.navigateTo({
+      url: `/pages/book/index?storeId=${storeId}&storeTitle=${storeTitle}&dateIndex=${dateIndex}`
+    })
+
   }
+  componentDidHide() { }
+
   render() {
-    const { current } = this.state
+    const { images, cover, type, body, title } = this.state
     return (
-      <View className='exercise'>
-        <View className="tabHeaderWrapper">
-          <View className={`tabHeader ${current == 'future' ? 'on' : ''}`} data-idx='future' onClick={this.tapTab}>待训练</View>
-          <View className={`tabHeader ${current == 'ongoing' ? 'on' : ''}`} data-idx='ongoing' onClick={this.tapTab}>历史训练</View>
+      <View className='project'>
+        <Image src={cover}></Image>
+        <View className="title">{title}</View>
+        <View className="info">
+          <View className="type">
+            <Text>训练部位</Text>
+            <Text>{body}</Text>
+          </View>
+          <Text className="vertical-gap"></Text>
+          <View className="type">
+            <Text>训练目的</Text>
+            <Text>{type}</Text>
+          </View>
         </View>
-        <View className="tabPaneWrapper">
-          <Swiper circular current={current == 'future' ? 0 : 1} className="exercise-list-swiper">
-            <SwiperItem className="exercise-list-wrapper">
-              <View className="cell">
-                <Text>我的训练</Text>
-                <Text className="icon-ic_more iconfont"></Text>
-              </View>
-              <View className="cell">
-                <Text>优惠券</Text>
-                <Text className="icon-ic_more iconfont"></Text>
-              </View>
-            </SwiperItem>
-            <SwiperItem className="exercise-list-wrapper">
-              <View className="cell">
-                <Text>我的训练3</Text>
-                <Text className="icon-ic_more iconfont"></Text>
-              </View>
-              <View className="cell">
-                <Text>优惠券</Text>
-                <Text className="icon-ic_more iconfont"></Text>
-              </View>
-            </SwiperItem>
-          </Swiper>
+        <View className="card">
+          <View className="card-title description">
+            <Text className="verticalIcon"></Text>
+            <Text className="card-title-text">课程说明</Text>
+          </View>
+          {images.map((x,i) => (<Image className="project-image" mode="widthFix" key={i} src={x}></Image>))}
         </View>
+        <View className="book-btn-placeholder"></View>
+        <Button className="book-btn" onClick={this.toBook}>立即预约</Button>
       </View>
     )
   }
