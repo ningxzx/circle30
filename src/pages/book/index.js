@@ -2,7 +2,7 @@ import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Image } from '@tarojs/components'
 import { connectLogin, requestUserId } from '../../utils/helper'
 import { addDayStr, formatHour } from '../../utils/tool'
-import { WeekDate } from '../../components'
+import { WeekDate,PostButton } from '../../components'
 import { getCoupons } from '../../actions/coupons'
 import { decryptData, putUser } from '../../actions/user'
 import { getSchedules } from '../../actions/schedule'
@@ -229,7 +229,7 @@ class Book extends Component {
                 <View className="footer-placeholder"></View>
                 <View className="footer">
                     <Text className="amount">￥{total}</Text>
-                    <View className="pay-button" onClick={this.toPay}> 立即支付</View>
+                    <PostButton btn-class="pay-button" onClick={this.toPay}>立即支付</PostButton>
                 </View>
             </View>
         )

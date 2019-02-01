@@ -1,7 +1,9 @@
 import Taro, { Component } from '@tarojs/taro'
-import { View, Button, Text } from '@tarojs/components'
+import { View, Button, Text, Form } from '@tarojs/components'
 import { connectLogin } from '../../utils/helper'
+import { PostButton } from '../../components'
 import { getExercise } from '../../actions/exercise'
+import { postFormId } from '../../actions/message'
 import './index.less'
 @connectLogin
 class Exercise extends Component {
@@ -27,7 +29,7 @@ class Exercise extends Component {
   componentWillUnmount() { }
 
   componentDidMount() {
-    const { title, id, dateIndex, storeId,storeTitle } = this.$router.params
+    const { title, id, dateIndex, storeId, storeTitle } = this.$router.params
     this.setState({
       title,
       id,
@@ -49,12 +51,18 @@ class Exercise extends Component {
       })
     })
   }
-  toBook() {
-    const {storeId,dateIndex,storeTitle} = this.state
+  jumpToBook() {
+    const { storeId, dateIndex, storeTitle } = this.state
     Taro.navigateTo({
       url: `/pages/book/index?storeId=${storeId}&storeTitle=${storeTitle}&dateIndex=${dateIndex}`
     })
-
+  }
+  formSubmit(e) {
+    const form_id = e.detail.formId
+    const open_id = Taro.getStorageSync('openid')
+    if (form_id) {
+      postFormId({form_id,open_id})
+    }
   }
   componentDidHide() { }
 
@@ -80,10 +88,11 @@ class Exercise extends Component {
             <Text className="verticalIcon"></Text>
             <Text className="card-title-text">课程说明</Text>
           </View>
-          {images.map((x,i) => (<Image className="project-image" mode="widthFix" key={i} src={x}></Image>))}
+          {images.map((x, i) => (<Image className="project-image" mode="widthFix" key={i} src={x}></Image>))}
         </View>
         <View className="book-btn-placeholder"></View>
-        <Button className="book-btn" onClick={this.toBook}>立即预约</Button>
+        <PostButton btn-class="book-btn" onClick={this.jumpToBook}>立即预约</PostButton>
+
       </View>
     )
   }

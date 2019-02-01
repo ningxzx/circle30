@@ -1,6 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
-import { WeekDate } from '../../components'
+import { WeekDate, PostButton } from '../../components'
 import { connectLogin } from '../../utils/helper'
 import { addDayStr, calDistance, getUniqueExercise } from '../../utils/tool'
 import { getShops } from '../../actions/shop'
@@ -98,7 +98,7 @@ class Index extends Component {
     const id = e.currentTarget.dataset.id
     const { selectDateIndex } = this.state
     const store = this.state.stores[0]
-    const { _id: { $oid },title} = store
+    const { _id: { $oid }, title } = store
     Taro.navigateTo({
       url: `/pages/exercise/index?title=${exerciseTitle}&id=${id}&storeId=${$oid}&storeTitle=${title}&dateIndex=${selectDateIndex}`
     })
@@ -139,7 +139,7 @@ class Index extends Component {
     return (
       <View className='index' >
         <View className="header">
-          <View className="book-btn" onClick={this.jumpToBook}>预约训练</View>
+          <PostButton btn-class="book-btn" onClick={this.jumpToBook}>预约训练</PostButton>
           <View className="sign" onClick={this.scan}>
             <Text className="icon-ic__qiandao iconfont sign-icon"></Text>
             <Text className="sign-text">扫码签到</Text>

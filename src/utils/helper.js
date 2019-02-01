@@ -1,8 +1,6 @@
 import Taro from '@tarojs/taro'
 import { login, getUser, decryptData, register } from '../actions/user'
 import { APP_ID } from '../constants/app.js'
-import { func } from 'prop-types';
-
 
 // 获取微信登录凭证
 export const wxLogin = async () => {
@@ -162,8 +160,6 @@ export const connectLogin = (Component) => {
     }
     return LoginWrapper
 }
-
-
 export function withShare(opts = {}) {
 
     // 设置默认

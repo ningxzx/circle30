@@ -1,6 +1,6 @@
 @import '../../varible.less';
-.order{
-    .tabHeaderWrapper{
+.order {
+    .tabHeaderWrapper {
         height: 88px;
         padding: 0 165px;
         box-sizing: border-box;
@@ -9,7 +9,7 @@
         justify-content: space-between;
         align-items: center;
         background: #fff;
-        .tabHeader{
+        .tabHeader {
             width: 130px;
             height: 88px;
             position: relative;
@@ -18,12 +18,12 @@
             color: @textLight;
             text-align: center;
         }
-        .tabHeader.on{
+        .tabHeader.on {
             color: @textHeavy;
         }
-        .tabHeader.on:after{
+        .tabHeader.on:after {
             position: absolute;
-            content:'';
+            content: '';
             display: block;
             width: 50px;
             height: 10px;
@@ -31,15 +31,25 @@
             border-radius: 5px;
             left: 50%;
             margin-left: -25px;
-            bottom:0px;
+            bottom: 0px;
         }
     }
-    .tabPaneWrapper{
-        background: #ffffff;
-        .order-list-swiper{
-            height: 400px;
+    .tabPaneWrapper {
+        position: relative;
+        .order-list-swiper {
+            min-height: 1020px;
         }
-        .cell{
+        .order-list-wrapper{
+            height: auto;
+        }
+        .order-list-wrapper.blank{
+            height: 1020px;
+            background-color: #ffffff;
+            .blank-wrapper{
+                margin-top: 100px;
+            }
+        }
+        .cell {
             margin: 0 32px 0 28px;
             height: 172px;
             box-sizing: border-box;
@@ -50,8 +60,8 @@
             color: @textHeavy;
             font-size: 28px;
         }
-        .cell + .cell{
-            border-top:1px solid @borderColor;
+        .cell+.cell {
+            border-top: 1px solid @borderColor;
         }
     }
 }

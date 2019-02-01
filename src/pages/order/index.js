@@ -31,14 +31,20 @@ class Order extends Component {
     }
   }
   async getOrderList() {
+    Taro.showLoading({title:'请求中...'})
     const user_id = await requestUserId()
     getOrders({
       user_id
     }).then(res => {
+      Taro.hideLoading()
+      const orders = res.data
       this.setState({
 
       })
     })
+  }
+  componentDidShow(){
+    this.getOrderList()
   }
   render() {
     const { current } = this.state
@@ -50,7 +56,7 @@ class Order extends Component {
         </View>
         <View className="tabPaneWrapper">
           <Swiper circular current={current == 'future' ? 0 : 1} className="order-list-swiper">
-            <SwiperItem className="order-list-wrapper">
+            <SwiperItem className={`order-list-wrapper ${newOrders.length?'':'blank'}`}>
               {newOrders.length ? newOrders.map((order, i) => {
                 return (<View className="cell" key={i} onClick={this.toBookInfo} data-id={order._id.$oid}>
                   <View className="left-content">
@@ -63,7 +69,7 @@ class Order extends Component {
                   <Text>暂无训练计划</Text>
                 </View>}
             </SwiperItem>
-            <SwiperItem className="order-list-wrapper">
+            <SwiperItem className={`order-list-wrapper ${oldOrders.length?'':'blank'}`}>
               {oldOrders.length ? newOrders.map((order, i) => {
                 return (<View className="cell" key={i} onClick={this.toBookInfo} data-id={order._id.$oid}>
                   <View className="left-content">

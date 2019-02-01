@@ -2,7 +2,7 @@ import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Swiper, SwiperItem } from '@tarojs/components'
 import { connectLogin } from '../../utils/helper'
 import { getUniqueExercise, addDayStr } from '../../utils/tool'
-import { WeekDate } from '../../components'
+import { WeekDate,PostButton } from '../../components'
 import { getTheShop, getShopUsers } from '../../actions/shop'
 import { getSchedules } from '../../actions/schedule'
 import './index.less'
@@ -188,7 +188,7 @@ class Store extends Component {
               <Text>暂无训练计划</Text>
             </View>}
         </View >
-        <Button className="book-btn" onClick={this.jumpToBook}>立即预约</Button>
+        <PostButton btn-class="book-btn" onClick={this.jumpToBook}>立即预约</PostButton>
       </View>
     )
   }
