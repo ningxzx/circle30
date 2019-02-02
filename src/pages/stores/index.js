@@ -1,13 +1,14 @@
 import { ComponentClass } from 'react'
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
-import { connectLogin } from '../../utils/helper'
+import { connectLogin,withShare } from '../../utils/helper'
 import { getShops } from '../../actions/shop'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 import { calDistance } from '../../utils/tool'
 
 import './index.less'
 @connectLogin
+@withShare()
 class StoreList extends Component {
   config = {
     navigationBarTitleText: '选择门店'

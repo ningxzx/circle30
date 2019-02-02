@@ -1,6 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
-import { connectLogin, requestUserId } from '../../utils/helper'
+import { connectLogin, withShare } from '../../utils/helper'
 import { refund, getOrder } from '../../actions/order'
 import './index.less'
 
@@ -12,6 +12,7 @@ const BOOK_TYPES = {
   outdate: '已过期'
 }
 @connectLogin
+@withShare()
 class BookInfo extends Component {
 
   state = {
@@ -53,7 +54,15 @@ class BookInfo extends Component {
   }
 
   componentDidHide() { }
-
+  $setShareTitle(){
+    return '分享预约订单 | CirCle30'
+  }
+  $setSharePath(){
+    
+  }
+  $setShareImageUrl(){
+    return  ''
+  }
   render() {
     const { cources, type, users } = this.state
     return (

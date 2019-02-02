@@ -18,11 +18,13 @@ class App extends Component {
 
   config = {
     pages: [
+      'pages/bookStatus/index',
+
       'pages/index/index',
       'pages/book/index',
       'pages/bookInfo/index',
       'pages/students/index',
-      'pages/bookStatus/index',
+      // 'pages/bookStatus/index',
       'pages/store/index',
       'pages/share/index',
       'pages/stores/index',

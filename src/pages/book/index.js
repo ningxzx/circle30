@@ -1,6 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Image } from '@tarojs/components'
-import { connectLogin, requestUserId } from '../../utils/helper'
+import { connectLogin, requestUserId,withShare } from '../../utils/helper'
 import { addDayStr, formatHour } from '../../utils/tool'
 import { WeekDate,PostButton } from '../../components'
 import { getCoupons } from '../../actions/coupons'
@@ -13,6 +13,7 @@ import { set as setGlobalData, get as getGlobalData } from '../../utils/globalDa
 
 import './index.less'
 @connectLogin
+@withShare()
 class Book extends Component {
     state = {
         storeId: '',

@@ -1,6 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Swiper, Text } from '@tarojs/components'
-import { connectLogin, requestUserId } from '../../utils/helper'
+import { connectLogin, requestUserId,withShare } from '../../utils/helper'
 import { getOrders } from '../../actions/order'
 import { formatDate, formatWeek, formatHour } from '../../utils/tool'
 import './index.less'
@@ -12,6 +12,7 @@ const classNames = {
   '-2': 'error',
 }
 @connectLogin
+@withShare()
 class Order extends Component {
   constructor() {
     this.state = {
@@ -81,6 +82,11 @@ class Order extends Component {
   }
   componentDidShow() {
     this.getOrderList()
+  }
+  toBookInfo(){
+    Taro.navigateTo({
+      url:''
+    })
   }
   render() {
     const { current } = this.state

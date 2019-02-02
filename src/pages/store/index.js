@@ -1,13 +1,14 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Swiper, SwiperItem } from '@tarojs/components'
-import { connectLogin } from '../../utils/helper'
+import { connectLogin,withShare} from '../../utils/helper'
 import { getUniqueExercise, addDayStr } from '../../utils/tool'
-import { WeekDate,PostButton } from '../../components'
+import { WeekDate, PostButton } from '../../components'
 import { getTheShop, getShopUsers } from '../../actions/shop'
 import { getSchedules } from '../../actions/schedule'
 import './index.less'
 
 @connectLogin
+@withShare()
 class Store extends Component {
   state = {
     id: '',
@@ -98,24 +99,38 @@ class Store extends Component {
       shop_id: id,
       date: addDayStr(days)
     }).then(res => {
-      const schedule = res.data[0]
-      const exercises = getUniqueExercise(res.data)
-      this.setState({
-        exercises,
-        scheduleId: schedule._id.$oid
-      })
+      if (res.data.length) {
+        const schedule = res.data[0]
+        const exercises = getUniqueExercise(res.data)
+        this.setState({
+          exercises,
+          scheduleId: schedule._id.$oid
+        })
+      }
     })
   }
   toExerciseDetail(e) {
     const exerciseId = e.currentTarget.dataset.id
     const exerciseTitle = e.currentTarget.dataset.title
-    const { id, selectDateIndex,title } = this.state
+    const { id, selectDateIndex, title } = this.state
     Taro.navigateTo({
       url: `/pages/exercise/index?id=${exerciseId}&title=${exerciseTitle}&storeId=${id}&dateIndex=${selectDateIndex}&storeTitle=${title}`
     })
   }
   componentDidHide() { }
 
+  $setShareTitle(){
+    const {  title } = this.state
+    return `${title} | Circle30`
+  }
+  $setSharePath(){
+    const { id, title } = this.state
+    return  `/pages/store/index?id=${id}&title=${title}`
+  }
+  $setShareImageUrl(){
+    const { images } = this.state
+    return images[0]
+  }
   render() {
     const { title, service_time, phone, description, address, images, studentsNum, avatars, selectDateIndex } = this.state
     return (

@@ -1,11 +1,11 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
-import { connectLogin } from '../../utils/helper'
+import { connectLogin,withShare } from '../../utils/helper'
 import { getShopUsers } from '../../actions/shop'
 
 import './index.less'
 @connectLogin
-
+@withShare()
 class Students extends Component {
   static defaultProps = {
     list: []

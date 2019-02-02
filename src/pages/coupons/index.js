@@ -1,12 +1,13 @@
 import { ComponentClass } from 'react'
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
-import { connectLogin,requestUserId } from '../../utils/helper'
+import { connectLogin,requestUserId,withShare} from '../../utils/helper'
 import { Coupon } from '../../components'
 import { getCoupons } from '../../actions/coupons'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 import './index.less'
 @connectLogin
+@withShare()
 class CouponList extends Component {
   config = {
     navigationBarTitleText: '我的卡券'

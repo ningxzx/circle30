@@ -1,9 +1,10 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
-import { connectLogin,requestUserId } from '../../utils/helper'
+import { connectLogin,withShare } from '../../utils/helper'
 import { get as getGlobalData } from '../../utils/globalData'
 import './index.less'
 @connectLogin
+@withShare()
 class Mine extends Component {
   config = {
     navigationBarTitleText: '个人中心'

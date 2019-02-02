@@ -163,17 +163,17 @@ export const connectLogin = (Component) => {
 export function withShare(opts = {}) {
 
     // 设置默认
-    const defalutPath = 'pages/index/index';
+    const defalutPath = '/pages/index/index';
     const defalutTitle = 'CirCle30光速燃脂';
-    const defaultImageUrl = 'cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/微信分享图.png';
+    const defaultImageUrl = '/assets/images/weappShare.png';
 
     return function demoComponent(Component) {
         class WithShare extends Component {
-            // async componentWillMount() {
-            //     wx.showShareMenu({
-            //         withShareTicket: true
-            //     });
-            // }
+            async componentWillMount() {
+                wx.showShareMenu({
+                    withShareTicket: true
+                });
+            }
 
             // 点击分享的那一刻会进行调用
             onShareAppMessage() {
@@ -197,6 +197,8 @@ export function withShare(opts = {}) {
                     typeof this.$setShareImageUrl === 'function'
                 ) {
                     imageUrl = this.$setShareImageUrl();
+                } else {
+                    imageUrl = defaultImageUrl
                 }
 
                 if (!path) {
@@ -205,12 +207,12 @@ export function withShare(opts = {}) {
 
                 // 每条分享都补充用户的分享id
                 // 如果path不带参数，分享出去后解析的params里面会带一个{''： ''}
-                const sharePath = `${path}&shareFromUser=${userInfo.shareId}`;
+                const sharePath = `${path}`;
 
                 return {
                     title: title || defalutTitle,
                     path: sharePath,
-                    imageUrl: imageUrl || defaultImageUrl
+                    imageUrl: imageUrl 
                 };
             }
 

@@ -1,9 +1,10 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
-import { connectLogin } from '../../utils/helper'
+import { connectLogin, withShare } from '../../utils/helper'
 import { PostButton } from '../../components'
 import './index.less'
 @connectLogin
+@withShare()
 class BookStatus extends Component {
 
   config = {
@@ -23,7 +24,16 @@ class BookStatus extends Component {
   componentWillReceiveProps(nextProps) {
     console.log(this.props, nextProps)
   }
-
+  $setShareTitle() {
+    return '预约训练 | CirCle30'
+  }
+  $setSharePath() {
+    const { order_id } = this.$router.params
+    return `/pages/bookStatus/index?order_id=${order_id}`
+  }
+  $setShareImageUrl() {
+    return ''
+  }
 
   render() {
     return (
@@ -32,7 +42,7 @@ class BookStatus extends Component {
         <Text className="mainText">预约成功</Text>
         <Text className="subText">请提前到达预约门店签到</Text>
         <PostButton btn-class="circle-btn info-btn" onClick={this.toInfo}>查看预约详情</PostButton>
-        <PostButton btn-class="circle-btn sub-btn home-btn" onClick={this.toHome}>查看预约详情</PostButton>
+        <PostButton btn-class="circle-btn sub-btn home-btn" onClick={this.toHome}>返回首页</PostButton>
       </View>
     )
   }

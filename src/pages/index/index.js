@@ -1,13 +1,14 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
 import { WeekDate, PostButton } from '../../components'
-import { connectLogin } from '../../utils/helper'
+import { connectLogin,withShare } from '../../utils/helper'
 import { addDayStr, calDistance, getUniqueExercise } from '../../utils/tool'
 import { getShops } from '../../actions/shop'
 import { getSchedules } from '../../actions/schedule'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 import './index.less'
 @connectLogin
+@withShare()
 class Index extends Component {
   state = {
     chooseDate: 0,

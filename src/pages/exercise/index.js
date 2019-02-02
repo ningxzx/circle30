@@ -1,11 +1,12 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Form } from '@tarojs/components'
-import { connectLogin } from '../../utils/helper'
+import { connectLogin,withShare } from '../../utils/helper'
 import { PostButton } from '../../components'
 import { getExercise } from '../../actions/exercise'
 import { postFormId } from '../../actions/message'
 import './index.less'
 @connectLogin
+@withShare()
 class Exercise extends Component {
   state = {
     title: '',
@@ -65,6 +66,17 @@ class Exercise extends Component {
     }
   }
   componentDidHide() { }
+  $setShareTitle(){
+    const {  title } = this.state
+    return `${title} | Circle30`
+  }
+  $setSharePath(){
+    const { title, id, dateIndex, storeId, storeTitle } = this.$router.params
+    return  `/pages/exercise/index?id=${id}&title=${title}&dateIndex=${dateIndex}&storeId=${storeId}&storeTitle=${storeTitle}`
+  }
+  $setShareImageUrl(){
+    return  this.state.cover
+  }
 
   render() {
     const { images, cover, type, body, title } = this.state

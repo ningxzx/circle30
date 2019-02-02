@@ -1,12 +1,11 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Image } from '@tarojs/components'
-import { login, setUserInfo } from '../../actions/user'
+import { withShare } from '../../utils/helper'
 import { saveUserInfo } from '../../utils/helper'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
-import { connect } from '@tarojs/redux'
 
 import './index.less'
-// @wxLogin
+@withShare()
 class Login extends Component {
   state={
     avatarUrl:''
