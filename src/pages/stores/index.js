@@ -37,8 +37,16 @@ class StoreList extends Component {
         selectIdx: idx
       })
       const { _id: { $oid }, title } = this.state.stores[idx]
-      Taro.navigateTo({
-        url: `/pages/store/index?id=${oid}&title=${title}`
+      const pages = Taro.getCurrentPages()
+      let prevPage = pages[pages.length - 2];
+      prevPage.setData({
+           id: $oid,
+           title:'test'
+      })
+      setGlobalData('selectCoupon', coupons[idx])
+
+      Taro.navigateBack({
+           delta: -1
       })
     }
   }

@@ -115,10 +115,11 @@ class Index extends Component {
     }
   }
   jumpToStore(e) {
+    const { selectDateIndex } = this.state
     const store = e.currentTarget.dataset.store
     const { _id: { $oid }, title } = store
     Taro.navigateTo({
-      url: `/pages/store/index?id=${$oid}&title=${title}`
+      url: `/pages/store/index?id=${$oid}&title=${title}&dateIndex=${selectDateIndex}`
     })
   }
   onPageScroll(scroll) {

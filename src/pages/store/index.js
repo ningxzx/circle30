@@ -1,6 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Swiper, SwiperItem } from '@tarojs/components'
-import { connectLogin,withShare} from '../../utils/helper'
+import { connectLogin, withShare } from '../../utils/helper'
 import { getUniqueExercise, addDayStr } from '../../utils/tool'
 import { WeekDate, PostButton } from '../../components'
 import { getTheShop, getShopUsers } from '../../actions/shop'
@@ -29,9 +29,6 @@ class Store extends Component {
     selectDateIndex: 0
   }
 
-  config = {
-    navigationBarTitleText: '门店详情'
-  }
   jumpToBook() {
     const { id, title, selectDateIndex } = this.state
     Taro.navigateTo({
@@ -44,19 +41,18 @@ class Store extends Component {
       url: `/pages/students/index?storeId=${id}`
     })
   }
-  componentDidMount() {
-    const { id, title } = this.$router.params
+  componentDidShow() {
+    const { id, dateIndex } = this.$router.params
     this.setState({
       id,
-      title
+      selectDateIndex: dateIndex || 0
     }, () => {
-      Taro.setNavigationBarTitle({
-        title: title
-      })
+      Taro.showLoading()
       // 查询门店详情
       getTheShop({
         shop_id: id
       }).then(res => {
+        Taro.hideLoading()
         const { _id: { $oid }, service_time, title, phone, location, images, description, status, address } = res.data
         this.setState({ id: $oid, service_time, title, phone, location, images, description, status, address })
       })
@@ -64,16 +60,18 @@ class Store extends Component {
       getShopUsers({
         shop_id: id
       }).then(res => {
-        const studentsNum = res.data.length
-        const avatars = res.data.map(user => {
-          return user.avatar
-        })
-        this.setState({
-          studentsNum,
-          avatars
-        })
+        if (res.data) {
+          const studentsNum = res.data.length
+          const avatars = res.data.map(user => {
+            return user.avatar
+          })
+          this.setState({
+            studentsNum,
+            avatars
+          })
+        }
       })
-      this.getDateSchedules()
+      this.getDateSchedules(dateIndex)
     })
   }
   makePhoneCall() {
@@ -99,7 +97,7 @@ class Store extends Component {
       shop_id: id,
       date: addDayStr(days)
     }).then(res => {
-      if (res.data.length) {
+      if (res.data & res.data.length) {
         const schedule = res.data[0]
         const exercises = getUniqueExercise(res.data)
         this.setState({
@@ -119,15 +117,15 @@ class Store extends Component {
   }
   componentDidHide() { }
 
-  $setShareTitle(){
-    const {  title } = this.state
+  $setShareTitle() {
+    const { title } = this.state
     return `${title} | Circle30`
   }
-  $setSharePath(){
+  $setSharePath() {
     const { id, title } = this.state
-    return  `/pages/store/index?id=${id}&title=${title}`
+    return `/pages/store/index?id=${id}&title=${title}`
   }
-  $setShareImageUrl(){
+  $setShareImageUrl() {
     const { images } = this.state
     return images[0]
   }

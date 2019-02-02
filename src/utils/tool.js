@@ -28,9 +28,9 @@ export function addDayStr(n) {
  * @param {timestamp} 时间戳 e.g.1548898800
  */
 export function formatHour(timestamp) {
-    const date = new Date(timestamp*1000);
-    const hour =  ('0'+date.getHours()).slice(-2)
-    const minutes = (date.getMinutes()+'0').slice(0,2)
+    const date = new Date(timestamp * 1000);
+    const hour = ('0' + date.getHours()).slice(-2)
+    const minutes = (date.getMinutes() + '0').slice(0, 2)
     return `${hour}:${minutes}`
 }
 
@@ -39,13 +39,19 @@ export function formatHour(timestamp) {
  * @param {timestamp} 时间戳 e.g.1548898800
  */
 export function formatDate(timestamp) {
-    const date = new Date(timestamp*1000);
+    const date = new Date(timestamp * 1000);
     const nowYear = (new Date()).getFullYear()
-    if(date.getFullYear()===nowYear){
-        return  format(date, 'MM月DD日')
+    if (date.getFullYear() === nowYear) {
+        return format(date, 'MM月DD日')
     } else {
-        return  format(date, 'YYYY年MM月DD日')
+        return format(date, 'YYYY年MM月DD日')
     }
+}
+
+
+export function formatNormalDate(timestamp) {
+    const date = new Date(timestamp*1);
+    return format(date, 'YYYY-MM-DD HH:mm:ss')
 }
 
 /**
@@ -53,7 +59,7 @@ export function formatDate(timestamp) {
  * @param {timestamp} 时间戳 e.g.1548898800
  */
 export function formatWeek(timestamp) {
-    const date = new Date(timestamp*1000);
+    const date = new Date(timestamp * 1000);
     return `周${WEEK_STR[date.getDay()]}`
 }
 

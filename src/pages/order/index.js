@@ -83,9 +83,10 @@ class Order extends Component {
   componentDidShow() {
     this.getOrderList()
   }
-  toBookInfo(){
+  toBookInfo(e){
+    const id = e.currentTarget.dataset.id
     Taro.navigateTo({
-      url:''
+      url:`/pages/bookInfo/index?id=${id}`
     })
   }
   render() {

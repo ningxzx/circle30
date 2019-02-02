@@ -1,8 +1,8 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Image } from '@tarojs/components'
-import { connectLogin, requestUserId,withShare } from '../../utils/helper'
+import { connectLogin, requestUserId, withShare } from '../../utils/helper'
 import { addDayStr, formatHour } from '../../utils/tool'
-import { WeekDate,PostButton } from '../../components'
+import { WeekDate, PostButton } from '../../components'
 import { getCoupons } from '../../actions/coupons'
 import { decryptData, putUser } from '../../actions/user'
 import { getSchedules } from '../../actions/schedule'
@@ -29,10 +29,6 @@ class Book extends Component {
         scheduleId: ''
     }
 
-    config = {
-        navigationBarTitleText: '预约训练'
-    }
-
     componentWillReceiveProps(nextProps) {
         console.log(this.props, nextProps)
     }
@@ -53,9 +49,10 @@ class Book extends Component {
                 storeId,
                 storeTitle,
                 selectDateIndex: dateIndex
-            }, () => {
-                this.getDateSchedules()
+            },()=>{
+                this.getDateSchedules(dateIndex)
             })
+
         }
     }
     async getDateSchedules(days = 0) {
@@ -69,20 +66,22 @@ class Book extends Component {
             shop_id,
             date: str
         }).then(res => {
-            const schedule = res.data[0]
-            let courses = schedule.courses
-            courses.forEach(cource => {
-                cource.startTime = formatHour(cource.start)
-                cource.endTime = formatHour(cource.end)
-                cource.avatars = cource.users.map(x => x.avatar)
-                cource.num = cource.users.length
-                cource.full = cource.num == FULL_NUM
-                cource.joined = cource.users.some(x => x._id.$oid == user_id)
-            });
-            this.setState({
-                courses,
-                scheduleId: schedule._id.$oid
-            })
+            if (res.data&res.data.length) {
+                const schedule = res.data[0]
+                let courses = schedule.courses
+                courses.forEach(cource => {
+                    cource.startTime = formatHour(cource.start)
+                    cource.endTime = formatHour(cource.end)
+                    cource.avatars = cource.users.map(x => x.avatar)
+                    cource.num = cource.users.length
+                    cource.full = cource.num == FULL_NUM
+                    cource.joined = cource.users.some(x => x._id.$oid == user_id)
+                });
+                this.setState({
+                    courses,
+                    scheduleId: schedule._id.$oid
+                })
+            }
         })
     }
     async getUserCoupons() {
@@ -91,7 +90,7 @@ class Book extends Component {
             user_id,
             used: 0
         }).then(res => {
-            const couponsNum = res.data.length
+            const couponsNum = res.data&res.data.length
             this.setState({ couponsNum })
         })
     }
@@ -109,7 +108,7 @@ class Book extends Component {
     async toPay() {
         const user_id = await requestUserId()
         const { scheduleId, selectPeriodIdx, courses, couponId } = this.state
-        if (selectPeriodIdx===null) {
+        if (selectPeriodIdx === null) {
             Taro.showToast({
                 title: '请选择一个时间段后再提交',
                 icon: 'none',
@@ -139,14 +138,14 @@ class Book extends Component {
             openid
         }).then(res => {
             const param = res.data
-            param.timeStamp  = param.timestamp
-            const {timestamp,...rest} = param
+            param.timeStamp = param.timestamp
+            const { timestamp, ...rest } = param
             Taro.requestPayment(rest).then(res => {
                 Taro.navigateTo({
                     url: `/pages/bookStatus/index?order_id=${order_id}`
                 })
-            }).catch(res=>{
-                
+            }).catch(res => {
+
             })
         })
     }
