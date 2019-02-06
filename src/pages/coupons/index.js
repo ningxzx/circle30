@@ -27,18 +27,6 @@ class CouponList extends Component {
       this.setState({ coupons })
     })
   }
-  selectCoupon(e) {
-    const pages = Taro.getCurrentPages()
-    const lastPage = pages[pages.length - 2]
-    if (lastPage.route === 'pages/book/index') {
-      const { coupons } = this.state
-      const idx = e.currentTarget.dataset.idx
-      setGlobalData('selectCoupon', coupons[idx])
-      Taro.navigateBack({
-        delta: 1
-      })
-    }
-  }
   render() {
     const { coupons } = this.state
     return (

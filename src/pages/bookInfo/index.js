@@ -1,31 +1,35 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
-import { connectLogin, withShare } from '../../utils/helper'
-import { refund, getOrder } from '../../actions/order'
-import { formatDate, formatWeek, formatHour,formatNormalDate } from '../../utils/tool'
+import { connectLogin, withShare, requestUserId } from '../../utils/helper'
+import { PostButton } from '../../components'
+import { refundOrder, getOrder } from '../../actions/order'
+import { formatDate, formatWeek, formatHour, formatNormalDate } from '../../utils/tool'
 import './index.less'
 
 
 const TYPE_CLASSES = {
-  '0':'unArrived',
-  '1':'arrived',
-  '-1':'canceled',
-  '-2':'outdate'
+  '0': 'unArrived',
+  '1': 'arrived',
+  '-1': 'canceled',
+  '-2': 'outdate'
 }
 @connectLogin
 @withShare()
 class BookInfo extends Component {
 
   state = {
+    orderId: '',
+    orderUser: {},
+    orderStartTime: 0,
     date: '',
     weekDay: '',
     startTime: '',
     endTime: '',
     status: '',
     statusText: '',
-    shop:{},
-    exercises:[],
-    checkout:{}
+    shop: {},
+    exercises: [],
+    checkout: {}
   }
   config = {
     navigationBarTitleText: 'CirCle30'
@@ -41,9 +45,13 @@ class BookInfo extends Component {
 
   componentDidShow() {
     const { id } = this.$router.params
+    this.setState({
+      orderId: id
+    })
     getOrder(id).then(res => {
       if (res.data) {
         const order = res.data
+        const orderUser = order.user
         const nowTime = (new Date()).getTime()
         const orderStartTime = order.schedule.course.start
         const orderEndTime = order.schedule.course.end
@@ -58,11 +66,11 @@ class BookInfo extends Component {
           status = 0
           statusText = '待预约'
         } else {
-          if (arrive) {
+          if (order.arrive) {
             status = 1
             statusText = '已训练'
           } else {
-            if (refund) {
+            if (order.refund) {
               status = -1
               statusText = '已取消'
             } else {
@@ -73,8 +81,8 @@ class BookInfo extends Component {
         }
         const shop = order.schedule.shop
         const checkout = order.checkout
-        let exercise=[]
-        if(order.schedule.device){
+        let exercise = []
+        if (order.schedule.device) {
           exercises = getUniqueExercise(order.schedule)
         }
         this.setState({
@@ -86,15 +94,67 @@ class BookInfo extends Component {
           statusText,
           shop,
           exercise,
-          checkout
+          checkout,
+          orderStartTime,
+          orderUser
         })
       }
     })
   }
-  toStore(e){
+  toStore(e) {
     const storeId = e.currentTarget.dataset.id
     Taro.navigateTo({
-      url:`/pages/store/index?id=${storeId}`
+      url: `/pages/store/index?id=${storeId}`
+    })
+  }
+  copyOrderId() {
+    const { checkout } = this.state
+    const orderId = checkout._id && checkout._id.$oid
+    if (orderId) {
+      Taro.setClipboardData({ data: orderId })
+    }
+  }
+  handleRefund() {
+    const { checkout } = this.state
+    const amount = checkout.amount/1000
+    if(amount){
+      Taro.showModal({
+        title:'取消预约',
+        content:'已支付的金额会在1-3日内退还至你的支付账户',
+        cancelText:'再想想',
+        cancelColor:'#999',
+        confirmText:'取消预约',
+        cancelColor:'#FF747C',
+        success:()=>{
+          this.refund()
+        }
+      })
+    } else {
+      Taro.showModal({
+        title:'',
+        content:'确定要取消预约吗？',
+        cancelText:'再想想',
+        cancelColor:'#999',
+        confirmText:'取消预约',
+        cancelColor:'#FF747C',
+        success:()=>{
+          this.refund()
+        }
+      })
+    }
+    
+  }
+  refund() {
+    const { orderId } = this.state
+
+    refundOrder(orderId).then(res => {
+      Taro.showToast({
+        icon:'success',
+        duration:2000,
+        titile:'已取消预约'
+      }).then(()=>{
+        Taro.redirectTo(`/pages/bookInfo/index?id=${orderId}`)
+      })
     })
   }
   componentDidHide() { }
@@ -114,7 +174,8 @@ class BookInfo extends Component {
       status,
       checkout,
       shop,
-      statusText } = this.state
+      statusText, orderUser, orderStartTime } = this.state
+    const nowTime = (new Date()).getTime()
     return (
       <View className='bookInfo'>
         <View class="book-info-detail">
@@ -129,7 +190,7 @@ class BookInfo extends Component {
               <Text className="sign-text">扫码签到</Text>
             </View>) : <View className={`bookStatus ${TYPE_CLASSES[status]}`}>{statusText}</View>}
           </View>
-          <View className="store-info" data-id={shop._id&&shop._id.$oid} onClick={this.toStore}>
+          <View className="store-info" data-id={shop._id && shop._id.$oid} onClick={this.toStore}>
             <Text class="title">预约门店</Text>
             <View className="content">
               <View className="left-content">
@@ -146,8 +207,8 @@ class BookInfo extends Component {
             <Text className="title">预约学员</Text>
             <View className="student-wrapper">
               {
-                users.map(user => {
-                  return <View class="student">
+                users.map((user, i) => {
+                  return <View class="student" key={i}>
                     <Image src={user.avatarUrl} />
                     <Text>{user.name}</Text>
                   </View>
@@ -179,27 +240,35 @@ class BookInfo extends Component {
               <Text>暂无训练计划</Text>
             </View>}
         </View >
-        <View class="order-wrapper">
-          <View>
-            <Text>订单信息</Text>
-            <Text></Text>
+        <View className="order-wrapper">
+          <View className="order-info">
+            <View>
+              <Text className="order-info-title">订单信息</Text>
+            </View>
+            <View>
+              <Text>订单编号</Text>
+              <View className="copy-wrapper">{checkout._id && checkout._id.$oid}<PostButton onClick={this.copyOrderId} btn-class='copy-btn'>复制</PostButton></View>
+            </View>
+            <View>
+              <Text>订单金额</Text>
+              <Text>￥{checkout.price && checkout.price.amount / 1000}</Text>
+            </View>
+            <View>
+              <Text>实际支付</Text>
+              <Text>{checkout.amount / 1000}</Text>
+            </View>
+            <View>
+              <Text>下单时间</Text>
+              <Text>{checkout.created && formatNormalDate(checkout.created.$date.$numberLong)}</Text>
+            </View>
           </View>
-          <View>
-            <Text>订单编号</Text>
-            <Text>{checkout._id&&checkout._id.$oid}<View>复制</View></Text>
-          </View>
-          <View>
-            <Text>订单金额</Text>
-            <Text>￥{checkout.price&&checkout.price.amount/1000}</Text>
-          </View>
-          <View>
-            <Text>实际支付</Text>
-            <Text>{checkout.amount/1000}</Text>
-          </View>
-          <View>
-            <Text>下单时间</Text>
-            <Text>{checkout.created&&formatNormalDate(checkout.created.$date.$numberLong)}</Text>
-          </View>
+          {status == 0 && (orderStartTime - nowTime > 7200000) && orderUser._id.$oid == Taro.getStorageSync('user_id') ?
+            <View className="refund-wrapper">
+              <PostButton onClick={this.handleRefund} btn-class='refund-btn'>取消预约</PostButton>
+              <Text>* 请在训练开始前到达门店，提前10分钟即可签到</Text>
+              <Text>* 训练开始前2小时内不支持取消预约</Text>
+              <Text>* 训练结束后仍未签到，预约订单将会自动失效 行距20px</Text>
+            </View> : null}
         </View>
       </View >
     )

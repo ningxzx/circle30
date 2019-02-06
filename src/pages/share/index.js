@@ -33,7 +33,9 @@ class Share extends Component {
       title: type === 'shareBy' ? '好友邀请' : '邀请好友'
     })
   }
-
+  onShareAppMessage(){
+    console.log(1)
+  }
   componentDidShow() { }
 
   componentDidHide() { }
@@ -60,7 +62,7 @@ class Share extends Component {
           <Text className="subTitle">代金券将会自动发放至你的账户中</Text>
         </View>)}
         <Coupon used={used} coupon={coupon}></Coupon>
-        <View className="gotoBook">{type === 'shareBy' ? '立即预约训练' : '立即邀请好友'}</View>
+        <Button open-type="share" className="gotoBook">{type === 'shareBy' ? '立即预约训练' : '立即邀请好友'}</Button>
       </View>
     )
   }

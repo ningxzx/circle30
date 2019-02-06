@@ -1,0 +1,87 @@
+@import '../../varible.less';
+.coupon-list {
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    .no-coupon-wrapper {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        .no-coupon {
+            margin: 172px auto 60px;
+            width: 180px;
+            height: 180px;
+        }
+        .no-coupon-text {
+            font-size: 28px;
+            color: @textNormal;
+        }
+    }
+    .coupon{
+        margin: 20px 28px;
+        height: 152px;
+        box-sizing: border-box;
+        border:1px solid #fff;
+        position: relative;
+        background-color: #fff;
+        border-radius: 8px;
+        display: flex;
+        .amount {
+            position: relative;
+            width: 232px;
+            padding-left: 68px;
+            box-sizing: border-box;
+            font-size: 70px;
+            line-height: 152px;
+            color: #FF747C;
+            .symbol {
+                position: absolute;
+                left: 30px;
+                top: 40px;
+                font-size: 28px;
+                color: #FF747C;
+            }
+        }
+        .detail {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+            padding: 40px 0;
+            .title {
+                font-size: 28px;
+            }
+            .range {
+                font-size: 24px;
+                color: @textLight;
+            }
+        }
+        .circle{
+            position: absolute;
+            top: 61px;
+            right: 30px;
+            width: 30px;
+            height: 30px;
+            border-radius: 15px;
+            border: 1px solid  @borderColor;
+        }
+        .selectIcon{
+            position: absolute;
+            top: 61px;
+            right: 30px;
+            width: 30px;
+            height: 30px;
+        }
+    }
+    .coupon.active{
+        border-radius: 8px;
+        background: #E9FAF3;
+        border: 1px solid @mainColor;
+    }
+}
+.coupon-list.no-coupon{
+    background-color: #fff;
+}
+.coupon-item{
+    margin: 20px 0;
+}

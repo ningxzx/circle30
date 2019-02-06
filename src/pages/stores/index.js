@@ -1,7 +1,7 @@
 import { ComponentClass } from 'react'
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
-import { connectLogin,withShare } from '../../utils/helper'
+import { connectLogin, withShare } from '../../utils/helper'
 import { getShops } from '../../actions/shop'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 import { calDistance } from '../../utils/tool'
@@ -40,13 +40,12 @@ class StoreList extends Component {
       const pages = Taro.getCurrentPages()
       let prevPage = pages[pages.length - 2];
       prevPage.setData({
-           id: $oid,
-           title:'test'
+        id: $oid,
+        title: 'test'
       })
-      setGlobalData('selectCoupon', coupons[idx])
-
+      setGlobalData('selectStore', { storeId: $oid, storeTitle: title })
       Taro.navigateBack({
-           delta: -1
+        delta: -1
       })
     }
   }

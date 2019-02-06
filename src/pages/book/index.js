@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Image } from '@tarojs/components'
 import { connectLogin, requestUserId, withShare } from '../../utils/helper'
-import { addDayStr, formatHour } from '../../utils/tool'
+import { addDayStr, formatHour, getUniqueExercise } from '../../utils/tool'
 import { WeekDate, PostButton } from '../../components'
 import { getCoupons } from '../../actions/coupons'
 import { decryptData, putUser } from '../../actions/user'
@@ -43,13 +43,14 @@ class Book extends Component {
                 couponId
             })
         }
-        const { storeId, storeTitle, dateIndex } = this.$router.params
+        const { dateIndex } = this.$router.params
+        const { storeTitle, storeId } = getGlobalData('SelectStore') || this.$router.params
         if (storeId) {
             this.setState({
                 storeId,
                 storeTitle,
                 selectDateIndex: dateIndex
-            },()=>{
+            }, () => {
                 this.getDateSchedules(dateIndex)
             })
 
@@ -66,20 +67,28 @@ class Book extends Component {
             shop_id,
             date: str
         }).then(res => {
-            if (res.data&res.data.length) {
+            const schedules = res.data
+            if (schedules && schedules.length) {
                 const schedule = res.data[0]
                 let courses = schedule.courses
-                courses.forEach(cource => {
-                    cource.startTime = formatHour(cource.start)
-                    cource.endTime = formatHour(cource.end)
-                    cource.avatars = cource.users.map(x => x.avatar)
-                    cource.num = cource.users.length
-                    cource.full = cource.num == FULL_NUM
-                    cource.joined = cource.users.some(x => x._id.$oid == user_id)
+                const nowTime = (new Date()).getTime()
+                courses = courses.filter(x => x.end * 1000 > nowTime)
+                courses.forEach(course => {
+                    course.startTime = formatHour(course.start)
+                    course.endTime = formatHour(course.end)
+                    course.avatars = course.users.map(x => x.avatar)
+                    course.num = course.users.length
+                    course.full = course.num == FULL_NUM
+                    course.joined = course.users.some(x => x._id.$oid == user_id)
                 });
+                console.log(courses)
                 this.setState({
                     courses,
                     scheduleId: schedule._id.$oid
+                })
+            } else {
+                this.setState({
+                    courses: []
                 })
             }
         })
@@ -90,7 +99,7 @@ class Book extends Component {
             user_id,
             used: 0
         }).then(res => {
-            const couponsNum = res.data&res.data.length
+            const couponsNum = res.data & res.data.length
             this.setState({ couponsNum })
         })
     }
@@ -101,7 +110,7 @@ class Book extends Component {
     }
     jumToCoupons() {
         Taro.navigateTo({
-            url: '/pages/coupons/index'
+            url: '/pages/selectCoupon/index'
         })
     }
     // 生成订单
@@ -158,6 +167,9 @@ class Book extends Component {
     }
     async getPhoneNumber(e) {
         const { iv, encryptedData } = e.detail
+        if (!iv) {
+            return false
+        }
         const session_key = Taro.getStorageSync('session_key')
         decryptData({
             encrypted: encryptedData,
@@ -166,19 +178,17 @@ class Book extends Component {
         }).then(async (res) => {
             const { phoneNumber } = res.data
             const unionid = Taro.getStorageSync('unionid')
-            const avatar = Taro.getStorageSync('avatarUrl')
-            const username = Taro.getStorageSync('nickName')
             this.setState({
                 phoneNumber
             })
             Taro.setStorageSync('phoneNumber', phoneNumber)
             const user_id = await requestUserId()
+            const openid = Taro.getStorageSync('openid')
             putUser({
                 user_id,
+                openid,
                 unionid,
-                phone: phoneNumber,
-                avatar,
-                username
+                phone: phoneNumber
             })
         })
     }

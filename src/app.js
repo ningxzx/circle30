@@ -28,6 +28,7 @@ class App extends Component {
       'pages/stores/index',
       'pages/login/index',
       'pages/coupons/index',
+      'pages/selectCoupon/index',
       'pages/order/index',
       'pages/mine/index',
       'pages/exercise/index',

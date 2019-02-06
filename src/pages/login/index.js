@@ -1,7 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Image } from '@tarojs/components'
-import { withShare } from '../../utils/helper'
-import { saveUserInfo } from '../../utils/helper'
+import { withShare,saveUserInfo } from '../../utils/helper'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 
 import './index.less'
