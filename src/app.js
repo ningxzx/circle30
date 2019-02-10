@@ -74,8 +74,10 @@ class App extends Component {
       setGlobalData(res)
     })
     getSystemConfig().then(res => {
-      const { price: { amount } } = res.data
+      const { price: { amount } ,coupons} = res.data
       setGlobalData('amount', amount)
+      const share_coupon_id = coupons.filter(x=>x.type=='invite')[0]._id.$oid
+      setGlobalData('share_coupon_id', share_coupon_id)
     })
   }
 

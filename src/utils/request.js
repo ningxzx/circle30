@@ -71,6 +71,7 @@ export default {
             },
             error(e) {
                 Taro.hideNavigationBarLoading()
+                Taro.hideLoading()
                 logError('api', '请求接口出现问题', e)
             }
         }

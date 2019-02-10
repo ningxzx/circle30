@@ -21,7 +21,7 @@ class Mine extends Component {
   }
   toShare() {
     Taro.navigateTo({
-      url: '/pages/share/index?type=toShare'
+      url: '/pages/share/index?type=shareBy'
     })
   }
   componentWillReceiveProps(nextProps) {
