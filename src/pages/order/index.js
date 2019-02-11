@@ -55,7 +55,7 @@ class Order extends Component {
         order.endTime = formatHour(orderEndTime)
         order.shopTitle = order.schedule.shop.title
 
-        const overTime = nowTime > orderStartTime
+        const overTime = nowTime < orderEndTime*1000
         if (overTime) {
           order.status = 0
           order.statusText = '待预约'

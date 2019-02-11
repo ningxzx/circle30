@@ -6,8 +6,12 @@ export const login = (params => api.post('/wechat/mini/sessions', { ...params, a
 export const decryptData = (params => api.post('/wechat/mini/data', { ...params, appid: APP_ID }))
 export const register = (params => api.post('/users', params))
 export const getUser = (params => api.get('/users', { ...params }))
+export const putOpenid = (params => {
+    const { user_id, ...rest } = params
+    api.put(`/users/${user_id}/identifies`, { ...rest, appid: APP_ID })
+})
 export const putUser = (params => {
     const { user_id, ...rest } = params
-    return api.put(`/users/${user_id}`, {...rest, appid: APP_ID})
+    return api.put(`/users/${user_id}`, { ...rest, appid: APP_ID })
 })
 

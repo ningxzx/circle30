@@ -61,7 +61,7 @@ class BookInfo extends Component {
         const endTime = formatHour(orderEndTime)
         let status = 0
         let statusText = ''
-        const overTime = nowTime > orderStartTime
+        const overTime = nowTime < orderEndTime * 1000
         if (overTime) {
           status = 0
           statusText = '待预约'
@@ -116,43 +116,43 @@ class BookInfo extends Component {
   }
   handleRefund() {
     const { checkout } = this.state
-    const amount = checkout.amount/1000
-    if(amount){
+    const amount = checkout.amount / 1000
+    if (amount) {
       Taro.showModal({
-        title:'取消预约',
-        content:'已支付的金额会在1-3日内退还至你的支付账户',
-        cancelText:'再想想',
-        cancelColor:'#999',
-        confirmText:'取消预约',
-        cancelColor:'#FF747C',
-        success:()=>{
+        title: '取消预约',
+        content: '已支付的金额会在1-3日内退还至你的支付账户',
+        cancelText: '再想想',
+        cancelColor: '#999',
+        confirmText: '取消预约',
+        cancelColor: '#FF747C',
+        success: () => {
           this.refund()
         }
       })
     } else {
       Taro.showModal({
-        title:'',
-        content:'确定要取消预约吗？',
-        cancelText:'再想想',
-        cancelColor:'#999',
-        confirmText:'取消预约',
-        cancelColor:'#FF747C',
-        success:()=>{
+        title: '',
+        content: '确定要取消预约吗？',
+        cancelText: '再想想',
+        cancelColor: '#999',
+        confirmText: '取消预约',
+        cancelColor: '#FF747C',
+        success: () => {
           this.refund()
         }
       })
     }
-    
+
   }
   refund() {
     const { orderId } = this.state
 
     refundOrder(orderId).then(res => {
       Taro.showToast({
-        icon:'success',
-        duration:2000,
-        titile:'已取消预约'
-      }).then(()=>{
+        icon: 'success',
+        duration: 2000,
+        titile: '已取消预约'
+      }).then(() => {
         Taro.redirectTo(`/pages/bookInfo/index?id=${orderId}`)
       })
     })

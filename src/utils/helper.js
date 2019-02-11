@@ -1,5 +1,5 @@
 import Taro from '@tarojs/taro'
-import { login, getUser, decryptData, register } from '../actions/user'
+import { login, getUser, decryptData, register,putOpenid } from '../actions/user'
 import { APP_ID } from '../constants/app.js'
 
 // 获取微信登录凭证
@@ -114,6 +114,10 @@ export const userLogin = async () => {
         const session_key = Taro.getStorageSync('session_key')
         if (openid) {
             const id = await emitUserid(unionid, openid, session_key)
+            putOpenid({
+                openid,
+                user_id:id
+            })
             Taro.setStorageSync('user_id', id)
         } else {
             const session = await getSession()
@@ -121,6 +125,10 @@ export const userLogin = async () => {
             Taro.setStorageSync('openid', openid)
             Taro.setStorageSync('session_key', session_key)
             const id = await emitUserid(unionid, openid, session_key)
+            putOpenid({
+                openid,
+                user_id:id
+            })
             Taro.setStorageSync('user_id', id)
         }
     }

@@ -97,9 +97,10 @@ class Store extends Component {
       shop_id: id,
       date: addDayStr(days)
     }).then(res => {
-      if (res.data & res.data.length) {
+      if (res.data && res.data.length) {
         const schedule = res.data[0]
         const exercises = getUniqueExercise(res.data)
+        console.log(exercises)
         this.setState({
           exercises,
           scheduleId: schedule._id.$oid
