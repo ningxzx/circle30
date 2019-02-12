@@ -3,7 +3,8 @@ import { View, Button, Text } from '@tarojs/components'
 import { connectLogin, withShare, requestUserId } from '../../utils/helper'
 import { PostButton } from '../../components'
 import { refundOrder, getOrder } from '../../actions/order'
-import { formatDate, formatWeek, formatHour, formatNormalDate } from '../../utils/tool'
+import { getTheSchedule } from '../../actions/schedule'
+import { formatDate, formatWeek, formatHour, formatNormalDate, getUniqueExercise } from '../../utils/tool'
 import './index.less'
 
 
@@ -41,7 +42,6 @@ class BookInfo extends Component {
       console.log(res)
     })
   }
-  componentWillUnmount() { }
 
   componentDidShow() {
     const { id } = this.$router.params
@@ -49,6 +49,7 @@ class BookInfo extends Component {
       orderId: id
     })
     getOrder(id).then(res => {
+      const _this = this
       if (res.data) {
         const order = res.data
         const orderUser = order.user
@@ -81,9 +82,22 @@ class BookInfo extends Component {
         }
         const shop = order.schedule.shop
         const checkout = order.checkout
-        let exercise = []
-        if (order.schedule.device) {
-          exercises = getUniqueExercise(order.schedule)
+        if (order.schedule) {
+          const { _id: { $oid }, date } = order.schedule
+          getTheSchedule({
+            schedule_id: $oid
+          }).then(res => {
+            if (res.data) {
+              try {
+                const exercises = getUniqueExercise([res.data])
+                _this.setState({
+                  exercises
+                })
+              } catch (err) {
+                console.log(err)
+              }
+            }
+          })
         }
         this.setState({
           date,
@@ -93,7 +107,6 @@ class BookInfo extends Component {
           status,
           statusText,
           shop,
-          exercise,
           checkout,
           orderStartTime,
           orderUser
@@ -109,14 +122,16 @@ class BookInfo extends Component {
   }
   copyOrderId() {
     const { checkout } = this.state
-    const orderId = checkout._id && checkout._id.$oid
-    if (orderId) {
-      Taro.setClipboardData({ data: orderId })
+    if (checkout) {
+      const orderId = checkout._id && checkout._id.$oid
+      if (orderId) {
+        Taro.setClipboardData({ data: orderId })
+      }
     }
   }
   handleRefund() {
     const { checkout } = this.state
-    const amount = checkout.amount / 1000
+    const amount = checkout.amount / 100
     if (amount) {
       Taro.showModal({
         title: '取消预约',
@@ -174,6 +189,7 @@ class BookInfo extends Component {
       status,
       checkout,
       shop,
+      exercises,
       statusText, orderUser, orderStartTime } = this.state
     const nowTime = (new Date()).getTime()
     return (
@@ -224,7 +240,7 @@ class BookInfo extends Component {
           </View>
         </View>
         <View className="exercise-list">
-          {exercises.length ? exercise.map((exercise, i) => {
+          {exercises.length ? exercises.map((exercise, i) => {
             return (<View className="cell" key={i} onClick={this.toProject} data-title={exercise.title}>
               <View className="exercise-info">
                 <Text className="exercise-name">{exercise.title}</Text>
@@ -251,11 +267,11 @@ class BookInfo extends Component {
             </View>
             <View>
               <Text>订单金额</Text>
-              <Text>￥{checkout.price && checkout.price.amount / 1000}</Text>
+              <Text>￥{checkout.price && checkout.price.amount / 100}</Text>
             </View>
             <View>
               <Text>实际支付</Text>
-              <Text>{checkout.amount / 1000}</Text>
+              <Text>{checkout.amount / 100}</Text>
             </View>
             <View>
               <Text>下单时间</Text>

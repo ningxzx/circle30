@@ -1,6 +1,7 @@
 import Taro from '@tarojs/taro'
 import { login, getUser, decryptData, register,putOpenid } from '../actions/user'
 import { APP_ID } from '../constants/app.js'
+import shareImg from '../assets/images/weappShare.png'
 
 // 获取微信登录凭证
 export const wxLogin = async () => {
@@ -173,7 +174,7 @@ export function withShare(opts = {}) {
     // 设置默认
     const defalutPath = '/pages/index/index';
     const defalutTitle = 'CirCle30光速燃脂';
-    const defaultImageUrl = '/assets/images/weappShare.png';
+    const defaultImageUrl = shareImg
 
     return function demoComponent(Component) {
         class WithShare extends Component {
@@ -216,7 +217,7 @@ export function withShare(opts = {}) {
                 // 每条分享都补充用户的分享id
                 // 如果path不带参数，分享出去后解析的params里面会带一个{''： ''}
                 const sharePath = `${path}`;
-
+                console.log(imageUrl)
                 return {
                     title: title || defalutTitle,
                     path: sharePath,

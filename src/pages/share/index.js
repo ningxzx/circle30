@@ -57,9 +57,9 @@ class Share extends Component {
         user_id
       }).then(res => {
         Taro.hideLoading()
-        if (res.code === 0) {
+        if (res.data._id) {
           this.setState({
-            token_id: res._id.$oid
+            token_id: res.data._id.$oid
           })
         }
       })
@@ -69,7 +69,8 @@ class Share extends Component {
     })
   }
   onShareAppMessage() {
-    const url = this.state.token_id
+    const url = `pages/share/index?type=shareBy&token_id=${this.state.token_id}`
+    console.log(url)
     return {
       title: '送你一张CirCle30减脂训练体验券，跟我一起来锻炼吧！',
       path: url,

@@ -1,10 +1,10 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
 import { WeekDate, PostButton } from '../../components'
-import { connectLogin,withShare } from '../../utils/helper'
-import { addDayStr, calDistance, getUniqueExercise } from '../../utils/tool'
+import { connectLogin, withShare, requestUserId } from '../../utils/helper'
+import { addDayStr, calDistance, getUniqueExercise, queryString } from '../../utils/tool'
 import { getShops } from '../../actions/shop'
-import { getSchedules } from '../../actions/schedule'
+import { getSchedules, userCheckin } from '../../actions/schedule'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 import './index.less'
 @connectLogin
@@ -21,11 +21,50 @@ class Index extends Component {
   config = {
     navigationBarTitleText: 'CirCle30'
   }
-  scan() {
+  async scan() {
+    const user_id = await requestUserId()
     Taro.scanCode({
       onlyFromCamera: true
     }).then(res => {
-      console.log(res)
+      if (res.errMsg == "scanCode:ok") {
+        const scene = queryString(res.path, 'scene')
+        userCheckin({
+          checkin_id: scene,
+          user_id
+        }).then(res => {
+          if (res.code == 200) {
+            Taro.showToast({
+              icon:'success',
+              title:'签到成功',
+              duration:2000
+            })
+          } else if (res.code == 4100) {
+            Taro.showModal({
+              title: '签到失败',
+              content: `订单不存在`,
+              showCancel: false
+            })
+          } else if (res.code == 4101) {
+            Taro.showModal({
+              title: '签到失败',
+              content: `订单未支付`,
+              showCancel: false
+            })
+          } else if (res.code == 4100) {
+            Taro.showModal({
+              title: '签到失败',
+              content: `订单已退款`,
+              showCancel: false
+            })
+          } else {
+            Taro.showModal({
+              title: '签到失败',
+              content: `请检查预约信息与设备是否对应：${res.data.message}`,
+              showCancel: false
+            })
+          }
+        })
+      }
     })
   }
   componentDidShow() {

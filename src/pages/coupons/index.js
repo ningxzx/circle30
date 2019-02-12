@@ -23,7 +23,7 @@ class CouponList extends Component {
     getCoupons({
       user_id
     }).then(res => {
-      const coupons = res.data
+      const coupons = res.data.filter(x=>x.used==0)
       this.setState({ coupons })
     })
   }
@@ -31,7 +31,8 @@ class CouponList extends Component {
     const { coupons } = this.state
     return (
       <View className={`coupon-list ${!coupons.length ? 'no-coupon' : ''}`}>
-        {coupons.length ? coupons.map((coupon, i) => {
+        {coupons.length ? coupons.map((couponObj, i) => {
+          const coupon = couponObj.coupon
           return <View className="coupon-item" onClick={this.selectCoupon} key={i} data-idx={i}><Coupon hasMargin={true} coupon={coupon}></Coupon></View>
         }) : <View className="no-coupon-wrapper" ><Image className="no-coupon" src="cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_12_wuquan@2x.png"></Image><View className="no-coupon-text">暂无优惠券</View></View>}
       </View>

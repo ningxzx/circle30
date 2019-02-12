@@ -50,7 +50,7 @@ export function formatDate(timestamp) {
 
 
 export function formatNormalDate(timestamp) {
-    const date = new Date(timestamp*1);
+    const date = new Date(timestamp * 1);
     return format(date, 'YYYY-MM-DD HH:mm:ss')
 }
 
@@ -110,4 +110,17 @@ export function getUniqueExercise(schedules) {
         })
         return uniqueExercises
     }
+}
+
+export function queryString(url,name) {
+    let params = {};
+    if (url.indexOf("?") != -1) {
+        let str = url.split('?')[1];
+        let strs = str.split("&");
+        for(var i = 0; i < strs.length; i ++) {
+            params[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+        }
+    }
+    return name?params[name]:params
+
 }

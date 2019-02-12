@@ -89,7 +89,6 @@ class Book extends Component {
                     course.full = course.num == FULL_NUM
                     course.joined = course.users.some(x => x._id.$oid == user_id)
                 });
-                console.log(courses)
                 this.setState({
                     courses,
                     scheduleId: schedule._id.$oid
@@ -108,6 +107,7 @@ class Book extends Component {
             used: 0
         }).then(res => {
             const couponsNum = res.data & res.data.length
+            console.log(couponsNum)
             this.setState({ couponsNum })
         })
     }
@@ -170,7 +170,7 @@ class Book extends Component {
         const { amount } = this.state
         this.setState({
             selectPeriodIdx: e.currentTarget.dataset.idx,
-            total: (getGlobalData('amount') - amount) / 1000
+            total: (getGlobalData('amount') - amount) / 100
         })
     }
     async getPhoneNumber(e) {

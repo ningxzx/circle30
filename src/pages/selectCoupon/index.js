@@ -23,14 +23,14 @@ class SelectCoupon extends Component {
         getCoupons({
             user_id
         }).then(res => {
-            const coupons = res.data
+            const coupons = res.data.filter(x => x.used === 0)
             this.setState({ coupons })
         })
     }
     selectCoupon(e) {
         const i = e.currentTarget.dataset.idx
         this.setState({
-            selectIndex:i
+            selectIndex: i
         }, () => {
             const pages = Taro.getCurrentPages()
             const lastPage = pages[pages.length - 2]
@@ -48,9 +48,10 @@ class SelectCoupon extends Component {
         const { coupons, selectIndex } = this.state
         return (
             <View className={`coupon-list ${!coupons.length ? 'no-coupon' : ''}`}>
-                {coupons.length ? coupons.map((coupon, i) => {
+                {coupons.length ? coupons.map((couponObj, i) => {
+                    const coupon = couponObj.coupon
                     return (<View className={`coupon ${selectIndex == i ? 'active' : ''}`} onClick={this.selectCoupon} key={i} data-idx={i}>
-                        <View className="amount">{coupon.amount / 1000}<Text class="symbol">￥</Text></View>
+                        <View className="amount">{coupon.amount / 100}<Text class="symbol">￥</Text></View>
                         <View className="detail">
                             <Text class="title">{coupon.title}</Text>
                             <Text class="range">{coupon.description}</Text>
