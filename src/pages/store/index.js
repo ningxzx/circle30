@@ -28,7 +28,9 @@ class Store extends Component {
     exercises: [],
     selectDateIndex: 0
   }
-
+  config = {
+    navigationBarTitleText: ' '
+  }
   jumpToBook() {
     const { id, title, selectDateIndex } = this.state
     Taro.navigateTo({
@@ -143,7 +145,7 @@ class Store extends Component {
           autoplay>
           {images.map((banner, i) => {
             return <SwiperItem key={i}>
-              <Image src={banner}></Image>
+              <Image src={banner} mode="aspectFill"></Image>
             </SwiperItem>
           })
           }
@@ -161,7 +163,7 @@ class Store extends Component {
             <Text className="info-text"><Text className="icon-ic__shopadd iconfont"></Text>{address}</Text>
             <Text className="icon-ic_more iconfont"></Text>
           </View>
-          <View className="students" onClick={this.toStudents}>
+          {avatars.length ? <View className="students" onClick={this.toStudents}>
             <View className="period-avatars-wrapper">
               {avatars.slice(0, 4).map((src, i) => {
                 return <View className="period-avatars" key={i} style={{ left: `${i * 48}rpx`, zIndex: (5 - i) * 100 }}><View className="mini-avatar" style={{ backgroundImage: `url(${src})` }}></View></View>
@@ -174,7 +176,7 @@ class Store extends Component {
               </View> : null}
             </View>
             <Text>{`${studentsNum}位学员`}</Text>
-          </View>
+          </View> : null}
           <View className="description"><Text>{description}</Text></View>
         </View>
         <View className="card">
@@ -202,6 +204,7 @@ class Store extends Component {
               <Text>暂无训练计划</Text>
             </View>}
         </View >
+        <View className="book-btn-placeholder"></View>
         <PostButton btn-class="book-btn" onClick={this.jumpToBook}>立即预约</PostButton>
       </View>
     )

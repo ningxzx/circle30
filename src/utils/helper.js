@@ -43,7 +43,7 @@ export const getUserInfo = async (session_key) => {
 }
 
 export const saveUserInfo = (info) => {
-    const { avatarUrl, unionId, province, language, country, city, nickName, gender } = info
+    const { avatarUrl, unionId, province, language, country, city, nickName, gender,phone } = info
     if (unionId) {
         Taro.setStorageSync('unionid', unionId)
     }
@@ -54,6 +54,7 @@ export const saveUserInfo = (info) => {
     Taro.setStorageSync('city', city)
     Taro.setStorageSync('nickName', nickName)
     Taro.setStorageSync('gender', gender)
+    Taro.setStorageSync('phoneNumber', phone)
 }
 
 const getUserId = async (info, users, unionid, openid) => {

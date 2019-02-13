@@ -96,15 +96,19 @@ export function getUniqueExercise(schedules) {
         lessons.forEach(x => {
             const sections = x.sections
             if (sections && sections.some(sec => sec.exercise)) {
-                exercises.push(x.sections.filter(sec => sec.exercise)[0])
+                x.sections.forEach(sec=>{
+                    if(sec.exercise){
+                        exercises.push(sec.exercise)
+                    }
+                })
             }
         })
         const hash = {}
         const uniqueExercises = []
         exercises.forEach(e => {
-            const id = e.exercise_id
+            const id = e._id.$oid
             if (id && !hash[id]) {
-                uniqueExercises.push(e.exercise)
+                uniqueExercises.push(e)
                 hash[id] = 1
             }
         })

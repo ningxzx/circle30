@@ -1,6 +1,13 @@
 @import '../../varible.less';
 .order {
+    position: relative;
+    padding-top: 88px;
     .tabHeaderWrapper {
+        position: fixed;
+        z-index:99999;
+        left: 0;
+        top: 0;
+        width: 750px;
         height: 88px;
         padding: 0 165px;
         box-sizing: border-box;
@@ -40,14 +47,14 @@
             min-height: 1020px;
             margin-bottom: 20px;
         }
-        .order-list-wrapper{
+        .order-list-wrapper {
             height: auto !important;
             background-color: #ffffff;
         }
-        .order-list-wrapper.blank{
+        .order-list-wrapper.blank {
             height: 1020px;
             background-color: #ffffff;
-            .blank-wrapper{
+            .blank-wrapper {
                 margin-top: 100px;
             }
         }
@@ -62,33 +69,35 @@
             background: #fff;
             color: @textHeavy;
             font-size: 28px;
-            .left-content{
+            .left-content {
                 height: 112px;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
-                .date-str Text{
-                    font-size: 24px;
-                    color: @textLight;
-                    .week-day{
+                .date-str {
+                    Text {
+                        font-size: 24px;
+                        color: @textLight;
+                    }
+                    .week-day {
                         margin-left: 10px;
                     }
                 }
-                .time-str{ 
+                .time-str {
                     font-size: 32px;
                 }
-                .shop-str{
+                .shop-str {
                     font-size: 24px;
                     color: @textNormal;
                 }
             }
-            .order-status{
-                margin-right:16px;
+            .order-status {
+                margin-right: 16px;
             }
-            .order-status.finished{
+            .order-status.finished {
                 color: @textNormal;
             }
-            .order-status.error{
+            .order-status.error {
                 color: @textLight;
             }
         }

@@ -1,6 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Form } from '@tarojs/components'
-import { connectLogin,withShare } from '../../utils/helper'
+import { connectLogin, withShare } from '../../utils/helper'
 import { PostButton } from '../../components'
 import { getExercise } from '../../actions/exercise'
 import { postFormId } from '../../actions/message'
@@ -20,9 +20,8 @@ class Exercise extends Component {
     images: []
   }
   config = {
-    navigationBarTitleText: '训练项目介绍'
+    navigationBarTitleText: ' '
   }
-
   componentWillReceiveProps(nextProps) {
     console.log(this.props, nextProps)
   }
@@ -38,9 +37,6 @@ class Exercise extends Component {
       storeTitle,
       dateIndex
     }, () => {
-      Taro.setNavigationBarTitle({
-        title: title
-      })
       getExercise(id).then(res => {
         const { images, cover, type, body } = res.data
         this.setState({
@@ -62,26 +58,26 @@ class Exercise extends Component {
     const form_id = e.detail.formId
     const open_id = Taro.getStorageSync('openid')
     if (form_id) {
-      postFormId({form_id,open_id})
+      postFormId({ form_id, open_id })
     }
   }
   componentDidHide() { }
-  $setShareTitle(){
-    const {  title } = this.state
+  $setShareTitle() {
+    const { title } = this.state
     return `${title} | Circle30`
   }
-  $setSharePath(){
+  $setSharePath() {
     const { title, id, dateIndex, storeId, storeTitle } = this.$router.params
-    return  `/pages/exercise/index?id=${id}&title=${title}&dateIndex=${dateIndex}&storeId=${storeId}&storeTitle=${storeTitle}`
+    return `/pages/exercise/index?id=${id}&title=${title}&dateIndex=${dateIndex}&storeId=${storeId}&storeTitle=${storeTitle}`
   }
-  $setShareImageUrl(){
-    return  this.state.cover
+  $setShareImageUrl() {
+    return this.state.cover
   }
 
   render() {
     const { images, cover, type, body, title } = this.state
     return (
-      <View className='project'>
+      <View className='exercise'>
         <Image src={cover}></Image>
         <View className="title">{title}</View>
         <View className="info">
@@ -95,12 +91,14 @@ class Exercise extends Component {
             <Text>{type}</Text>
           </View>
         </View>
-        <View className="card">
+        <View className="card description-card">
           <View className="card-title description">
             <Text className="verticalIcon"></Text>
             <Text className="card-title-text">课程说明</Text>
           </View>
-          {images.map((x, i) => (<Image className="project-image" mode="widthFix" key={i} src={x}></Image>))}
+          <View className="exercise-image-wrapper">
+            {images.map((x, i) => (<Image className="project-image" mode="widthFix" key={i} src={x}></Image>))}
+          </View>
         </View>
         <View className="book-btn-placeholder"></View>
         <PostButton btn-class="book-btn" onClick={this.jumpToBook}>立即预约</PostButton>

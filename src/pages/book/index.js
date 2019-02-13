@@ -12,13 +12,14 @@ import { FULL_NUM } from '../../constants/app'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 
 import './index.less'
+
 @connectLogin
 @withShare()
 class Book extends Component {
     state = {
         storeId: '',
         storeTitle: '',
-        phoneNumber: Taro.getStorageSync('phoneNumber'),
+        phoneNumber: '',
         courses: [],
         couponsNum: 1,
         amount: 0,
@@ -28,9 +29,10 @@ class Book extends Component {
         selectDateIndex: 0,
         scheduleId: ''
     }
-
-    componentWillReceiveProps(nextProps) {
-        console.log(this.props, nextProps)
+    componentWillMount() {
+        this.setState({
+            phoneNumber: Taro.getStorageSync('phoneNumber') || ''
+        })
     }
     componentDidShow() {
         // 折扣数，折扣id
@@ -124,8 +126,14 @@ class Book extends Component {
     // 生成订单
     async toPay() {
         const user_id = await requestUserId()
-        const { scheduleId, selectPeriodIdx, courses, couponId } = this.state
-        if (selectPeriodIdx === null) {
+        const { scheduleId, selectPeriodIdx, courses, couponId, phoneNumber } = this.state
+        if (!phoneNumber) {
+            Taro.showToast({
+                title: '请授权手机号',
+                icon: 'none',
+                duration: 2000
+            })
+        } else if (selectPeriodIdx === null) {
             Taro.showToast({
                 title: '请选择一个时间段后再提交',
                 icon: 'none',
@@ -200,6 +208,12 @@ class Book extends Component {
             })
         })
     }
+    changeDate(day) {
+        this.setState({
+            selectPeriodIdx: 0
+        })
+        this.getDateSchedules(day)
+    }
     render() {
         const { storeTitle, phoneNumber, courses, selectPeriodIdx } = this.state
         return (
@@ -215,7 +229,7 @@ class Book extends Component {
                     </View>
                 </View>
                 <View className="date-wrapper">
-                    <WeekDate selectIndex={selectDateIndex} onChangeDate={this.getDateSchedules}></WeekDate>
+                    <WeekDate selectIndex={selectDateIndex} onChangeDate={this.changeDate}></WeekDate>
                 </View>
                 <View className="period-wrapper">
                     {courses.length ? courses.map((x, i) => {

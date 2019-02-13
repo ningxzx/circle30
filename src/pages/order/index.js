@@ -1,6 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Swiper, Text } from '@tarojs/components'
-import { connectLogin, requestUserId,withShare } from '../../utils/helper'
+import { connectLogin, requestUserId, withShare } from '../../utils/helper'
 import { getOrders } from '../../actions/order'
 import { formatDate, formatWeek, formatHour } from '../../utils/tool'
 import './index.less'
@@ -31,7 +31,7 @@ class Order extends Component {
   }
   swipeTab(e) {
     if ("touch" === e.detail.source) {
-      let current = e.detail.current==0?'future':'ongoing'
+      let current = e.detail.current == 0 ? 'future' : 'ongoing'
       this.setState({
         current
       })
@@ -44,7 +44,7 @@ class Order extends Component {
       user_id
     }).then(res => {
       Taro.hideLoading()
-      const orders = res.data
+      const orders = res.data.filter(x => !!x.checkout)
       const nowTime = (new Date()).getTime()
       orders.forEach(order => {
         const orderStartTime = order.schedule.course.start
@@ -55,7 +55,7 @@ class Order extends Component {
         order.endTime = formatHour(orderEndTime)
         order.shopTitle = order.schedule.shop.title
 
-        const overTime = nowTime < orderEndTime*1000
+        const overTime = nowTime < orderEndTime * 1000
         if (overTime) {
           order.status = 0
           order.statusText = '待预约'
@@ -75,18 +75,22 @@ class Order extends Component {
         }
       })
       this.setState({
-        oldOrders: orders.filter(x => x.status !== 0),
-        newOrders: orders.filter(x => x.status === 0)
+        oldOrders: orders.filter(x => x.status !== 0).sort((a, b) => {
+          return a.schedule.course.start > b.schedule.course.start ? 1 : -1
+        }),
+        newOrders: orders.filter(x => x.status === 0).sort((a, b) => {
+          return a.schedule.course.start > b.schedule.course.start ? -1 : 1
+        })
       })
     })
   }
   componentDidShow() {
     this.getOrderList()
   }
-  toBookInfo(e){
+  toBookInfo(e) {
     const id = e.currentTarget.dataset.id
     Taro.navigateTo({
-      url:`/pages/bookInfo/index?id=${id}`
+      url: `/pages/bookInfo/index?id=${id}`
     })
   }
   render() {

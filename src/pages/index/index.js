@@ -59,7 +59,7 @@ class Index extends Component {
           } else {
             Taro.showModal({
               title: '签到失败',
-              content: `请检查预约信息与设备是否对应：${res.data.message}`,
+              content: `你尚未预约此课程`,
               showCancel: false
             })
           }
