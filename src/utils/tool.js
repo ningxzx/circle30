@@ -66,13 +66,30 @@ export function formatWeek(timestamp) {
 // - 小于1km，显示单位m，如321m
 // - 1km至9.9km之间，显示单位km，允许小数点后一位；如果小数点后是0，则显示为整数
 // - 10km以上，显示单位km，并且都为整数
-export function calDistance(la1, lo1, la2, lo2) {
-    var La1 = la1 * Math.PI / 180.0;
-    var La2 = la2 * Math.PI / 180.0;
-    var La3 = La1 - La2;
-    var Lb3 = lo1 * Math.PI / 180.0 - lo2 * Math.PI / 180.0;
-    var s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(La3 / 2), 2) + Math.cos(La1) * Math.cos(La2) * Math.pow(Math.sin(Lb3 / 2), 2)));
-    s = Math.round(s * 6378.137);
+const EARTH_RADIUS = 6378137.0;    //单位M
+const PI = Math.PI;
+
+function getRad(d) {
+    return d * PI / 180.0;
+}
+
+/**
+ * caculate the great circle distance
+ * @param {Object} lat1
+ * @param {Object} lng1
+ * @param {Object} lat2
+ * @param {Object} lng2
+ */
+export function calDistance(lat1, lng1, lat2, lng2) {
+    var radLat1 = getRad(lat1);
+    var radLat2 = getRad(lat2);
+
+    var a = radLat1 - radLat2;
+    var b = getRad(lng1) - getRad(lng2);
+
+    var s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
+    s = s * EARTH_RADIUS;
+    s = Math.round(s * 10000) / 10000.0;
     if (s < 1000) {
         s = s + 'm'
     } else if (s <= 9900) {
@@ -96,8 +113,8 @@ export function getUniqueExercise(schedules) {
         lessons.forEach(x => {
             const sections = x.sections
             if (sections && sections.some(sec => sec.exercise)) {
-                x.sections.forEach(sec=>{
-                    if(sec.exercise){
+                x.sections.forEach(sec => {
+                    if (sec.exercise) {
                         exercises.push(sec.exercise)
                     }
                 })
@@ -116,15 +133,15 @@ export function getUniqueExercise(schedules) {
     }
 }
 
-export function queryString(url,name) {
+export function queryString(url, name) {
     let params = {};
     if (url.indexOf("?") != -1) {
         let str = url.split('?')[1];
         let strs = str.split("&");
-        for(var i = 0; i < strs.length; i ++) {
-            params[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+        for (var i = 0; i < strs.length; i++) {
+            params[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
         }
     }
-    return name?params[name]:params
+    return name ? params[name] : params
 
 }

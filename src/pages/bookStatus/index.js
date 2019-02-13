@@ -13,7 +13,7 @@ class BookStatus extends Component {
   toInfo() {
     const { order_id } = this.$router.params
     Taro.navigateTo({
-      url: `/pages/bookInfo/index?order_id=${order_id}`
+      url: `/pages/bookInfo/index?id=${order_id}`
     })
   }
   toHome() {

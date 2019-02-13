@@ -140,8 +140,10 @@ class BookInfo extends Component {
         cancelColor: '#999',
         confirmText: '取消预约',
         cancelColor: '#FF747C',
-        success: () => {
-          this.refund()
+        success: (res) => {
+          if (res.confirm) {
+            this.refund()
+          }
         }
       })
     } else {
@@ -152,8 +154,10 @@ class BookInfo extends Component {
         cancelColor: '#999',
         confirmText: '取消预约',
         cancelColor: '#FF747C',
-        success: () => {
-          this.refund()
+        success: (res) => {
+          if (res.confirm) {
+            this.refund()
+          }
         }
       })
     }
@@ -278,7 +282,7 @@ class BookInfo extends Component {
               <Text>{checkout.created && formatNormalDate(checkout.created.$date.$numberLong)}</Text>
             </View>
           </View>
-          {status == 0 && (orderStartTime - nowTime > 7200000) && orderUser._id.$oid == Taro.getStorageSync('user_id') ?
+          {(status == 0 && (orderStartTime * 1000 - nowTime > 7200000) && (orderUser._id && orderUser._id.$oid) == Taro.getStorageSync('user_id')) ?
             <View className="refund-wrapper">
               <PostButton onClick={this.handleRefund} btn-class='refund-btn'>取消预约</PostButton>
               <Text>* 请在训练开始前到达门店，提前10分钟即可签到</Text>

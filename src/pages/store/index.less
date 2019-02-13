@@ -10,6 +10,7 @@
     .store-info {
         margin-bottom: 20px;
         background-color: #fff;
+        overflow: hidden;
         &>view {
             display: flex;
             align-items: center;
@@ -89,16 +90,27 @@
             }
         }
         .description {
-            padding: 30px 0;
-            line-height: 34px;
+            margin: 30px 28px 0;
+            border: none;
+            text{
+                line-height: 34px;
+            }
         }
-        view.description {
+        .description.line-limit {
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
             -webkit-line-clamp: 4;
             -webkit-box-orient: vertical;
             align-items: flex-start;
+        }
+        .show-all-icon{
+            color: @mainColor;
+            line-height: 34px;
+            margin-top: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: flex-end;
         }
         view Text:first-child .iconfont {
             margin-right: 18px;

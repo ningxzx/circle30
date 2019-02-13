@@ -1,5 +1,5 @@
 import Taro, { Component } from '@tarojs/taro'
-import { View, Button, Text, Swiper, SwiperItem } from '@tarojs/components'
+import { View, Button, Text, Swiper, SwiperItem, Icon } from '@tarojs/components'
 import { connectLogin, withShare } from '../../utils/helper'
 import { getUniqueExercise, addDayStr } from '../../utils/tool'
 import { WeekDate, PostButton } from '../../components'
@@ -26,7 +26,8 @@ class Store extends Component {
     studentsNum: 0,
     avatars: [],
     exercises: [],
-    selectDateIndex: 0
+    selectDateIndex: 0,
+    showAllDesc: false
   }
   config = {
     navigationBarTitleText: ' '
@@ -102,7 +103,6 @@ class Store extends Component {
       if (res.data && res.data.length) {
         const schedule = res.data[0]
         const exercises = getUniqueExercise(res.data)
-        console.log(exercises)
         this.setState({
           exercises,
           scheduleId: schedule._id.$oid
@@ -132,8 +132,14 @@ class Store extends Component {
     const { images } = this.state
     return images[0]
   }
+  onShowAllDesc() {
+    const showAllDesc = this.state.showAllDesc
+    this.setState({
+      showAllDesc: !showAllDesc
+    })
+  }
   render() {
-    const { title, service_time, phone, description, address, images, studentsNum, avatars, selectDateIndex } = this.state
+    const { title, service_time, phone, description, address, images, studentsNum, avatars, selectDateIndex, showAllDesc } = this.state
     return (
       <View className='store'>
         <Swiper
@@ -177,7 +183,9 @@ class Store extends Component {
             </View>
             <Text>{`${studentsNum}位学员`}</Text>
           </View> : null}
-          <View className="description"><Text>{description}</Text></View>
+          <View className={`description ${showAllDesc ? '' : 'line-limit'}`}><Text>{description}</Text>
+          </View>
+          <View onClick={this.onShowAllDesc} className="show-all-icon">{showAllDesc ? '收起' : '更多>'}</View>
         </View>
         <View className="card">
           <View className="card-title">

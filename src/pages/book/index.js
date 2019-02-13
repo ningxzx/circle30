@@ -1,10 +1,10 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Image } from '@tarojs/components'
-import { connectLogin, requestUserId, withShare } from '../../utils/helper'
+import { connectLogin, requestUserId, withShare, wxLogin } from '../../utils/helper'
 import { addDayStr, formatHour, getUniqueExercise } from '../../utils/tool'
 import { WeekDate, PostButton } from '../../components'
 import { getCoupons } from '../../actions/coupons'
-import { decryptData, putUser } from '../../actions/user'
+import { decryptData, putUser, getSessionKey } from '../../actions/user'
 import { getShops } from '../../actions/shop'
 import { getSchedules } from '../../actions/schedule'
 import { createOrder, checkoutOrder, createTrasctions } from '../../actions/order'
@@ -21,7 +21,7 @@ class Book extends Component {
         storeTitle: '',
         phoneNumber: '',
         courses: [],
-        couponsNum: 1,
+        couponsNum: 0,
         amount: 0,
         couponId: null,
         selectPeriodIdx: null,
@@ -29,14 +29,14 @@ class Book extends Component {
         selectDateIndex: 0,
         scheduleId: ''
     }
-    componentWillMount() {
+    componentDidMount() {
         this.setState({
             phoneNumber: Taro.getStorageSync('phoneNumber') || ''
         })
     }
     componentDidShow() {
         // 折扣数，折扣id
-        const { amount, couponId } = getGlobalData('SelectCoupon') || {}
+        const { amount, couponId } = getGlobalData('selectCoupon') || {}
         if (!amount) {
             this.getUserCoupons()
         } else {
@@ -46,7 +46,7 @@ class Book extends Component {
             })
         }
         const { dateIndex } = this.$router.params
-        const { storeTitle, storeId } = getGlobalData('SelectStore') || this.$router.params
+        const { storeTitle, storeId } = getGlobalData('selectStore') || this.$router.params
         if (storeId) {
             this.setState({
                 storeId,
@@ -70,9 +70,6 @@ class Book extends Component {
         const user_id = await requestUserId()
         const str = addDayStr(days)
         const shop_id = this.state.storeId
-        this.setState({
-            selectDateIndex: days
-        })
         getSchedules({
             shop_id,
             date: str
@@ -108,8 +105,7 @@ class Book extends Component {
             user_id,
             used: 0
         }).then(res => {
-            const couponsNum = res.data & res.data.length
-            console.log(couponsNum)
+            const couponsNum = res.data && res.data.length
             this.setState({ couponsNum })
         })
     }
@@ -186,19 +182,21 @@ class Book extends Component {
         if (!iv) {
             return false
         }
-        const session_key = Taro.getStorageSync('session_key')
+        const code = await wxLogin()
+        const res = await getSessionKey({ code })
+        const session = res.data
         decryptData({
             encrypted: encryptedData,
             iv,
-            session: session_key
-        }).then(async (res) => {
+            session: session.session_key
+        }).then((res) => {
             const { phoneNumber } = res.data
             const unionid = Taro.getStorageSync('unionid')
             this.setState({
                 phoneNumber
             })
             Taro.setStorageSync('phoneNumber', phoneNumber)
-            const user_id = await requestUserId()
+            const user_id = Taro.getStorageSync('user_id')
             const openid = Taro.getStorageSync('openid')
             putUser({
                 user_id,
@@ -210,7 +208,8 @@ class Book extends Component {
     }
     changeDate(day) {
         this.setState({
-            selectPeriodIdx: 0
+            selectDateIndex: day,
+            selectPeriodIdx: null
         })
         this.getDateSchedules(day)
     }
@@ -250,8 +249,8 @@ class Book extends Component {
                             <Text>暂无训练计划</Text>
                         </View>}
                 </View>
-                {couponsNum || amount ? <View className="footer-placeholder"></View> : null}
-                {couponsNum || amount ? <View className="coupon-wrapper" onClick={this.jumToCoupons}>
+                {couponsNum ? <View className="footer-placeholder"></View> : null}
+                {couponsNum ? <View className="coupon-wrapper" onClick={this.jumToCoupons}>
                     <Text>优惠券</Text>
                     <Text>
                         <Text className={`coupon-text {amount?'amount':'coupon-num'}`}>{!amount ? `${couponsNum}个可用` : `-￥${amount}`}</Text>

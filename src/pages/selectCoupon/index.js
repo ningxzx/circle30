@@ -39,7 +39,7 @@ class SelectCoupon extends Component {
                 const idx = i
                 setGlobalData('selectCoupon', coupons[idx])
                 Taro.navigateBack({
-                    delta: 1
+                    delta: -1
                 })
             }
         })

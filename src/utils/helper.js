@@ -1,5 +1,5 @@
 import Taro from '@tarojs/taro'
-import { login, getUser, decryptData, register,putOpenid } from '../actions/user'
+import { getSessionKey, getUser, decryptData, register, putOpenid, getSingleUser } from '../actions/user'
 import { APP_ID } from '../constants/app.js'
 import shareImg from '../assets/images/weappShare.png'
 
@@ -16,9 +16,10 @@ export const wxLogin = async () => {
 export const getSession = async () => {
     try {
         const code = await wxLogin()
-        const res = await login({ code })
+        const res = await getSessionKey({ code })
         return res.data
     } catch (error) {
+        console.log(error)
         console.log('换取客户微信session失败')
     }
 }
@@ -43,10 +44,13 @@ export const getUserInfo = async (session_key) => {
 }
 
 export const saveUserInfo = (info) => {
-    const { avatarUrl, unionId, province, language, country, city, nickName, gender,phone } = info
-    if (unionId) {
-        Taro.setStorageSync('unionid', unionId)
+    const { phone } = info
+    if (phone) {
+        Taro.setStorageSync('phoneNumber', phone)
     }
+}
+export const saveWxUserInfo = (info) => {
+    const { avatarUrl, province, language, country, city, nickName, gender, phone } = info
     Taro.setStorageSync('avatarUrl', avatarUrl)
     Taro.setStorageSync('province', province)
     Taro.setStorageSync('language', language)
@@ -54,8 +58,8 @@ export const saveUserInfo = (info) => {
     Taro.setStorageSync('city', city)
     Taro.setStorageSync('nickName', nickName)
     Taro.setStorageSync('gender', gender)
-    Taro.setStorageSync('phoneNumber', phone)
 }
+
 
 const getUserId = async (info, users, unionid, openid) => {
     if (users.length) {
@@ -93,7 +97,8 @@ const emitUserid = async (unionid, openid, session_key) => {
             const info = await getUserInfo(session_key)
             if (info) {
                 const { unionId } = info
-                saveUserInfo(info)
+                Taro.setStorageSync('unionid', unionId)
+                saveWxUserInfo(info)
                 const res = await getUser({ unionid: unionId })
                 const users = res.data
                 const userId = await getUserId(info, users, unionid, openid)
@@ -118,9 +123,12 @@ export const userLogin = async () => {
             const id = await emitUserid(unionid, openid, session_key)
             putOpenid({
                 openid,
-                user_id:id
+                user_id: id
             })
             Taro.setStorageSync('user_id', id)
+            getSingleUser(id).then(res => {
+                saveUserInfo(res.data)
+            })
         } else {
             const session = await getSession()
             const { openid, session_key, unionid } = session
@@ -129,9 +137,12 @@ export const userLogin = async () => {
             const id = await emitUserid(unionid, openid, session_key)
             putOpenid({
                 openid,
-                user_id:id
+                user_id: id
             })
             Taro.setStorageSync('user_id', id)
+            getSingleUser(id).then(res => {
+                saveUserInfo(res.data)
+            })
         }
     }
 }
@@ -222,7 +233,7 @@ export function withShare(opts = {}) {
                 return {
                     title: title || defalutTitle,
                     path: sharePath,
-                    imageUrl: imageUrl 
+                    imageUrl: imageUrl
                 };
             }
 
