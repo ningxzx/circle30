@@ -8,7 +8,8 @@ class PostButton extends Component {
 
     static defaultProps = {
         className: '',
-        onClick: ()=>{}
+        onClick: ()=>{},
+        disabled:false
     }
     formSubmit = (e) => {
         const form_id = e.detail.formId
@@ -23,7 +24,7 @@ class PostButton extends Component {
     render() {
         return (
             <Form reportSubmit={true} onSubmit={this.formSubmit} >
-                <Button onClick={this.props.onClick}  formType='submit' className="btn-class">{this.props.children}</Button>
+                <Button onClick={this.props.onClick}  formType='submit' className="btn-class" disabled={this.props.disabled}>{this.props.children}</Button>
             </Form>
         )
     }

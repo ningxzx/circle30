@@ -139,7 +139,7 @@ class Store extends Component {
     })
   }
   render() {
-    const { title, service_time, phone, description, address, images, studentsNum, avatars, selectDateIndex, showAllDesc } = this.state
+    const { title, service_time, phone, description, address, images, studentsNum, avatars, selectDateIndex, showAllDesc ,status} = this.state
     return (
       <View className='store'>
         <Swiper
@@ -213,7 +213,7 @@ class Store extends Component {
             </View>}
         </View >
         <View className="book-btn-placeholder"></View>
-        <PostButton btn-class="book-btn" onClick={this.jumpToBook}>立即预约</PostButton>
+        <PostButton btn-class={`book-btn ${status!='enable'?'disabled':''}`} onClick={this.jumpToBook} disabled={status!='enable'}>立即预约</PostButton>
       </View>
     )
   }

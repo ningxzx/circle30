@@ -101,8 +101,7 @@ class Index extends Component {
     setGlobalData({ latitude, longitude })
     getShops({
       latitude,
-      longitude,
-      status: 'enable'
+      longitude
     }).then(res => {
       const list = res.data.map(shop => {
         const { title, address, location: { lat, lng }, ...rest } = shop
@@ -219,9 +218,9 @@ class Index extends Component {
           </View>
           <View className="store-list">
             {stores.length ? stores.map((store, i) => {
-              return (<View className="cell" key={i} data-store={store} onClick={this.jumpToStore}>
+              return (<View className={`cell ${store.status == 'enable' ? '' : 'disable'} `} key={i} data-store={store} onClick={this.jumpToStore}>
                 <View className="left-content">
-                  <Text className="cell-title">{store.title}</Text>
+                  <Text className="cell-title">{store.title}{store.status == 'enable' ? null : <Text className="status-str">暂停预约</Text>}</Text>
                   <View className="cell-detail">
                     <Text>{store.address}</Text>
                   </View>
