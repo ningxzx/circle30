@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Image } from '@tarojs/components'
 import { connectLogin, requestUserId, withShare, wxLogin } from '../../utils/helper'
-import { addDayStr, formatHour, getUniqueExercise } from '../../utils/tool'
+import { addDayStr, formatHour, getUniqueExercise, calDistance } from '../../utils/tool'
 import { WeekDate, PostButton } from '../../components'
 import { getCoupons } from '../../actions/coupons'
 import { decryptData, putUser, getSessionKey } from '../../actions/user'
@@ -22,58 +22,88 @@ class Book extends Component {
         phoneNumber: '',
         courses: [],
         couponsNum: 0,
-        amount: 0,
+        couponAmount: 0,
         couponId: null,
-        selectPeriodIdx: null,
+        selectPeriodIdx: {},
         total: 0,
         selectDateIndex: 0,
         scheduleId: ''
     }
     componentDidMount() {
+        const { dateIndex, storeTitle, storeId } = this.$router.params
         this.setState({
-            phoneNumber: Taro.getStorageSync('phoneNumber') || ''
+            phoneNumber: Taro.getStorageSync('phoneNumber') || '',
+            selectDateIndex: dateIndex
+        }, () => {
+            if (storeId) {
+                this.setState({
+                    storeId,
+                    storeTitle
+                }, () => {
+                    this.getDateSchedules()
+                })
+            } else {
+                const { latitude, longitude } = getGlobalData(['latitude', 'longitude'])
+                getShops().then(res => {
+                    let stores = res.data.map(store => {
+                        const { location: { lat, lng } } = store
+                        const { distance, pureDistance } = calDistance(latitude, longitude, lat, lng)
+                        store = { ...store, ...{ distance, pureDistance } }
+                        return store
+                    })
+                    stores = stores.sort((a, b) => a.pureDistance > b.pureDistance ? 1 : -1).filter(x => x.status == 'enable')
+                    const { _id: { $oid }, title } = stores[0]
+                    this.setState({
+                        storeId: $oid,
+                        storeTitle: title
+                    }, () => {
+                        this.getDateSchedules()
+                    })
+
+                })
+            }
         })
+        this.getUserCoupons()
     }
     componentDidShow() {
         // 折扣数，折扣id
-        const { amount, couponId } = getGlobalData('selectCoupon') || {}
-        if (!amount) {
-            this.getUserCoupons()
+        const selectCoupon = getGlobalData('selectCoupon')
+        if (selectCoupon) {
+            const { amount, _id:{$oid} } = selectCoupon['coupon'] || {}
+            if (amount) {
+                const couponAmount = amount / 100
+                this.setState({
+                    couponAmount,
+                    couponId:$oid
+                })
+            }
         } else {
             this.setState({
-                amount,
-                couponId
+                couponAmount: 0,
+                couponId: null
             })
         }
-        const { dateIndex } = this.$router.params
-        const { storeTitle, storeId } = getGlobalData('selectStore') || this.$router.params
+        let { storeTitle, storeId } = getGlobalData('selectStore') || {}
         if (storeId) {
             this.setState({
                 storeId,
                 storeTitle,
-                selectDateIndex: dateIndex
             }, () => {
-                this.getDateSchedules(dateIndex)
-            })
-        } else {
-            getShops().then(res => {
-                const stores = res.data
-                const { _id: { $oid }, title } = stores[0]
-                this.setState({
-                    storeId: $oid,
-                    storeTitle: title
-                })
+                this.getDateSchedules()
             })
         }
     }
-    async getDateSchedules(days = 0) {
-        const user_id = await requestUserId()
-        const str = addDayStr(days)
+    getDateSchedules() {
+        Taro.showLoading({ title: '请求中...' })
+        const dateIndex = this.state.selectDateIndex
+        const user_id = Taro.getStorageSync('user_id')
+        const str = addDayStr(dateIndex)
         const shop_id = this.state.storeId
         getSchedules({
             shop_id,
             date: str
         }).then(res => {
+            Taro.hideLoading()
             const schedules = res.data
             if (schedules && schedules.length) {
                 const schedule = res.data[0]
@@ -122,27 +152,28 @@ class Book extends Component {
     // 生成订单
     async toPay() {
         const user_id = await requestUserId()
-        const { scheduleId, selectPeriodIdx, courses, couponId, phoneNumber } = this.state
+        const { scheduleId, selectPeriodIdx, courses, couponId, phoneNumber, selectDateIndex } = this.state
         if (!phoneNumber) {
             Taro.showToast({
                 title: '请授权手机号',
                 icon: 'none',
                 duration: 2000
             })
-        } else if (selectPeriodIdx === null) {
+        } else if (!(selectDateIndex in selectPeriodIdx)) {
             Taro.showToast({
                 title: '请选择一个时间段后再提交',
                 icon: 'none',
                 duration: 2000
             })
         } else {
-            const start = courses[selectPeriodIdx]['start']
+            const start = courses[selectPeriodIdx[selectDateIndex]]['start']
             createOrder({
                 user_id,
                 schedule_id: scheduleId,
                 course: start
             }).then(res => {
                 const { _id: { $oid } } = res.data
+                console.log(couponId)
                 checkoutOrder({
                     coupon_id: couponId,
                     order_id: $oid
@@ -171,10 +202,11 @@ class Book extends Component {
         })
     }
     selectPeriod(e) {
-        const { amount } = this.state
+        let { couponAmount, selectPeriodIdx, selectDateIndex } = this.state
+        selectPeriodIdx[selectDateIndex] = e.currentTarget.dataset.idx
         this.setState({
-            selectPeriodIdx: e.currentTarget.dataset.idx,
-            total: (getGlobalData('amount') - amount) / 100
+            selectPeriodIdx,
+            total: Math.max(getGlobalData('price') - couponAmount, 0) / 100
         })
     }
     async getPhoneNumber(e) {
@@ -209,12 +241,12 @@ class Book extends Component {
     changeDate(day) {
         this.setState({
             selectDateIndex: day,
-            selectPeriodIdx: null
+        }, () => {
+            this.getDateSchedules()
         })
-        this.getDateSchedules(day)
     }
     render() {
-        const { storeTitle, phoneNumber, courses, selectPeriodIdx } = this.state
+        const { storeTitle, phoneNumber, courses, selectPeriodIdx, selectDateIndex } = this.state
         return (
             <View className='book'>
                 <View className="book-info-wrapper">
@@ -234,7 +266,7 @@ class Book extends Component {
                     {courses.length ? courses.map((x, i) => {
                         const statusText = x.joined ? '您已预约' : x.full ? '满员' : `${x.num || '无'}人预约`
                         const statusClass = x.joined ? 'joined' : x.full || !x.num ? 'full' : ''
-                        return (<View key={i} data-idx={i} className={`period ${x.joined || x.full ? 'disable' : selectPeriodIdx == i ? 'selected' : ''}`} onClick={this.selectPeriod}>
+                        return (<View key={i} data-idx={i} className={`period ${x.joined || x.full ? 'disable' : selectPeriodIdx[selectDateIndex] == i ? 'selected' : ''}`} onClick={this.selectPeriod}>
                             <Text>{x.startTime}<Text className="timeGap">-</Text>{x.endTime}</Text>
                             <View className="period-detail">
                                 <View className="period-avatars-wrapper">
@@ -253,13 +285,13 @@ class Book extends Component {
                 {couponsNum ? <View className="coupon-wrapper" onClick={this.jumToCoupons}>
                     <Text>优惠券</Text>
                     <Text>
-                        <Text className={`coupon-text {amount?'amount':'coupon-num'}`}>{!amount ? `${couponsNum}个可用` : `-￥${amount}`}</Text>
+                        <Text className={`coupon-text ${couponAmount ? 'amount' : 'coupon-num'}`}>{!couponAmount ? `${couponsNum}个可用` : `-￥${couponAmount}`}</Text>
                         <Text className="icon-ic_more iconfont"></Text>
                     </Text>
                 </View> : null}
                 <View className="footer-placeholder"></View>
                 <View className="footer">
-                    <Text className="amount">￥{total}</Text>
+                    <Text className="total">￥{total}</Text>
                     <PostButton btn-class="pay-button" onClick={this.toPay}>立即支付</PostButton>
                 </View>
             </View>

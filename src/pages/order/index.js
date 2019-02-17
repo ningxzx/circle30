@@ -44,7 +44,7 @@ class Order extends Component {
       user_id
     }).then(res => {
       Taro.hideLoading()
-      const orders = res.data.filter(x => !!x.checkout)
+      const orders = res.data.filter(x => x.checkout.status=='done')
       const nowTime = (new Date()).getTime()
       orders.forEach(order => {
         const orderStartTime = order.schedule.course.start
@@ -56,17 +56,17 @@ class Order extends Component {
         order.shopTitle = order.schedule.shop.title
 
         const overTime = nowTime < orderEndTime * 1000
-        if (overTime) {
-          order.status = 0
-          order.statusText = '待预约'
+        if (order.refund) {
+          order.status = -1
+          order.statusText = '已取消'
         } else {
-          if (order.arrive) {
-            order.status = 1
-            order.statusText = '已训练'
+          if (overTime) {
+            order.status = 0
+            order.statusText = '待预约'
           } else {
-            if (order.refund) {
-              order.status = -1
-              order.statusText = '已取消'
+            if (order.arrive) {
+              order.status = 1
+              order.statusText = '已训练'
             } else {
               order.status = -2
               order.statusText = '已过期'

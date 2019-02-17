@@ -54,7 +54,6 @@
         }
     }
     .store-info {
-        height: 236px;
         padding: 40px 0;
         box-sizing: border-box;
         border-bottom: 1px solid @lineColor;
@@ -68,7 +67,6 @@
         .content {
             display: flex;
             justify-content: space-between;
-            height: 110px;
             .icon-ic_more {
                 margin-top: 40px;
             }
@@ -77,18 +75,17 @@
                 .icon-ic__add {
                     margin-right: 16px;
                     color: #000;
+                    margin-top: 3px;
                 }
             }
             .address-info {
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
                 Text {
                     width: 540px;
                 }
-            }
-            .store-name {
-                font-size: 30px;
+                .store-name {
+                    font-size: 30px;
+                    margin-bottom: 20px;
+                }
             }
             .address {
                 font-size: 24px;
@@ -111,15 +108,17 @@
         .student-wrapper {
             display: flex;
             height: 122px;
+            overflow-x: auto;
             .student {
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
                 margin-right: 30px;
+                width: 80px;
                 image {
                     width: 80px;
                     height: 80px;
-                    background-repeat: 40px;
+                    border-radius: 40px;
                 }
                 text {
                     width: 90px;

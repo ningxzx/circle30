@@ -6,16 +6,11 @@ import { set as setGlobalData, get as getGlobalData } from '../../utils/globalDa
 import { Coupon } from '../../components'
 import { createShareCoupon, verifyShareCoupon } from '../../actions/coupons'
 import './index.less'
+
 @connectLogin
 class Share extends Component {
   state = {
-    coupon: {
-      amount: 30,
-      title: '新用户体验券',
-      description: '所有门店通用',
-      token_id: ''
-    },
-    // toShare-发出邀请,shareBy-接收邀请
+    coupon: {},
     type: 'toShare',
     used: false
   }
@@ -32,11 +27,13 @@ class Share extends Component {
     const { type } = this.$router.params
     this.setState({
       type,
-      used: type !== 'toShare'
+      used: type !== 'toShare',
+      coupon: getGlobalData('invite_coupon'),
     })
     if (type == 'shareBy') {
       wx.hideShareMenu()
-      const coupon_id = getGlobalData('share_coupon_id')
+      const invite_coupon = getGlobalData('invite_coupon')
+      const coupon_id = invite_coupon._id.$oid
       const user_id = await requestUserId()
       const { token_id } = this.$router.params
       if (token_id) {
@@ -51,7 +48,8 @@ class Share extends Component {
     } else {
       Taro.showLoading()
       const user_id = await requestUserId()
-      const coupon_id = getGlobalData('share_coupon_id')
+      const invite_coupon = getGlobalData('invite_coupon')
+      const coupon_id = invite_coupon._id.$oid
       createShareCoupon({
         coupon_id,
         user_id

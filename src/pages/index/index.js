@@ -34,9 +34,9 @@ class Index extends Component {
         }).then(res => {
           if (res.code == 200) {
             Taro.showToast({
-              icon:'success',
-              title:'签到成功',
-              duration:2000
+              icon: 'success',
+              title: '签到成功',
+              duration: 2000
             })
           } else if (res.code == 4100) {
             Taro.showModal({
@@ -96,7 +96,7 @@ class Index extends Component {
     })
   }
   // 默认选择天府广场
-  getStores(location = { "latitude": 104.072329, "longitude": 30.66342 }) {
+  getStores(location = { "latitude": 30.66342, "longitude": 104.072329 }) {
     const { latitude, longitude } = location
     setGlobalData({ latitude, longitude })
     getShops({
@@ -105,14 +105,16 @@ class Index extends Component {
     }).then(res => {
       const list = res.data.map(shop => {
         const { title, address, location: { lat, lng }, ...rest } = shop
-        const distance = calDistance(latitude, longitude, lat, lng)
+        const { distance, pureDistance } = calDistance(latitude, longitude, lat, lng)
         return {
           title,
           address,
           distance,
+          pureDistance,
           ...rest
         }
       })
+      list.sort((a, b) => a.pureDistance > b.pureDistance ? 1 : -1)
       this.setState({
         stores: list
       })
@@ -136,21 +138,15 @@ class Index extends Component {
     const exerciseTitle = e.currentTarget.dataset.title
     const id = e.currentTarget.dataset.id
     const { selectDateIndex } = this.state
-    const store = this.state.stores[0]
-    const { _id: { $oid }, title } = store
     Taro.navigateTo({
-      url: `/pages/exercise/index?title=${exerciseTitle}&id=${id}&storeId=${$oid}&storeTitle=${title}&dateIndex=${selectDateIndex}`
+      url: `/pages/exercise/index?title=${exerciseTitle}&id=${id}&dateIndex=${selectDateIndex}`
     })
   }
   jumpToBook() {
     const { selectDateIndex } = this.state
-    const store = this.state.stores[0]
-    if (store) {
-      const { _id: { $oid }, title } = store
-      Taro.navigateTo({
-        url: `/pages/book/index?storeId=${$oid}&storeTitle=${title}&dateIndex=${selectDateIndex}`
-      })
-    }
+    Taro.navigateTo({
+      url: `/pages/book/index?dateIndex=${selectDateIndex}`
+    })
   }
   jumpToStore(e) {
     const { selectDateIndex } = this.state
@@ -220,7 +216,7 @@ class Index extends Component {
             {stores.length ? stores.map((store, i) => {
               return (<View className={`cell ${store.status == 'enable' ? '' : 'disable'} `} key={i} data-store={store} onClick={this.jumpToStore}>
                 <View className="left-content">
-                  <Text className="cell-title">{store.title}{store.status == 'enable' ? null : <Text className="status-str">暂停预约</Text>}</Text>
+                  <View className="cell-title">{store.title}{store.status == 'enable' ? null : <Text className="status-str">暂停预约</Text>}</View>
                   <View className="cell-detail">
                     <Text>{store.address}</Text>
                   </View>

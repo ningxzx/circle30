@@ -95,7 +95,8 @@
                 box-sizing: border-box;
                 padding: 40px 0;
                 .cell-title {
-                    display: block;
+                    display: flex;
+                    align-items: center;
                     font-size: 36px;
                     margin-bottom: 20px;
                 }
@@ -132,6 +133,9 @@
         }
         .cell.disable {
             // background-color: @bgColor;
+            .cell-title{
+                color: #666666;
+            }
         }
     }
     .authLocationTip {

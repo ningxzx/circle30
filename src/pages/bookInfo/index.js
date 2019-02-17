@@ -48,6 +48,7 @@ class BookInfo extends Component {
     this.setState({
       orderId: id
     })
+    Taro.showLoading({ title: '请求中...' })
     getOrder(id).then(res => {
       const _this = this
       if (res.data) {
@@ -87,11 +88,14 @@ class BookInfo extends Component {
           getTheSchedule({
             schedule_id: $oid
           }).then(res => {
+            Taro.hideLoading()
             if (res.data) {
               try {
                 const exercises = getUniqueExercise([res.data])
+                let users = res.data.courses.filter(x => x.start === orderStartTime)[0]['users']
                 _this.setState({
-                  exercises
+                  exercises,
+                  users
                 })
               } catch (err) {
                 console.log(err)
@@ -216,8 +220,8 @@ class BookInfo extends Component {
               <View className="left-content">
                 <Text className="icon-ic__add iconfont"></Text>
                 <View className="address-info">
-                  <Text className="store-name">{shop.title}</Text>
-                  <Text class="address">{shop.address}</Text>
+                  <View className="store-name">{shop.title}</View>
+                  <View class="address">{shop.address}</View>
                 </View>
               </View>
               <Text className="icon-ic_more iconfont"></Text>
@@ -228,9 +232,9 @@ class BookInfo extends Component {
             <View className="student-wrapper">
               {
                 users.map((user, i) => {
-                  return <View class="student" key={i}>
-                    <Image src={user.avatarUrl} />
-                    <Text>{user.name}</Text>
+                  return <View className="student" key={i}>
+                    <Image src={user.avatar} />
+                    <Text>{user.username}</Text>
                   </View>
                 })
               }

@@ -81,23 +81,23 @@ function getRad(d) {
  * @param {Object} lng2
  */
 export function calDistance(lat1, lng1, lat2, lng2) {
-    var radLat1 = getRad(lat1);
-    var radLat2 = getRad(lat2);
+    let radLat1 = getRad(lat1);
+    let radLat2 = getRad(lat2);
 
-    var a = radLat1 - radLat2;
-    var b = getRad(lng1) - getRad(lng2);
+    let a = radLat1 - radLat2;
+    let b = getRad(lng1) - getRad(lng2);
 
-    var s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
-    s = s * EARTH_RADIUS;
-    s = Math.round(s * 10000) / 10000.0;
-    if (s < 1000) {
-        s = s + 'm'
-    } else if (s <= 9900) {
-        s = Math.round(s / 100) / 10 + 'km'
+    let pureDistance = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
+    pureDistance = Math.round(pureDistance * EARTH_RADIUS);
+    let distance = ''
+    if (pureDistance < 1000) {
+        distance = pureDistance+ 'm'
+    } else if (pureDistance <= 9900) {
+        distance = Math.round(pureDistance / 100) / 10 + 'km'
     } else {
-        s = Math.round(s / 1000) + 'km'
+        distance = Math.round(pureDistance / 1000) + 'km'
     }
-    return s;
+    return { distance, pureDistance };
 }
 
 const concatArr = arr => arr.reduce((a, b) => a.concat(b), [])

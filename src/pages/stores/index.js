@@ -22,9 +22,11 @@ class StoreList extends Component {
     getShops().then(res => {
       const stores = res.data.map(store => {
         const { location: { lat, lng } } = store
-        store.distance = calDistance(latitude, longitude, lat, lng)
+        const { distance, pureDistance } = calDistance(latitude, longitude, lat, lng)
+        store = { ...store, ...{ distance, pureDistance } }
         return store
       })
+      stores.sort((a, b) => a.pureDistance > b.pureDistance ? 1 : -1)
       this.setState({
         stores
       })
@@ -56,7 +58,7 @@ class StoreList extends Component {
         {stores.length ? stores.map((store, i) => {
           return (<View className={`cell ${store.status == 'enable' ? '' : 'disable'} ${i == selectIdx ? 'selected' : ''}`} key={i} data-idx={i} data-status={store.status} onClick={this.toStoreInfo} >
             <View className="left-content">
-              <Text className="cell-title">{store.title}{store.status == 'enable' ? null : <Text className="status-str">暂停预约</Text>}</Text>
+              <View className="cell-title">{store.title}{store.status == 'enable' ? null : <Text className="status-str">暂停预约</Text>}</View>
               <View className="cell-detail">
                 <Text>{store.address}</Text>
               </View>

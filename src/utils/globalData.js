@@ -14,7 +14,7 @@ export function get(param) {
     if (typeof param === 'string') {
         return globalData[param]
     } else if (Array.isArray(param)&&param.every(x=>!!x)) {
-        let res = []
+        let res = {}
         param.forEach(x=>{
             res[x] = globalData[x]
         })

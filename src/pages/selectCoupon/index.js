@@ -13,10 +13,16 @@ class SelectCoupon extends Component {
         navigationBarTitleText: '我的卡券'
     }
     state = {
-        coupons: []
+        coupons: [],
+        selectCouponId: ''
     }
     componentDidShow() {
         this.getUserCoupons()
+        if (getGlobalData('selectCoupon')) {
+            this.setState({
+                selectCouponId: getGlobalData('selectCoupon')._id.$oid
+            })
+        }
     }
     async getUserCoupons() {
         const user_id = await requestUserId()
@@ -28,35 +34,45 @@ class SelectCoupon extends Component {
         })
     }
     selectCoupon(e) {
-        const i = e.currentTarget.dataset.idx
-        this.setState({
-            selectIndex: i
-        }, () => {
-            const pages = Taro.getCurrentPages()
-            const lastPage = pages[pages.length - 2]
-            if (lastPage && lastPage.route === 'pages/book/index') {
+        const id = e.currentTarget.dataset.id
+        const idx = e.currentTarget.dataset.idx
+        const { selectCouponId } = this.state
+        if (selectCouponId != id) {
+            this.setState({
+                selectCouponId: id
+            }, () => {
                 const { coupons } = this.state
-                const idx = i
                 setGlobalData('selectCoupon', coupons[idx])
                 Taro.navigateBack({
                     delta: -1
                 })
-            }
-        })
+
+            })
+        } else {
+            this.setState({
+                selectCouponId: ''
+            }, () => {
+                setGlobalData('selectCoupon', null)
+                Taro.navigateBack({
+                    delta: -1
+                })
+            })
+        }
     }
     render() {
-        const { coupons, selectIndex } = this.state
+        const { coupons, selectCouponId } = this.state
         return (
             <View className={`coupon-list ${!coupons.length ? 'no-coupon' : ''}`}>
                 {coupons.length ? coupons.map((couponObj, i) => {
                     const coupon = couponObj.coupon
-                    return (<View className={`coupon ${selectIndex == i ? 'active' : ''}`} onClick={this.selectCoupon} key={i} data-idx={i}>
+                    const id = couponObj._id.$oid
+                    return (<View className={`coupon ${selectCouponId == id ? 'active' : ''}`} onClick={this.selectCoupon} key={i} data-idx={i} data-id={id}>
                         <View className="amount">{coupon.amount / 100}<Text class="symbol">￥</Text></View>
                         <View className="detail">
                             <Text class="title">{coupon.title}</Text>
                             <Text class="range">{coupon.description}</Text>
                         </View>
-                        {selectIndex == i ? <Icon type='success' className="selectIcon" /> : <View className="circle"></View>}
+                        {selectCouponId == id ? <Icon type='success' className="selectIcon" /> : <View className="circle"></View>}
                     </View>)
                 }) : <View className="no-coupon-wrapper" ><Image className="no-coupon" src="cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_12_wuquan@2x.png"></Image><View className="no-coupon-text">暂无优惠券</View></View>}
             </View>

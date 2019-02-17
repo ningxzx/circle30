@@ -3,7 +3,7 @@ import { format } from 'date-fns'
 
 
 export const HTTP_STATUS = {
-    SUCCESS: 200,
+    SUCCESS: [200, 201],
     CLIENT_ERROR: 400,
     AUTHENTICATE: 401,
     FORBIDDEN: 403,
@@ -12,7 +12,7 @@ export const HTTP_STATUS = {
     BAD_GATEWAY: 502,
     SERVICE_UNAVAILABLE: 503,
     GATEWAY_TIMEOUT: 504
-  }
+}
 
 export const base = "https://stage.circle30.com/api"
 
@@ -55,17 +55,19 @@ export default {
             url: base + url,
             data: data,
             method: method,
-            header: { 'content-type': contentType},
+            header: { 'content-type': contentType },
             success(res) {
                 Taro.hideNavigationBarLoading()
+                console.log(HTTP_STATUS.SUCCESS.includes(res.statusCode))
+
                 if (res.statusCode === HTTP_STATUS.NOT_FOUND) {
-                    console.log( base + url)
+                    console.log(base + url)
                     return logError('api', '请求资源不存在')
                 } else if (res.statusCode === HTTP_STATUS.BAD_GATEWAY) {
                     return logError('api', '服务端出现了问题')
                 } else if (res.statusCode === HTTP_STATUS.FORBIDDEN) {
                     return logError('api', '没有权限访问')
-                } else if (res.statusCode === HTTP_STATUS.SUCCESS) {
+                } else if (HTTP_STATUS.SUCCESS.includes(res.statusCode)) {
                     return res.data
                 }
             },

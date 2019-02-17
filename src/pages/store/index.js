@@ -185,7 +185,7 @@ class Store extends Component {
           </View> : null}
           <View className={`description ${showAllDesc ? '' : 'line-limit'}`}><Text>{description}</Text>
           </View>
-          <View onClick={this.onShowAllDesc} className="show-all-icon">{showAllDesc ? '收起' : '更多>'}</View>
+          <View onClick={this.onShowAllDesc} className="show-all-icon">{showAllDesc ? '' : '更多>'}</View>
         </View>
         <View className="card">
           <View className="card-title">
