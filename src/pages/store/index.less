@@ -90,25 +90,29 @@
             }
         }
         .description {
-            margin: 30px 28px 0;
+            position: relative;
+            margin: 30px 28px;
             border: none;
+            text-align: justify;
             text{
                 line-height: 34px;
+                word-break: break-word;
             }
         }
-        .description.line-limit {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 4;
-            -webkit-box-orient: vertical;
-            align-items: flex-start;
-        }
+        // .description.line-limit {
+        //     overflow: hidden;
+        //     text-overflow: ellipsis;
+        //     display: -webkit-box;
+        //     -webkit-line-clamp: 4;
+        //     -webkit-box-orient: vertical;
+        //     align-items: flex-start;
+        // }
         .show-all-icon{
+            position: absolute;
+            right: 0;
+            top: 102px;
             color: @mainColor;
             line-height: 34px;
-            margin-top: 10px;
-            margin-bottom: 30px;
             display: flex;
             justify-content: flex-end;
         }
@@ -207,5 +211,6 @@
     }
     .disabled.book-btn{
         background-color: #ccc;
+        color: #999;
     }
 }

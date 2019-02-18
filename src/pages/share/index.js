@@ -12,7 +12,7 @@ class Share extends Component {
   state = {
     coupon: {},
     type: 'toShare',
-    used: false
+    recieved: false
   }
 
   config = {
@@ -27,8 +27,8 @@ class Share extends Component {
     const { type } = this.$router.params
     this.setState({
       type,
-      used: type !== 'toShare',
-      coupon: getGlobalData('invite_coupon'),
+      recieved: type === 'shareBy',
+      coupon: type === 'toShare' ? getGlobalData('invite_coupon') : getGlobalData('newer_coupon'),
     })
     if (type == 'shareBy') {
       wx.hideShareMenu()
@@ -68,7 +68,6 @@ class Share extends Component {
   }
   onShareAppMessage() {
     const url = `pages/share/index?type=shareBy&token_id=${this.state.token_id}`
-    console.log(url)
     return {
       title: '送你一张CirCle30减脂训练体验券，跟我一起来锻炼吧！',
       path: url,
@@ -86,8 +85,10 @@ class Share extends Component {
 
   render() {
     const pixelRatio = getGlobalData('pixelRatio')
-    const { coupon, type, used } = this.state
+    const { coupon, type, recieved } = this.state
     const ratio = pixelRatio === 3 ? '3' : '2'
+    const userName=Taro.getStorageSync('nickName')
+    const avatarUrl=Taro.getStorageSync('avatarUrl')
     return (
       <View className='share'>
         <View class="logo-wrapper">
@@ -95,8 +96,8 @@ class Share extends Component {
           <View class="circle"></View>
         </View>
         {type === 'shareBy' ? (<View className="content shareBy">
-          <Image className="avatar" src={`cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/default_icon@${ratio}x.png`}></Image>
-          <Text className="userName">刘二狗</Text>
+          <Image className="avatar" src={avatarUrl||`cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/default_icon@${ratio}x.png`}></Image>
+          <Text className="userName">{userName}</Text>
           <Text className="mainTitle">我正在参加CirCle30减脂训练</Text>
           <Text className="subTitle">送你一张体验券，一起来锻炼吧！</Text>
         </View>) : (<View className="content toShare">
@@ -105,7 +106,7 @@ class Share extends Component {
           <Text className="subTitle">好友注册成功后</Text>
           <Text className="subTitle">代金券将会自动发放至你的账户中</Text>
         </View>)}
-        <Coupon used={used} coupon={coupon}></Coupon>
+        <Coupon recieved={recieved} coupon={coupon}></Coupon>
         {type === 'shareBy' ? <Button className="gotoBook" onClick={this.jumpToBook}>立即预约训练</Button> : <Button className="gotoBook" openType="share" >立即邀请好友</Button>}
       </View>
     )

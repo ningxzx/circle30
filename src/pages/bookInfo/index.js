@@ -64,17 +64,17 @@ class BookInfo extends Component {
         let status = 0
         let statusText = ''
         const overTime = nowTime < orderEndTime * 1000
-        if (overTime) {
-          status = 0
-          statusText = '待预约'
+        if (order.refund) {
+          status = -1
+          statusText = '已取消'
         } else {
-          if (order.arrive) {
-            status = 1
-            statusText = '已训练'
+          if (overTime) {
+            status = 0
+            statusText = '待预约'
           } else {
-            if (order.refund) {
-              status = -1
-              statusText = '已取消'
+            if (order.arrive) {
+              status = 1
+              statusText = '已训练'
             } else {
               status = -2
               statusText = '已过期'
@@ -169,15 +169,25 @@ class BookInfo extends Component {
   }
   refund() {
     const { orderId } = this.state
-
     refundOrder(orderId).then(res => {
-      Taro.showToast({
-        icon: 'success',
-        duration: 2000,
-        titile: '已取消预约'
-      }).then(() => {
-        Taro.redirectTo(`/pages/bookInfo/index?id=${orderId}`)
-      })
+      const data = res.data
+      if (data.code == 200) {
+        Taro.showToast({
+          icon: 'success',
+          duration: 2000,
+          title: '已取消预约'
+        }).then((res) => {
+          Taro.redirectTo({
+            url:`/pages/bookInfo/index?id=${orderId}`
+          })
+        })
+      } else{
+        Taro.showModal({
+          title: '错误提示',
+          content: '订单取消失败',
+          showCancel:false
+        })
+      }
     })
   }
   componentDidHide() { }
@@ -227,7 +237,7 @@ class BookInfo extends Component {
               <Text className="icon-ic_more iconfont"></Text>
             </View>
           </View>
-          <View className="students-info">
+          {users.length ? <View className="students-info">
             <Text className="title">预约学员</Text>
             <View className="student-wrapper">
               {
@@ -239,7 +249,7 @@ class BookInfo extends Component {
                 })
               }
             </View>
-          </View>
+          </View> : null}
         </View>
         <View className="card">
           <View className="card-title">
@@ -291,7 +301,7 @@ class BookInfo extends Component {
               <PostButton onClick={this.handleRefund} btn-class='refund-btn'>取消预约</PostButton>
               <Text>* 请在训练开始前到达门店，提前10分钟即可签到</Text>
               <Text>* 训练开始前2小时内不支持取消预约</Text>
-              <Text>* 训练结束后仍未签到，预约订单将会自动失效 行距20px</Text>
+              <Text>* 训练结束后仍未签到，预约订单将会自动失效</Text>
             </View> : null}
         </View>
       </View >

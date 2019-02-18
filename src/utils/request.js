@@ -58,8 +58,6 @@ export default {
             header: { 'content-type': contentType },
             success(res) {
                 Taro.hideNavigationBarLoading()
-                console.log(HTTP_STATUS.SUCCESS.includes(res.statusCode))
-
                 if (res.statusCode === HTTP_STATUS.NOT_FOUND) {
                     console.log(base + url)
                     return logError('api', '请求资源不存在')

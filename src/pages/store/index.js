@@ -44,38 +44,42 @@ class Store extends Component {
       url: `/pages/students/index?storeId=${id}`
     })
   }
-  componentDidShow() {
+  componentDidMount() {
     const { id, dateIndex } = this.$router.params
     this.setState({
       id,
       selectDateIndex: dateIndex || 0
     }, () => {
-      Taro.showLoading()
+      Taro.showLoading({
+        title: '请求中...'
+      })
       // 查询门店详情
       getTheShop({
         shop_id: id
       }).then(res => {
         Taro.hideLoading()
-        const { _id: { $oid }, service_time, title, phone, location, images, description, status, address } = res.data
+        let { _id: { $oid }, service_time, title, phone, location, images, description, status, address } = res.data
         this.setState({ id: $oid, service_time, title, phone, location, images, description, status, address })
       })
-      // 查询预约过的用户
-      getShopUsers({
-        shop_id: id
-      }).then(res => {
-        if (res.data) {
-          const studentsNum = res.data.length
-          const avatars = res.data.map(user => {
-            return user.avatar
-          })
-          this.setState({
-            studentsNum,
-            avatars
-          })
-        }
-      })
-      this.getDateSchedules(dateIndex)
     })
+  }
+  componentDidShow() {
+    // 查询预约过的用户
+    getShopUsers({
+      shop_id: id
+    }).then(res => {
+      if (res.data) {
+        const studentsNum = res.data.length
+        const avatars = res.data.map(user => {
+          return user.avatar
+        })
+        this.setState({
+          studentsNum,
+          avatars
+        })
+      }
+    })
+    this.getDateSchedules(dateIndex)
   }
   makePhoneCall() {
     const { phone } = this.state
@@ -101,11 +105,13 @@ class Store extends Component {
       date: addDayStr(days)
     }).then(res => {
       if (res.data && res.data.length) {
-        const schedule = res.data[0]
         const exercises = getUniqueExercise(res.data)
         this.setState({
           exercises,
-          scheduleId: schedule._id.$oid
+        })
+      } else {
+        this.setState({
+          exercises: []
         })
       }
     })
@@ -133,13 +139,12 @@ class Store extends Component {
     return images[0]
   }
   onShowAllDesc() {
-    const showAllDesc = this.state.showAllDesc
     this.setState({
-      showAllDesc: !showAllDesc
+      showAllDesc: true
     })
   }
   render() {
-    const { title, service_time, phone, description, address, images, studentsNum, avatars, selectDateIndex, showAllDesc ,status} = this.state
+    const { title, service_time, phone, description, address, images, studentsNum, avatars, selectDateIndex, showAllDesc, status } = this.state
     return (
       <View className='store'>
         <Swiper
@@ -183,9 +188,10 @@ class Store extends Component {
             </View>
             <Text>{`${studentsNum}位学员`}</Text>
           </View> : null}
-          <View className={`description ${showAllDesc ? '' : 'line-limit'}`}><Text>{description}</Text>
+          <View onClick={this.onShowAllDesc} className={`description ${showAllDesc ? '' : 'line-limit'}`}>
+            <Text>{description.length > 142 ? (showAllDesc ? description : description.slice(0, 136) + '...') : description}</Text>
+          {description.length > 142 ? (showAllDesc ?'':<View onClick={this.onShowAllDesc} className="show-all-icon">更多></View>): null}
           </View>
-          <View onClick={this.onShowAllDesc} className="show-all-icon">{showAllDesc ? '' : '更多>'}</View>
         </View>
         <View className="card">
           <View className="card-title">
@@ -213,7 +219,7 @@ class Store extends Component {
             </View>}
         </View >
         <View className="book-btn-placeholder"></View>
-        <PostButton btn-class={`book-btn ${status!='enable'?'disabled':''}`} onClick={this.jumpToBook} disabled={status!='enable'}>立即预约</PostButton>
+        <PostButton btn-class={`book-btn ${status != 'enable' ? 'disabled' : ''}`} onClick={this.jumpToBook} disabled={status != 'enable'}>立即预约</PostButton>
       </View>
     )
   }

@@ -7,11 +7,11 @@ import './index.less'
 class Coupon extends Component {
     static defaultProps = {
         coupon: {},
-        used: false
+        recieved: false
     }
     render() {
         const pixelRatio = getGlobalData('pixelRatio')
-        const { coupon: { amount, title, description }, used} = this.props
+        const { coupon: { amount, title, description }, recieved} = this.props
         return (
             <View className={`coupon ${pixelRatio == 3 ? 'coupon-3x' : 'coupon-2x'}`}>
                 <View className="amount">{amount/100}<Text class="symbol">￥</Text></View>
@@ -19,7 +19,7 @@ class Coupon extends Component {
                     <Text class="title">{title}</Text>
                     <Text class="range">{description}</Text>
                 </View>
-                {used ? <View className="useStatus">已领取</View> : null}
+                {recieved ? <View className="useStatus">已领取</View> : null}
             </View>
         )
     }

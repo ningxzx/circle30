@@ -41,10 +41,11 @@ class Order extends Component {
     Taro.showLoading({ title: '请求中...' })
     const user_id = await requestUserId()
     getOrders({
-      user_id
+      user_id,
+      checkout_status:'done'
     }).then(res => {
       Taro.hideLoading()
-      const orders = res.data.filter(x => x.checkout.status=='done')
+      const orders = res.data
       const nowTime = (new Date()).getTime()
       orders.forEach(order => {
         const orderStartTime = order.schedule.course.start
@@ -76,11 +77,12 @@ class Order extends Component {
       })
       this.setState({
         oldOrders: orders.filter(x => x.status !== 0).sort((a, b) => {
-          return a.schedule.course.start > b.schedule.course.start ? 1 : -1
+          return a.schedule.course.start > b.schedule.course.start ? -1 : 1
         }),
         newOrders: orders.filter(x => x.status === 0).sort((a, b) => {
-          return a.schedule.course.start > b.schedule.course.start ? -1 : 1
+          return a.schedule.course.start > b.schedule.course.start ? 1 : -1
         })
+
       })
     })
   }
