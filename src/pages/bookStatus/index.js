@@ -3,6 +3,8 @@ import { View, Button, Text } from '@tarojs/components'
 import { connectLogin, withShare } from '../../utils/helper'
 import { PostButton } from '../../components'
 import './index.less'
+import successImage from '../../assets/images/img_8_chenggong@3x.png'
+
 @connectLogin
 @withShare()
 class BookStatus extends Component {
@@ -38,7 +40,7 @@ class BookStatus extends Component {
   render() {
     return (
       <View className='bookStatus'>
-        <Image className="status-image" src="cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_8_chenggong@2x.png"></Image>
+        <Image className="status-image" src={successImage}></Image>
         <Text className="mainText">预约成功</Text>
         <Text className="subText">请提前到达预约门店签到</Text>
         <PostButton btn-class="circle-btn info-btn" onClick={this.toInfo}>查看预约详情</PostButton>

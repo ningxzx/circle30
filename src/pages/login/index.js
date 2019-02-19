@@ -4,6 +4,8 @@ import { withShare,saveUserInfo } from '../../utils/helper'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 
 import './index.less'
+import defaultIconImage from '../../assets/images/default_icon@3x.png'
+
 @withShare()
 class Login extends Component {
   state={
@@ -37,8 +39,7 @@ class Login extends Component {
   }
 
   render() {
-    const ratio = getGlobalData('pixelRatio') === 3 ? '3' : '2'
-    const defaultAvatarUrl = `cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/default_icon@${ratio}x.png`
+    const defaultAvatarUrl = defaultIconImage
     return (
       <View className='login'>
         <Image src={this.state.avatarUrl||defaultAvatarUrl} className="avatar"></Image>

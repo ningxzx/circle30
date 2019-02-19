@@ -2,10 +2,11 @@ import { ComponentClass } from 'react'
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text, Icon } from '@tarojs/components'
 import { connectLogin, requestUserId, withShare } from '../../utils/helper'
-import { Coupon } from '../../components'
 import { getCoupons } from '../../actions/coupons'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 import './index.less'
+import noCouponImage from '../../assets/images/img_12_wuquan@3x.png'
+
 @connectLogin
 @withShare()
 class SelectCoupon extends Component {
@@ -74,7 +75,10 @@ class SelectCoupon extends Component {
                         </View>
                         {selectCouponId == id ? <Icon type='success' className="selectIcon" /> : <View className="circle"></View>}
                     </View>)
-                }) : <View className="no-coupon-wrapper" ><Image className="no-coupon" src="cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_12_wuquan@2x.png"></Image><View className="no-coupon-text">暂无优惠券</View></View>}
+                }) : (<View className="no-coupon-wrapper" >
+                    <Image className="no-coupon" src={noCouponImage}></Image>
+                    <View className="no-coupon-text">暂无优惠券</View>
+                </View>)}
             </View>
         )
     }

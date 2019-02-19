@@ -12,6 +12,7 @@ import { FULL_NUM } from '../../constants/app'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 
 import './index.less'
+import noplanImage from '../../assets/images/img_noplan@3x.png'
 
 @connectLogin
 @withShare()
@@ -33,7 +34,7 @@ class Book extends Component {
         const { dateIndex, storeTitle, storeId } = this.$router.params
         this.setState({
             phoneNumber: Taro.getStorageSync('phoneNumber') || '',
-            selectDateIndex: dateIndex
+            selectDateIndex: dateIndex||0
         }, () => {
             if (storeId) {
                 this.setState({
@@ -98,6 +99,7 @@ class Book extends Component {
         const dateIndex = this.state.selectDateIndex
         const user_id = Taro.getStorageSync('user_id')
         const str = addDayStr(dateIndex)
+        console.log(str)
         const shop_id = this.state.storeId
         getSchedules({
             shop_id,
@@ -277,7 +279,7 @@ class Book extends Component {
                                 <Text className={`${statusClass} status-text`}>{statusText}</Text>
                             </View>
                         </View>)
-                    }) : <View className="blank-wrapper" ><Image src="cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_noplan@2x.png" />
+                    }) : <View className="blank-wrapper" ><Image src={noplanImage} />
                             <Text>暂无训练计划</Text>
                         </View>}
                 </View>

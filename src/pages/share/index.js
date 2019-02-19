@@ -1,11 +1,14 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
-import { connectLogin, requestUserId } from '../../utils/helper'
+import { connectLogin } from '../../utils/helper'
 
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 import { Coupon } from '../../components'
 import { createShareCoupon, verifyShareCoupon } from '../../actions/coupons'
+import { getSingleUser } from '../../actions/user'
 import './index.less'
+import logoImage from '../../assets/images/img_logo@3x.png'
+import defaultIconImage from '../../assets/images/default_icon@3x.png'
 
 @connectLogin
 class Share extends Component {
@@ -23,31 +26,53 @@ class Share extends Component {
     console.log(this.props, nextProps)
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     const { type } = this.$router.params
-    this.setState({
-      type,
-      recieved: type === 'shareBy',
-      coupon: type === 'toShare' ? getGlobalData('invite_coupon') : getGlobalData('newer_coupon'),
-    })
     if (type == 'shareBy') {
       wx.hideShareMenu()
       const invite_coupon = getGlobalData('invite_coupon')
       const coupon_id = invite_coupon._id.$oid
-      const user_id = await requestUserId()
-      const { token_id } = this.$router.params
-      if (token_id) {
-        verifyShareCoupon({
+      const user_id = Taro.getStorageSync('user_id')
+      const { token_id, share_user_id } = this.$router.params
+      if (token_id && share_user_id) {
+        Taro.showLoading({
+          title: '请求中...'
+        })
+        Promise.all([verifyShareCoupon({
           coupon_id,
           user_id,
           token_id
-        }).then(res => {
-
+        }), getSingleUser(share_user_id)]).then(resArr => {
+          const [res1, res2] = resArr
+          Taro.hideLoading()
+          if (res2.data) {
+            const { username, avatar } = res2.data
+            this.setState({
+              type,
+              recieved: type === 'shareBy',
+              coupon: type === 'toShare' ? getGlobalData('invite_coupon') : getGlobalData('newer_coupon'),
+              userName: username,
+              avatarUrl: avatar
+            })
+          }
+        }).catch(() => {
+          Taro.showModal({
+            title: '请求出错！',
+            content: '请检查网络连接后重试',
+            showCancel: false
+          })
         })
       }
     } else {
+      this.setState({
+        type,
+        recieved: type === 'shareBy',
+        coupon: type === 'toShare' ? getGlobalData('invite_coupon') : getGlobalData('newer_coupon'),
+        userName: Taro.getStorageSync('nickName'),
+        avatarUrl: Taro.getStorageSync('avatarUrl')
+      })
       Taro.showLoading()
-      const user_id = await requestUserId()
+      const user_id = Taro.getStorageSync('user_id')
       const invite_coupon = getGlobalData('invite_coupon')
       const coupon_id = invite_coupon._id.$oid
       createShareCoupon({
@@ -67,7 +92,7 @@ class Share extends Component {
     })
   }
   onShareAppMessage() {
-    const url = `pages/share/index?type=shareBy&token_id=${this.state.token_id}`
+    const url = `pages/share/index?type=shareBy&token_id=${this.state.token_id}&share_user_id=${Taro.getStorageSync('user_id')}`
     return {
       title: '送你一张CirCle30减脂训练体验券，跟我一起来锻炼吧！',
       path: url,
@@ -85,18 +110,16 @@ class Share extends Component {
 
   render() {
     const pixelRatio = getGlobalData('pixelRatio')
-    const { coupon, type, recieved } = this.state
+    const { coupon, type, recieved, avatarUrl, userName } = this.state
     const ratio = pixelRatio === 3 ? '3' : '2'
-    const userName=Taro.getStorageSync('nickName')
-    const avatarUrl=Taro.getStorageSync('avatarUrl')
     return (
       <View className='share'>
         <View class="logo-wrapper">
-          <Image src={`cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_logo@${ratio}x.png`}></Image>
+          <Image src={logoImage}></Image>
           <View class="circle"></View>
         </View>
         {type === 'shareBy' ? (<View className="content shareBy">
-          <Image className="avatar" src={avatarUrl||`cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/default_icon@${ratio}x.png`}></Image>
+          <Image className="avatar" src={avatarUrl || defaultIconImage}></Image>
           <Text className="userName">{userName}</Text>
           <Text className="mainTitle">我正在参加CirCle30减脂训练</Text>
           <Text className="subTitle">送你一张体验券，一起来锻炼吧！</Text>

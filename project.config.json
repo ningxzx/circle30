@@ -13,5 +13,40 @@
 	"compileType": "miniprogram",
 	"libVersion": "2.5.0",
 	"appid": "wx880c53e9a6239e51",
-	"condition": {}
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"plugin": {
+			"current": -1,
+			"list": []
+		},
+		"game": {
+			"list": []
+		},
+		"miniprogram": {
+			"current": 1,
+			"list": [
+				{
+					"id": 0,
+					"name": "share",
+					"pathName": "pages/share/index",
+					"query": "type=shareBy&token_id=5c6bfb19eebc11011b3cf591&share_user_id=5c4fc0beeebc11006b1490fb",
+					"scene": null
+				},
+				{
+					"id": 1,
+					"name": "coupon",
+					"pathName": "pages/coupons/index",
+					"query": "",
+					"scene": null
+				}
+			]
+		}
+	}
 }

@@ -11,10 +11,10 @@ class Coupon extends Component {
     }
     render() {
         const pixelRatio = getGlobalData('pixelRatio')
-        const { coupon: { amount, title, description }, recieved} = this.props
+        const { coupon: { amount, title, description }, recieved } = this.props
         return (
             <View className={`coupon ${pixelRatio == 3 ? 'coupon-3x' : 'coupon-2x'}`}>
-                <View className="amount">{amount/100}<Text class="symbol">￥</Text></View>
+                <View className="amount">{amount ? amount / 100 : ''}<Text class="symbol">￥</Text></View>
                 <View className="detail">
                     <Text class="title">{title}</Text>
                     <Text class="range">{description}</Text>

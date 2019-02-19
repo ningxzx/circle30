@@ -6,6 +6,7 @@ import { Coupon } from '../../components'
 import { getCoupons } from '../../actions/coupons'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 import './index.less'
+import noCouponImage from '../../assets/images/img_12_wuquan@3x.png'
 @connectLogin
 @withShare()
 class CouponList extends Component {
@@ -34,7 +35,7 @@ class CouponList extends Component {
         {coupons.length ? coupons.map((couponObj, i) => {
           const coupon = couponObj.coupon
           return <View className="coupon-item" onClick={this.selectCoupon} key={i} data-idx={i}><Coupon hasMargin={true} coupon={coupon}></Coupon></View>
-        }) : <View className="no-coupon-wrapper" ><Image className="no-coupon" src="cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_12_wuquan@2x.png"></Image><View className="no-coupon-text">暂无优惠券</View></View>}
+        }) : <View className="no-coupon-wrapper" ><Image className="no-coupon" src={noCouponImage}></Image><View className="no-coupon-text">暂无优惠券</View></View>}
       </View>
     )
   }

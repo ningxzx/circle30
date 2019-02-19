@@ -1,9 +1,11 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Swiper, Text } from '@tarojs/components'
-import { connectLogin, requestUserId, withShare } from '../../utils/helper'
+import { connectLogin, withShare } from '../../utils/helper'
 import { getOrders } from '../../actions/order'
 import { formatDate, formatWeek, formatHour } from '../../utils/tool'
 import './index.less'
+import noplanImage from '../../assets/images/img_noplan@3x.png'
+
 
 const classNames = {
   '0': '',
@@ -37,12 +39,12 @@ class Order extends Component {
       })
     }
   }
-  async getOrderList() {
+  getOrderList() {
     Taro.showLoading({ title: '请求中...' })
-    const user_id = await requestUserId()
+    const user_id = Taro.getStorageSync('user_id')
     getOrders({
       user_id,
-      checkout_status:'done'
+      checkout_status: 'done'
     }).then(res => {
       Taro.hideLoading()
       const orders = res.data
@@ -117,9 +119,10 @@ class Order extends Component {
                     <Text className="icon-ic_more iconfont"></Text>
                   </View>
                 </View>)
-              }) : <View className="blank-wrapper" ><Image src="cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_noplan@2x.png" />
-                  <Text>暂无训练计划</Text>
-                </View>}
+              }) : (<View className="blank-wrapper" >
+                <Image src={noplanImage} />
+                <Text>暂无训练计划</Text>
+              </View>)}
             </SwiperItem>
             <SwiperItem className={`order-list-wrapper ${oldOrders.length ? '' : 'blank'}`}>
               {oldOrders.length ? oldOrders.map((order, i) => {
@@ -134,7 +137,7 @@ class Order extends Component {
                     <Text className="icon-ic_more iconfont"></Text>
                   </View>
                 </View>)
-              }) : <View className="blank-wrapper" ><Image src="cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_noplan@2x.png" />
+              }) : <View className="blank-wrapper" ><Image src={noplanImage} />
                   <Text>暂无训练计划</Text>
                 </View>}
             </SwiperItem>

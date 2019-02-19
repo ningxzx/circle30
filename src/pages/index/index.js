@@ -7,6 +7,8 @@ import { getShops } from '../../actions/shop'
 import { getSchedules, userCheckin } from '../../actions/schedule'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 import './index.less'
+import noplanImage from '../../assets/images/img_noplan@3x.png'
+
 @connectLogin
 @withShare()
 class Index extends Component {
@@ -202,7 +204,7 @@ class Index extends Component {
               </View>
               <Text className="icon-ic_more iconfont"></Text>
             </View>)
-          }) : <View className="blank-wrapper" ><Image src="cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_noplan@2x.png" />
+          }) : <View className="blank-wrapper" ><Image src={noplanImage} />
               <Text>暂无训练计划</Text>
             </View>}
         </View >

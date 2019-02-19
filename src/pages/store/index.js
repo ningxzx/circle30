@@ -6,6 +6,8 @@ import { WeekDate, PostButton } from '../../components'
 import { getTheShop, getShopUsers } from '../../actions/shop'
 import { getSchedules } from '../../actions/schedule'
 import './index.less'
+import noplanImage from '../../assets/images/img_noplan@3x.png'
+
 
 @connectLogin
 @withShare()
@@ -64,9 +66,10 @@ class Store extends Component {
     })
   }
   componentDidShow() {
+    const { id, dateIndex } = this.$router.params
     // 查询预约过的用户
     getShopUsers({
-      shop_id: this.state.id
+      shop_id: id
     }).then(res => {
       if (res.data) {
         const studentsNum = res.data.length
@@ -79,7 +82,9 @@ class Store extends Component {
         })
       }
     })
-    this.getDateSchedules(this.state.selectDateIndex)
+    const { selectDateIndex } = this.state
+    const index = selectDateIndex === 0 || selectDateIndex ? selectDateIndex : dateIndex
+    this.getDateSchedules(index, id)
   }
   makePhoneCall() {
     const { phone } = this.state
@@ -88,16 +93,15 @@ class Store extends Component {
     })
   }
   openMap() {
-    const { location: { lat, lng },title,address } = this.state
+    const { location: { lat, lng }, title, address } = this.state
     Taro.openLocation({
       latitude: lat,
       longitude: lng,
-      name:title,
+      name: title,
       address
     })
   }
-  getDateSchedules(days = 0) {
-    const { id } = this.state
+  getDateSchedules(days = 0, id) {
     this.setState({
       selectDateIndex: days
     })
@@ -192,7 +196,7 @@ class Store extends Component {
           </View> : null}
           <View onClick={this.onShowAllDesc} className={`description ${showAllDesc ? '' : 'line-limit'}`}>
             <Text>{description.length > 142 ? (showAllDesc ? description : description.slice(0, 136) + '...') : description}</Text>
-          {description.length > 142 ? (showAllDesc ?'':<View onClick={this.onShowAllDesc} className="show-all-icon">更多></View>): null}
+            {description.length > 142 ? (showAllDesc ? '' : <View onClick={this.onShowAllDesc} className="show-all-icon">更多></View>) : null}
           </View>
         </View>
         <View className="card">
@@ -216,7 +220,7 @@ class Store extends Component {
               </View>
               <Text className="icon-ic_more iconfont"></Text>
             </View>)
-          }) : <View className="blank-wrapper" ><Image src="cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_noplan@2x.png" />
+          }) : <View className="blank-wrapper" ><Image src={noplanImage} />
               <Text>暂无训练计划</Text>
             </View>}
         </View >

@@ -148,6 +148,7 @@ export const userLogin = async () => {
  */
 export async function requestUserId() {
     let user_id = Taro.getStorageSync('user_id')
+    let unionid = Taro.getStorageSync('unionid')
     if (!user_id) {
         const res = await getUser({ unionid })
         user_id = res[0]._id.$oid

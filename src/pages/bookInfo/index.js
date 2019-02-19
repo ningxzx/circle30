@@ -6,6 +6,8 @@ import { refundOrder, getOrder } from '../../actions/order'
 import { getTheSchedule } from '../../actions/schedule'
 import { formatDate, formatWeek, formatHour, formatNormalDate, getUniqueExercise } from '../../utils/tool'
 import './index.less'
+import noplanImage from '../../assets/images/img_noplan@3x.png'
+
 
 
 const TYPE_CLASSES = {
@@ -169,12 +171,16 @@ class BookInfo extends Component {
   }
   refund() {
     const { orderId } = this.state
+    Taro.showLoading({
+      title:'取消中...'
+    })
     refundOrder(orderId).then(res => {
+      Taro.hideLoading()
       const data = res.data
       if (data.code == 200) {
         Taro.showToast({
           icon: 'success',
-          duration: 2000,
+          duration: 4000,
           title: '已取消预约'
         }).then((res) => {
           Taro.redirectTo({
@@ -270,7 +276,7 @@ class BookInfo extends Component {
               </View>
               <Text className="icon-ic_more iconfont"></Text>
             </View>)
-          }) : <View className="blank-wrapper" ><Image src="cloud://circle30-dev-e034c4.6369-circle30-dev-e034c4/img_noplan@2x.png" />
+          }) : <View className="blank-wrapper" ><Image src={noplanImage} />
               <Text>暂无训练计划</Text>
             </View>}
         </View >
