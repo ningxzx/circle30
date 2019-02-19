@@ -121,10 +121,6 @@ export const userLogin = async () => {
         const session_key = Taro.getStorageSync('session_key')
         if (openid) {
             const id = await emitUserid(unionid, openid, session_key)
-            putOpenid({
-                openid,
-                user_id: id
-            })
             Taro.setStorageSync('user_id', id)
             getSingleUser(id).then(res => {
                 saveUserInfo(res.data)
@@ -135,13 +131,13 @@ export const userLogin = async () => {
             Taro.setStorageSync('openid', openid)
             Taro.setStorageSync('session_key', session_key)
             const id = await emitUserid(unionid, openid, session_key)
-            putOpenid({
-                openid,
-                user_id: id
-            })
             Taro.setStorageSync('user_id', id)
             getSingleUser(id).then(res => {
                 saveUserInfo(res.data)
+                putOpenid({
+                    openid,
+                    user_id: id
+                })
             })
         }
     }

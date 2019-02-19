@@ -66,7 +66,7 @@ class Store extends Component {
   componentDidShow() {
     // 查询预约过的用户
     getShopUsers({
-      shop_id: id
+      shop_id: this.state.id
     }).then(res => {
       if (res.data) {
         const studentsNum = res.data.length
@@ -79,7 +79,7 @@ class Store extends Component {
         })
       }
     })
-    this.getDateSchedules(dateIndex)
+    this.getDateSchedules(this.state.selectDateIndex)
   }
   makePhoneCall() {
     const { phone } = this.state
@@ -88,10 +88,12 @@ class Store extends Component {
     })
   }
   openMap() {
-    const { location: { lat, lng } } = this.state
+    const { location: { lat, lng },title,address } = this.state
     Taro.openLocation({
       latitude: lat,
-      longitude: lng
+      longitude: lng,
+      name:title,
+      address
     })
   }
   getDateSchedules(days = 0) {

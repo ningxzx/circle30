@@ -1,6 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
-import { connectLogin, withShare, requestUserId } from '../../utils/helper'
+import { connectLogin, withShare } from '../../utils/helper'
 import { PostButton } from '../../components'
 import { refundOrder, getOrder } from '../../actions/order'
 import { getTheSchedule } from '../../actions/schedule'
