@@ -1,5 +1,5 @@
 import Taro from '@tarojs/taro'
-import { getSessionKey, getUser, decryptData, register, putOpenid, getSingleUser } from '../actions/user'
+import { getSessionKey, getUser, decryptData, register, putOpenid, getSingleUser, putUser } from '../actions/user'
 import { APP_ID } from '../constants/app.js'
 import shareImg from '../assets/images/weappShare.png'
 
@@ -116,6 +116,9 @@ export const userLogin = async () => {
             throw new Error('本地没有缓存UserId')
         }
     } catch (error) {
+        Taro.showLoading({
+            title: '登录中'
+        })
         const openid = Taro.getStorageSync('openid')
         const unionid = Taro.getStorageSync('unionid')
         const session_key = Taro.getStorageSync('session_key')
@@ -123,7 +126,13 @@ export const userLogin = async () => {
             const id = await emitUserid(unionid, openid, session_key)
             Taro.setStorageSync('user_id', id)
             getSingleUser(id).then(res => {
-                saveUserInfo(res.data)
+                Taro.hideLoading()
+                Promise.all([saveUserInfo(res.data), putUser({
+                    user_id: id,
+                    openid,
+                    "username": Taro.getStorageSync('nickName'),
+                    "avatar": Taro.getStorageSync('avatarUrl')
+                })])
             })
         } else {
             const session = await getSession()
@@ -133,11 +142,16 @@ export const userLogin = async () => {
             const id = await emitUserid(unionid, openid, session_key)
             Taro.setStorageSync('user_id', id)
             getSingleUser(id).then(res => {
-                saveUserInfo(res.data)
-                putOpenid({
+                Taro.hideLoading()
+                Promise.all([saveUserInfo(res.data), putUser({
+                    user_id: id,
+                    openid,
+                    "username": Taro.getStorageSync('nickName'),
+                    "avatar": Taro.getStorageSync('avatarUrl')
+                }), putOpenid({
                     openid,
                     user_id: id
-                })
+                })])
             })
         }
     }

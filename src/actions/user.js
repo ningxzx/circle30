@@ -12,6 +12,13 @@ export const putOpenid = (params => {
     api.put(`/users/${user_id}/identifies`, { ...rest, appid: APP_ID })
 })
 export const putUser = (params => {
-    const { user_id, ...rest } = params
-    return api.put(`/users/${user_id}`, { ...rest, appid: APP_ID })
+    const { user_id, openid, ...rest } = params
+    return api.put(`/users/${user_id}`, {
+        ...rest, "identifies": [
+            {
+                appid: APP_ID,
+                openid
+            }
+        ]
+    })
 })

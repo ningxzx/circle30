@@ -180,7 +180,7 @@ class BookInfo extends Component {
       if (data.code == 200) {
         Taro.showToast({
           icon: 'success',
-          duration: 4000,
+          duration: 5000,
           title: '已取消预约'
         }).then((res) => {
           Taro.redirectTo({

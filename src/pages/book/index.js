@@ -1,6 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text, Image } from '@tarojs/components'
-import { connectLogin, requestUserId, withShare, wxLogin } from '../../utils/helper'
+import { connectLogin, withShare, wxLogin } from '../../utils/helper'
 import { addDayStr, formatHour, getUniqueExercise, calDistance } from '../../utils/tool'
 import { WeekDate, PostButton } from '../../components'
 import { getCoupons } from '../../actions/coupons'
@@ -34,7 +34,7 @@ class Book extends Component {
         const { dateIndex, storeTitle, storeId } = this.$router.params
         this.setState({
             phoneNumber: Taro.getStorageSync('phoneNumber') || '',
-            selectDateIndex: dateIndex||0
+            selectDateIndex: dateIndex || 0
         }, () => {
             if (storeId) {
                 this.setState({
@@ -70,18 +70,21 @@ class Book extends Component {
         // 折扣数，折扣id
         const selectCoupon = getGlobalData('selectCoupon')
         if (selectCoupon) {
-            const { amount, _id:{$oid} } = selectCoupon['coupon'] || {}
+            const { amount, _id: { $oid } } = selectCoupon['coupon'] || {}
             if (amount) {
                 const couponAmount = amount / 100
+                const total = Math.max(getGlobalData('price') - couponAmount, 0) / 100
                 this.setState({
                     couponAmount,
-                    couponId:$oid
+                    couponId: $oid,
+                    total
                 })
             }
         } else {
             this.setState({
                 couponAmount: 0,
-                couponId: null
+                couponId: null,
+                total: getGlobalData('price') / 100
             })
         }
         let { storeTitle, storeId } = getGlobalData('selectStore') || {}
@@ -93,6 +96,15 @@ class Book extends Component {
                 this.getDateSchedules()
             })
         }
+    }
+    componentWillUnmount() {
+        console.log('hide')
+        setGlobalData('selectCoupon', null)
+        this.setState({
+            couponAmount: 0,
+            couponId: null,
+            total: getGlobalData('price') / 100
+        })
     }
     getDateSchedules() {
         Taro.showLoading({ title: '请求中...' })
@@ -131,8 +143,8 @@ class Book extends Component {
             }
         })
     }
-    async getUserCoupons() {
-        const user_id = await requestUserId()
+    getUserCoupons() {
+        const user_id = Taro.getStorageSync('user_id')
         getCoupons({
             user_id,
             used: 0
@@ -152,8 +164,8 @@ class Book extends Component {
         })
     }
     // 生成订单
-    async toPay() {
-        const user_id = await requestUserId()
+    toPay() {
+        const user_id = Taro.getStorageSync('user_id')
         const { scheduleId, selectPeriodIdx, courses, couponId, phoneNumber, selectDateIndex } = this.state
         if (!phoneNumber) {
             Taro.showToast({
@@ -174,14 +186,21 @@ class Book extends Component {
                 schedule_id: scheduleId,
                 course: start
             }).then(res => {
-                const { _id: { $oid } } = res.data
-                console.log(couponId)
-                checkoutOrder({
-                    coupon_id: couponId,
-                    order_id: $oid
-                }).then(res => {
-                    this.pay($oid)
-                })
+                if (res.data.code == 200 || res.data.code == 201) {
+                    const { _id: { $oid } } = res.data
+                    checkoutOrder({
+                        coupon_id: couponId,
+                        order_id: $oid
+                    }).then(res => {
+                        this.pay($oid)
+                    })
+                } else {
+                    Taro.showModal({
+                        title: '请求出错',
+                        content: res.data.message,
+                        showCancel: false
+                    })
+                }
             })
         }
     }
@@ -287,7 +306,7 @@ class Book extends Component {
                 {couponsNum ? <View className="coupon-wrapper" onClick={this.jumToCoupons}>
                     <Text>优惠券</Text>
                     <Text>
-                        <Text className={`coupon-text ${couponAmount ? 'amount' : 'coupon-num'}`}>{!couponAmount ? `${couponsNum}个可用` : `-￥${couponAmount}`}</Text>
+                        <Text className={`coupon-text ${couponAmount ? 'discount' : 'coupon-num'}`}>{!couponAmount ? `${couponsNum}个可用` : `-￥${couponAmount}`}</Text>
                         <Text className="icon-ic_more iconfont"></Text>
                     </Text>
                 </View> : null}

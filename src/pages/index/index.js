@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
 import { WeekDate, PostButton } from '../../components'
-import { connectLogin, withShare, requestUserId } from '../../utils/helper'
+import { connectLogin, withShare } from '../../utils/helper'
 import { addDayStr, calDistance, getUniqueExercise, queryString } from '../../utils/tool'
 import { getShops } from '../../actions/shop'
 import { getSchedules, userCheckin } from '../../actions/schedule'
@@ -23,8 +23,8 @@ class Index extends Component {
   config = {
     navigationBarTitleText: 'CirCle30'
   }
-  async scan() {
-    const user_id = await requestUserId()
+  scan() {
+    const user_id = Taro.getStorageSync('user_id')
     Taro.scanCode({
       onlyFromCamera: true
     }).then(res => {

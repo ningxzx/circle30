@@ -1,7 +1,7 @@
 import { ComponentClass } from 'react'
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text, Icon } from '@tarojs/components'
-import { connectLogin, requestUserId, withShare } from '../../utils/helper'
+import { connectLogin, withShare } from '../../utils/helper'
 import { getCoupons } from '../../actions/coupons'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
 import './index.less'
@@ -25,8 +25,8 @@ class SelectCoupon extends Component {
             })
         }
     }
-    async getUserCoupons() {
-        const user_id = await requestUserId()
+    getUserCoupons() {
+        const user_id = Taro.getStorageSync('user_id')
         getCoupons({
             user_id
         }).then(res => {
