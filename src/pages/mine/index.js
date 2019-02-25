@@ -3,7 +3,7 @@ import { View, Button, Text } from '@tarojs/components'
 import { connectLogin, withShare } from '../../utils/helper'
 import { get as getGlobalData } from '../../utils/globalData'
 import './index.less'
-import logoImage from '../../assets/images/img_logo@3x.png'
+import iconImage from '../../assets/images/default_icon@3x.png'
 
 @connectLogin
 @withShare()
@@ -38,7 +38,7 @@ class Mine extends Component {
 
   render() {
     const pixelRatio = getGlobalData('pixelRatio') === 3 ? '3' : '2'
-    const avatarUrl = Taro.getStorageSync('avatarUrl') || logoImage
+    const avatarUrl = Taro.getStorageSync('avatarUrl') || iconImage
     const nickName = Taro.getStorageSync('nickName')
     return (
       <View>

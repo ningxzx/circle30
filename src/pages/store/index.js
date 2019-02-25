@@ -35,9 +35,9 @@ class Store extends Component {
     navigationBarTitleText: ' '
   }
   jumpToBook() {
-    const { id, title, selectDateIndex } = this.state
+    const { id } = this.state
     Taro.navigateTo({
-      url: `/pages/book/index?storeId=${id}&storeTitle=${title}&dateIndex=${selectDateIndex}`
+      url: `/pages/book/index?storeId=${id}`
     })
   }
   toStudents() {
@@ -47,10 +47,10 @@ class Store extends Component {
     })
   }
   componentDidMount() {
-    const { id, dateIndex } = this.$router.params
+    const { id } = this.$router.params
     this.setState({
       id,
-      selectDateIndex: dateIndex || 0
+      selectDateIndex: 0
     }, () => {
       Taro.showLoading({
         title: '请求中...'
@@ -84,7 +84,7 @@ class Store extends Component {
     })
     const { selectDateIndex } = this.state
     const index = selectDateIndex === 0 || selectDateIndex ? selectDateIndex : dateIndex
-    this.getDateSchedules(index, id)
+    this.getDateSchedules(index)
   }
   makePhoneCall() {
     const { phone } = this.state
@@ -101,7 +101,8 @@ class Store extends Component {
       address
     })
   }
-  getDateSchedules(days = 0, id) {
+  getDateSchedules(days = 0) {
+    const { id } = this.$router.params
     this.setState({
       selectDateIndex: days
     })
@@ -124,10 +125,9 @@ class Store extends Component {
   }
   toExerciseDetail(e) {
     const exerciseId = e.currentTarget.dataset.id
-    const exerciseTitle = e.currentTarget.dataset.title
-    const { id, selectDateIndex, title } = this.state
+    const { id } = this.state
     Taro.navigateTo({
-      url: `/pages/exercise/index?id=${exerciseId}&title=${exerciseTitle}&storeId=${id}&dateIndex=${selectDateIndex}&storeTitle=${title}`
+      url: `/pages/exercise/index?id=${exerciseId}&storeId=${id}`
     })
   }
   componentDidHide() { }

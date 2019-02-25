@@ -5,7 +5,7 @@ import { addDayStr, formatHour, getUniqueExercise, calDistance } from '../../uti
 import { WeekDate, PostButton } from '../../components'
 import { getCoupons } from '../../actions/coupons'
 import { decryptData, putUser, getSessionKey } from '../../actions/user'
-import { getShops } from '../../actions/shop'
+import { getShops, getTheShop } from '../../actions/shop'
 import { getSchedules } from '../../actions/schedule'
 import { createOrder, checkoutOrder, createTrasctions } from '../../actions/order'
 import { FULL_NUM } from '../../constants/app'
@@ -30,80 +30,113 @@ class Book extends Component {
         selectDateIndex: 0,
         scheduleId: ''
     }
-    componentDidMount() {
-        const { dateIndex, storeTitle, storeId } = this.$router.params
+    componentDidShow() {
+        let storeId = ''
+        if (getGlobalData('selectStore')) {
+            storeId = getGlobalData('selectStore')['storeId']
+        }
+        if (this.$router.params.storeId) {
+            storeId = this.$router.params.storeId
+        }
         this.setState({
             phoneNumber: Taro.getStorageSync('phoneNumber') || '',
-            selectDateIndex: dateIndex || 0
         }, () => {
             if (storeId) {
                 this.setState({
-                    storeId,
-                    storeTitle
+                    storeId
                 }, () => {
-                    this.getDateSchedules()
+                    Taro.showLoading({
+                        title: '请求中...'
+                    })
+                    // 查询门店详情
+                    getTheShop({
+                        shop_id: storeId
+                    }).then(res => {
+                        Taro.hideLoading()
+                        let { title } = res.data
+                        this.setState({ storeTitle: title })
+                    })
                 })
+                this.getDateSchedules()
             } else {
-                const { latitude, longitude } = getGlobalData(['latitude', 'longitude'])
-                getShops().then(res => {
-                    let stores = res.data.map(store => {
-                        const { location: { lat, lng } } = store
-                        const { distance, pureDistance } = calDistance(latitude, longitude, lat, lng)
-                        store = { ...store, ...{ distance, pureDistance } }
-                        return store
-                    })
-                    stores = stores.sort((a, b) => a.pureDistance > b.pureDistance ? 1 : -1).filter(x => x.status == 'enable')
-                    const { _id: { $oid }, title } = stores[0]
-                    this.setState({
-                        storeId: $oid,
-                        storeTitle: title
-                    }, () => {
-                        this.getDateSchedules()
-                    })
-
-                })
+                this.getLocationStore()
             }
         })
         this.getUserCoupons()
-    }
-    componentDidShow() {
+        const { selectPeriodIdx, selectDateIndex } = this.state
         // 折扣数，折扣id
         const selectCoupon = getGlobalData('selectCoupon')
+        let total
         if (selectCoupon) {
             const { amount, _id: { $oid } } = selectCoupon['coupon'] || {}
             if (amount) {
                 const couponAmount = amount / 100
-                const total = Math.max(getGlobalData('price') - couponAmount, 0) / 100
                 this.setState({
                     couponAmount,
                     couponId: $oid,
-                    total
+                }, () => {
+                    if (selectPeriodIdx[selectDateIndex] === 0 || selectPeriodIdx[selectDateIndex]) {
+                        total = Math.max((getGlobalData('price') || 0) - couponAmount, 0) / 100
+                    }
+                    this.setState({
+                        total
+                    })
                 })
             }
         } else {
             this.setState({
                 couponAmount: 0,
-                couponId: null,
-                total: getGlobalData('price') / 100
-            })
-        }
-        let { storeTitle, storeId } = getGlobalData('selectStore') || {}
-        if (storeId) {
-            this.setState({
-                storeId,
-                storeTitle,
+                couponId: null
             }, () => {
-                this.getDateSchedules()
+                if (selectPeriodIdx[selectDateIndex] === 0 || selectPeriodIdx[selectDateIndex]) {
+                    total = Math.max((getGlobalData('price') || 0), 0) / 100
+                }
+                this.setState({
+                    total
+                })
             })
         }
     }
+    getLocationStore() {
+        Taro.getLocation().then(res => {
+            this.getStores(res)
+        }).catch(error => {
+            Taro.getSetting().then(res => {
+                if (res.authSetting['scope.userLocation']) {
+                    Taro.getLocation().then(res => {
+                        this.getStores(res)
+                    })
+                } else {
+                    this.getStores()
+                }
+            })
+        })
+    }
+    getStores(location = { "latitude": 30.66342, "longitude": 104.072329 }) {
+        //  默认选择最近的门店
+        let { latitude, longitude } = location
+        getShops().then(res => {
+            let stores = res.data.map(store => {
+                const { location: { lat, lng } } = store
+                const { distance, pureDistance } = calDistance(latitude, longitude, lat, lng)
+                store = { ...store, ...{ distance, pureDistance } }
+                return store
+            })
+            stores = stores.sort((a, b) => a.pureDistance > b.pureDistance ? 1 : -1).filter(x => x.status == 'enable')
+            const { _id: { $oid }, title } = stores[0]
+            this.setState({
+                storeId: $oid,
+                storeTitle: title
+            }, () => {
+                this.getDateSchedules()
+            })
+        })
+    }
     componentWillUnmount() {
-        console.log('hide')
         setGlobalData('selectCoupon', null)
         this.setState({
             couponAmount: 0,
-            couponId: null,
-            total: getGlobalData('price') / 100
+            couponId: null
         })
     }
     getDateSchedules() {
@@ -111,7 +144,6 @@ class Book extends Component {
         const dateIndex = this.state.selectDateIndex
         const user_id = Taro.getStorageSync('user_id')
         const str = addDayStr(dateIndex)
-        console.log(str)
         const shop_id = this.state.storeId
         getSchedules({
             shop_id,
@@ -166,7 +198,7 @@ class Book extends Component {
     // 生成订单
     toPay() {
         const user_id = Taro.getStorageSync('user_id')
-        const { scheduleId, selectPeriodIdx, courses, couponId, phoneNumber, selectDateIndex } = this.state
+        const { scheduleId, selectPeriodIdx, courses, couponId, phoneNumber, selectDateIndex, total } = this.state
         if (!phoneNumber) {
             Taro.showToast({
                 title: '请授权手机号',
@@ -192,7 +224,15 @@ class Book extends Component {
                         coupon_id: couponId,
                         order_id: $oid
                     }).then(res => {
-                        this.pay($oid)
+                        if (res.data.code == 200) {
+                            if (total > 0) {
+                                this.pay($oid)
+                            } else {
+                                Taro.navigateTo({
+                                    url: `/pages/bookStatus/index?order_id=${$oid}`
+                                })
+                            }
+                        }
                     })
                 } else {
                     Taro.showModal({
@@ -214,8 +254,15 @@ class Book extends Component {
             param.timeStamp = param.timestamp
             const { timestamp, ...rest } = param
             Taro.requestPayment(rest).then(res => {
-                Taro.navigateTo({
-                    url: `/pages/bookStatus/index?order_id=${order_id}`
+                const { selectPeriodIdx, selectDateIndex, total } = this.state
+                delete selectPeriodIdx[selectDateIndex]
+                this.setState({
+                    selectPeriodIdx,
+                    total: 0
+                }, () => {
+                    Taro.navigateTo({
+                        url: `/pages/bookStatus/index?order_id=${order_id}`
+                    })
                 })
             }).catch(res => {
 
@@ -223,45 +270,87 @@ class Book extends Component {
         })
     }
     selectPeriod(e) {
-        let { couponAmount, selectPeriodIdx, selectDateIndex } = this.state
-        selectPeriodIdx[selectDateIndex] = e.currentTarget.dataset.idx
-        this.setState({
-            selectPeriodIdx,
-            total: Math.max(getGlobalData('price') - couponAmount, 0) / 100
-        })
+        const { idx, status } = e.currentTarget.dataset
+        console.log({ idx, status })
+        if (status !== 'joined' && status !== 'full') {
+            let { couponAmount, selectPeriodIdx, selectDateIndex } = this.state
+            selectPeriodIdx[selectDateIndex] = idx
+            this.setState({
+                selectPeriodIdx,
+                total: Math.max((getGlobalData('price') || 0) - couponAmount, 0) / 100
+            })
+        }
     }
     async getPhoneNumber(e) {
         const { iv, encryptedData } = e.detail
         if (!iv) {
             return false
         }
-        const code = await wxLogin()
-        const res = await getSessionKey({ code })
-        const session = res.data
-        decryptData({
-            encrypted: encryptedData,
-            iv,
-            session: session.session_key
-        }).then((res) => {
-            const { phoneNumber } = res.data
-            const unionid = Taro.getStorageSync('unionid')
-            this.setState({
-                phoneNumber
+        Taro.checkSession().then(
+            res => {
+                console.log(res)
+                decryptData({
+                    encrypted: encryptedData,
+                    iv,
+                    session: Taro.getStorageSync('session_key')
+                }).then((res) => {
+                    const { phoneNumber } = res.data
+                    const unionId = Taro.getStorageSync('unionId')
+                    this.setState({
+                        phoneNumber
+                    })
+                    Taro.setStorageSync('phoneNumber', phoneNumber)
+                    const user_id = Taro.getStorageSync('user_id')
+                    const openid = Taro.getStorageSync('openid')
+                    putUser({
+                        user_id,
+                        openid,
+                        unionId,
+                        phone: phoneNumber
+                    })
+                })
+                    .catch((err) => {
+                        console.log(err)
+                        Taro.login().then((res) => {
+                            const code = res.code
+                            getSessionKey({ code }).then((session => {
+                                decryptData({
+                                    encrypted: encryptedData,
+                                    iv,
+                                    session: session.session_key
+                                }).then((res) => {
+                                    const { phoneNumber } = res.data
+                                    const unionId = Taro.getStorageSync('unionId')
+                                    this.setState({
+                                        phoneNumber
+                                    })
+                                    Taro.setStorageSync('phoneNumber', phoneNumber)
+                                    const user_id = Taro.getStorageSync('user_id')
+                                    const openid = Taro.getStorageSync('openid')
+                                    putUser({
+                                        user_id,
+                                        openid,
+                                        unionId,
+                                        phone: phoneNumber
+                                    })
+                                })
+                            }))
+                            return res.data
+                        })
+                    })
             })
-            Taro.setStorageSync('phoneNumber', phoneNumber)
-            const user_id = Taro.getStorageSync('user_id')
-            const openid = Taro.getStorageSync('openid')
-            putUser({
-                user_id,
-                openid,
-                unionid,
-                phone: phoneNumber
-            })
-        })
     }
     changeDate(day) {
+        let { couponAmount, selectPeriodIdx } = this.state
+        let total
+        if (selectPeriodIdx[day] === 0 || selectPeriodIdx[day]) {
+            total = Math.max((getGlobalData('price') || 0) - couponAmount, 0) / 100
+        } else {
+            total = 0
+        }
         this.setState({
             selectDateIndex: day,
+            total
         }, () => {
             this.getDateSchedules()
         })
@@ -286,8 +375,8 @@ class Book extends Component {
                 <View className="period-wrapper">
                     {courses.length ? courses.map((x, i) => {
                         const statusText = x.joined ? '您已预约' : x.full ? '满员' : `${x.num || '无'}人预约`
-                        const statusClass = x.joined ? 'joined' : x.full || !x.num ? 'full' : ''
-                        return (<View key={i} data-idx={i} className={`period ${x.joined || x.full ? 'disable' : selectPeriodIdx[selectDateIndex] == i ? 'selected' : ''}`} onClick={this.selectPeriod}>
+                        const statusClass = x.joined ? 'joined' : x.full ? 'full' : ''
+                        return (<View key={i} data-idx={i} className={`period ${x.joined || x.full ? 'disable' : selectPeriodIdx[selectDateIndex] == i ? 'selected' : ''}`} onClick={this.selectPeriod} data-status={statusClass}>
                             <Text>{x.startTime}<Text className="timeGap">-</Text>{x.endTime}</Text>
                             <View className="period-detail">
                                 <View className="period-avatars-wrapper">

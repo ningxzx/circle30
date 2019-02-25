@@ -18,7 +18,25 @@ class StoreList extends Component {
     selectIdx: null
   }
   componentDidShow() {
-    const { latitude, longitude } = getGlobalData(['latitude', 'longitude'])
+    this.getLocationStore()
+  }
+  getLocationStore() {
+    Taro.getLocation().then(res => {
+      this.getStores(res)
+    }).catch(error => {
+      Taro.getSetting().then(res => {
+        if (res.authSetting['scope.userLocation']) {
+          Taro.getLocation().then(res => {
+            this.getStores(res)
+          })
+        } else {
+          this.getStores()
+        }
+      })
+    })
+  }
+  getStores(location = { "latitude": 30.66342, "longitude": 104.072329 }) {
+    let { latitude, longitude } = location
     getShops().then(res => {
       const stores = res.data.map(store => {
         const { location: { lat, lng } } = store

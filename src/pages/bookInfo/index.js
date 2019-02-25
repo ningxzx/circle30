@@ -32,7 +32,8 @@ class BookInfo extends Component {
     statusText: '',
     shop: {},
     exercises: [],
-    checkout: {}
+    checkout: {},
+    byShare: false
   }
   config = {
     navigationBarTitleText: 'CirCle30'
@@ -46,9 +47,10 @@ class BookInfo extends Component {
   }
 
   componentDidShow() {
-    const { id } = this.$router.params
+    const { id, from } = this.$router.params
     this.setState({
-      orderId: id
+      orderId: id,
+      byShare: from === 'byShare'
     })
     Taro.showLoading({ title: '请求中...' })
     getOrder(id).then(res => {
@@ -135,6 +137,12 @@ class BookInfo extends Component {
       }
     }
   }
+  toProject(e) {
+    const id = e.currentTarget.dataset.id
+    Taro.navigateTo({
+      url: `/pages/exercise/index?id=${id}`
+    })
+  }
   handleRefund() {
     const { checkout } = this.state
     const amount = checkout.amount / 100
@@ -172,7 +180,7 @@ class BookInfo extends Component {
   refund() {
     const { orderId } = this.state
     Taro.showLoading({
-      title:'取消中...'
+      title: '取消中...'
     })
     refundOrder(orderId).then(res => {
       Taro.hideLoading()
@@ -184,14 +192,14 @@ class BookInfo extends Component {
           title: '已取消预约'
         }).then((res) => {
           Taro.redirectTo({
-            url:`/pages/bookInfo/index?id=${orderId}`
+            url: `/pages/bookInfo/index?id=${orderId}`
           })
         })
-      } else{
+      } else {
         Taro.showModal({
           title: '错误提示',
           content: '订单取消失败',
-          showCancel:false
+          showCancel: false
         })
       }
     })
@@ -201,7 +209,8 @@ class BookInfo extends Component {
     return '分享预约订单 | CirCle30'
   }
   $setSharePath() {
-    return '/pages/bookInfo/index'
+    const { id } = this.$router.params
+    return `/pages/bookInfo/index?id=${id}&from=byShare`
   }
   $setShareImageUrl() {
     return ''
@@ -265,7 +274,7 @@ class BookInfo extends Component {
         </View>
         <View className="exercise-list">
           {exercises.length ? exercises.map((exercise, i) => {
-            return (<View className="cell" key={i} onClick={this.toProject} data-title={exercise.title}>
+            return (<View className="cell" key={i} data-id={exercise._id.$oid} onClick={this.toProject} data-title={exercise.title}>
               <View className="exercise-info">
                 <Text className="exercise-name">{exercise.title}</Text>
                 <View className="exercise-detail">
@@ -304,7 +313,7 @@ class BookInfo extends Component {
           </View>
           {(status == 0 && (orderStartTime * 1000 - nowTime > 7200000) && (orderUser._id && orderUser._id.$oid) == Taro.getStorageSync('user_id')) ?
             <View className="refund-wrapper">
-              <PostButton onClick={this.handleRefund} btn-class='refund-btn'>取消预约</PostButton>
+              {!byShare ? <PostButton onClick={this.handleRefund} btn-class='refund-btn'>取消预约</PostButton> : null}
               <Text>* 请在训练开始前到达门店，提前10分钟即可签到</Text>
               <Text>* 训练开始前2小时内不支持取消预约</Text>
               <Text>* 训练结束后仍未签到，预约订单将会自动失效</Text>

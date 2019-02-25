@@ -27,27 +27,26 @@ class Exercise extends Component {
   componentWillUnmount() { }
 
   componentDidMount() {
-    const { title, id, dateIndex } = this.$router.params
+    const { id } = this.$router.params
     this.setState({
-      title,
       id,
-      dateIndex
     }, () => {
       getExercise(id).then(res => {
-        const { images, cover, type, body } = res.data
+        const { images, cover, type, body,title } = res.data
         this.setState({
           images,
           cover,
           type,
-          body
+          body,
+          title
         })
       })
     })
   }
   jumpToBook() {
-    const { storeId, dateIndex, storeTitle } = this.state
+    const { storeId } = this.$router.params
     Taro.navigateTo({
-      url: `/pages/book/index?dateIndex=${dateIndex}`
+      url: `/pages/book/index?${storeId?`storeId=${storeId}`:''}`
     })
   }
   formSubmit(e) {
@@ -63,8 +62,8 @@ class Exercise extends Component {
     return `${title} | Circle30`
   }
   $setSharePath() {
-    const { title, id, dateIndex} = this.$router.params
-    return `/pages/exercise/index?id=${id}&title=${title}&dateIndex=${dateIndex}`
+    const {id} = this.$router.params
+    return `/pages/exercise/index?id=${id}`
   }
   $setShareImageUrl() {
     return this.state.cover

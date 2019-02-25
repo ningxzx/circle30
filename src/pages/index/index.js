@@ -34,28 +34,40 @@ class Index extends Component {
           checkin_id: scene,
           user_id
         }).then(res => {
-          if (res.code == 200) {
+          if (res.data.code == 200) {
             Taro.showToast({
               icon: 'success',
               title: '签到成功',
               duration: 2000
             })
-          } else if (res.code == 4100) {
+          } else if (res.data.code == 4100) {
             Taro.showModal({
               title: '签到失败',
               content: `订单不存在`,
               showCancel: false
             })
-          } else if (res.code == 4101) {
+          } else if (res.data.code == 4101) {
             Taro.showModal({
               title: '签到失败',
               content: `订单未支付`,
               showCancel: false
             })
-          } else if (res.code == 4100) {
+          } else if (res.data.code == 4100) {
             Taro.showModal({
               title: '签到失败',
               content: `订单已退款`,
+              showCancel: false
+            })
+          } else if (res.data.code == 4304) {
+            Taro.showModal({
+              title: '签到失败',
+              content: `没有预约过此订单`,
+              showCancel: false
+            })
+          } else if (res.data.code == 4303) {
+            Taro.showModal({
+              title: '签到失败',
+              content: `预约已过期`,
               showCancel: false
             })
           } else {
@@ -137,25 +149,21 @@ class Index extends Component {
     })
   }
   toProject(e) {
-    const exerciseTitle = e.currentTarget.dataset.title
     const id = e.currentTarget.dataset.id
-    const { selectDateIndex } = this.state
     Taro.navigateTo({
-      url: `/pages/exercise/index?title=${exerciseTitle}&id=${id}&dateIndex=${selectDateIndex}`
+      url: `/pages/exercise/index?id=${id}`
     })
   }
   jumpToBook() {
-    const { selectDateIndex } = this.state
     Taro.navigateTo({
-      url: `/pages/book/index?dateIndex=${selectDateIndex}`
+      url: `/pages/book/index`
     })
   }
   jumpToStore(e) {
-    const { selectDateIndex } = this.state
     const store = e.currentTarget.dataset.store
-    const { _id: { $oid }, title } = store
+    const { _id: { $oid } } = store
     Taro.navigateTo({
-      url: `/pages/store/index?id=${$oid}&title=${title}&dateIndex=${selectDateIndex}`
+      url: `/pages/store/index?id=${$oid}`
     })
   }
   onPageScroll(scroll) {

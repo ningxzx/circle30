@@ -30,7 +30,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 1,
+			"current": 2,
 			"list": [
 				{
 					"id": 0,
@@ -44,6 +44,12 @@
 					"name": "coupon",
 					"pathName": "pages/coupons/index",
 					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "book",
+					"pathName": "pages/book/index",
 					"scene": null
 				}
 			]
