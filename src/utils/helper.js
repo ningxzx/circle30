@@ -23,15 +23,15 @@ export const getSession = async () => {
         console.log('换取客户微信session失败')
     }
 }
-// 获取unionId
+// 获取unionid
 export const getUserInfo = async (session_key) => {
     try {
         const settingRes = await Taro.getSetting()
         if (settingRes.authSetting['scope.userInfo']) {
             const res = await Taro.getUserInfo()
             const { iv, encryptedData } = res
-            const unionIdRes = await decryptData({ session: session_key, iv, encrypted: encryptedData })
-            return unionIdRes.data
+            const unionidRes = await decryptData({ session: session_key, iv, encrypted: encryptedData })
+            return unionidRes.data
         } else {
             Taro.navigateTo({
                 url: '/pages/login/index'
@@ -39,7 +39,7 @@ export const getUserInfo = async (session_key) => {
             return false
         }
     } catch (error) {
-        console.log('换取unionId失败')
+        console.log('换取unionid失败')
     }
 }
 
@@ -61,13 +61,13 @@ export const saveWxUserInfo = (info) => {
 }
 
 
-const getUserId = async (info, users, unionId, openid) => {
+const getUserId = async (info, users, unionid, openid) => {
     if (users.length) {
         return users[0]._id && users[0]._id.$oid
     } else {
         try {
             const param = {
-                username: info.nickName, avatar: info.avatarUrl, unionId, identifies: [
+                username: info.nickName, avatar: info.avatarUrl, unionid, identifies: [
                     {
                         appid: APP_ID,
                         openid
@@ -84,24 +84,24 @@ const getUserId = async (info, users, unionId, openid) => {
     }
 
 }
-const emitUserid = async (unionId, openid, session_key) => {
+const emitUserid = async (unionid, openid, session_key) => {
     try {
-        if (unionId) {
-            const res = await getUser({ unionId })
+        if (unionid) {
+            const res = await getUser({ unionid })
             const users = res.data
             const nickName = Taro.getStorageSync('nickName')
             const avatarUrl = Taro.getStorageSync('avatarUrl')
-            const userId = await getUserId({ nickName, avatarUrl }, users, unionId, openid)
+            const userId = await getUserId({ nickName, avatarUrl }, users, unionid, openid)
             return userId
         } else {
             const info = await getUserInfo(session_key)
             if (info) {
-                const { unionId } = info
-                Taro.setStorageSync('unionId', unionId)
+                const { unionid } = info
+                Taro.setStorageSync('unionid', unionid)
                 saveWxUserInfo(info)
-                const res = await getUser({ unionId: unionId })
+                const res = await getUser({ unionid: unionid })
                 const users = res.data
-                const userId = await getUserId(info, users, unionId, openid)
+                const userId = await getUserId(info, users, unionid, openid)
                 return userId
             }
         }
@@ -120,10 +120,10 @@ export const oldUserLogin = async () => {
             title: '登录中'
         })
         const openid = Taro.getStorageSync('openid')
-        const unionId = Taro.getStorageSync('unionId')
+        const unionid = Taro.getStorageSync('unionid')
         const session_key = Taro.getStorageSync('session_key')
         if (openid) {
-            const id = await emitUserid(unionId, openid, session_key)
+            const id = await emitUserid(unionid, openid, session_key)
             Taro.setStorageSync('user_id', id)
             getSingleUser(id).then(res => {
                 Taro.hideLoading()
@@ -136,10 +136,10 @@ export const oldUserLogin = async () => {
             })
         } else {
             const session = await getSession()
-            const { openid, session_key, unionId } = session
+            const { openid, session_key, unionid } = session
             Taro.setStorageSync('openid', openid)
             Taro.setStorageSync('session_key', session_key)
-            const id = await emitUserid(unionId, openid, session_key)
+            const id = await emitUserid(unionid, openid, session_key)
             Taro.setStorageSync('user_id', id)
             getSingleUser(id).then(res => {
                 Taro.hideLoading()
@@ -160,8 +160,8 @@ export const oldUserLogin = async () => {
 function userLogin() {
     const openid = Taro.getStorageSync('openid')
     const user_id = Taro.getStorageSync('user_id')
-    const unionId = Taro.getStorageSync('unionId')
-    if (openid && user_id && unionId) {
+    const unionid = Taro.getStorageSync('unionid')
+    if (openid && user_id && unionid) {
         getSingleUser(user_id).then(res => {
             saveUserInfo(res.data)
         })
@@ -174,7 +174,7 @@ function userLogin() {
 /**
  * 登录态检查
  * openid
- * unionId
+ * unionid
  * userid
  */
 export const connectLogin = (Component) => {

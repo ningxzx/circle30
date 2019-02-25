@@ -30,7 +30,7 @@ export function addDayStr(n) {
 export function formatHour(timestamp) {
     const date = new Date(timestamp * 1000);
     const hour = ('0' + date.getHours()).slice(-2)
-    const minutes = (date.getMinutes() + '0').slice(0, 2)
+    const minutes = ('0' + date.getMinutes()).slice(-2)
     return `${hour}:${minutes}`
 }
 
@@ -91,7 +91,7 @@ export function calDistance(lat1, lng1, lat2, lng2) {
     pureDistance = Math.round(pureDistance * EARTH_RADIUS);
     let distance = ''
     if (pureDistance < 1000) {
-        distance = pureDistance+ 'm'
+        distance = pureDistance + 'm'
     } else if (pureDistance <= 9900) {
         distance = Math.round(pureDistance / 100) / 10 + 'km'
     } else {

@@ -25,7 +25,9 @@ class Share extends Component {
   componentWillReceiveProps(nextProps) {
     console.log(this.props, nextProps)
   }
-
+  componentWillMount(){
+    
+  }
   componentDidMount() {
     const { type } = this.$router.params
     if (type == 'shareBy') {

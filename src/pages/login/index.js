@@ -37,9 +37,9 @@ class Login extends Component {
         Taro.setStorageSync('session_key', session_key)
         const { iv, encryptedData } = e.detail
         decryptData({ session: session_key, iv, encrypted: encryptedData }).then(
-          unionIdres => {
-            const { unionId } = unionIdres.data
-            Taro.setStorageSync('unionId', unionId)
+          unionidres => {
+            const { unionId } = unionidres.data
+            Taro.setStorageSync('unionid', unionId)
             getUser({ openid }).then(user => {
               const info = user.data
               if (info.length) {
@@ -52,15 +52,17 @@ class Login extends Component {
                   delta: 1
                 })
               } else {
-                Taro.hideLoading()
                 register({
-                  unionId, identifies: [
+                  unionid:unionId, identifies: [
                     {
                       appid: APP_ID,
                       openid
                     }
-                  ]
+                  ],
+                  "username": Taro.getStorageSync('nickName'),
+                  "avatar": Taro.getStorageSync('avatarUrl')
                 }).then(res => {
+                  Taro.hideLoading()
                   const { _id: { $oid } } = res.data
                   Taro.setStorageSync('user_id', $oid)
                   Taro.navigateBack({

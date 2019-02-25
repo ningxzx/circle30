@@ -295,7 +295,7 @@ class Book extends Component {
                     session: Taro.getStorageSync('session_key')
                 }).then((res) => {
                     const { phoneNumber } = res.data
-                    const unionId = Taro.getStorageSync('unionId')
+                    const unionid = Taro.getStorageSync('unionid')
                     this.setState({
                         phoneNumber
                     })
@@ -305,7 +305,7 @@ class Book extends Component {
                     putUser({
                         user_id,
                         openid,
-                        unionId,
+                        unionid,
                         phone: phoneNumber
                     })
                 })
@@ -320,7 +320,7 @@ class Book extends Component {
                                     session: session.session_key
                                 }).then((res) => {
                                     const { phoneNumber } = res.data
-                                    const unionId = Taro.getStorageSync('unionId')
+                                    const unionid = Taro.getStorageSync('unionid')
                                     this.setState({
                                         phoneNumber
                                     })
@@ -330,7 +330,7 @@ class Book extends Component {
                                     putUser({
                                         user_id,
                                         openid,
-                                        unionId,
+                                        unionid,
                                         phone: phoneNumber
                                     })
                                 })
