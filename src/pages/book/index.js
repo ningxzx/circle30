@@ -76,7 +76,7 @@ class Book extends Component {
                     couponId: $oid,
                 }, () => {
                     if (selectPeriodIdx[selectDateIndex] === 0 || selectPeriodIdx[selectDateIndex]) {
-                        total = Math.max((getGlobalData('price') || 0) - couponAmount, 0) / 100
+                        total = Math.max((getGlobalData('price') || 0) - amount, 0) / 100
                     }
                     this.setState({
                         total
@@ -277,7 +277,7 @@ class Book extends Component {
             selectPeriodIdx[selectDateIndex] = idx
             this.setState({
                 selectPeriodIdx,
-                total: Math.max((getGlobalData('price') || 0) - couponAmount, 0) / 100
+                total: Math.max((getGlobalData('price') || 0) - couponAmount*100, 0) / 100
             })
         }
     }
@@ -310,7 +310,6 @@ class Book extends Component {
                     })
                 })
                     .catch((err) => {
-                        console.log(err)
                         Taro.login().then((res) => {
                             const code = res.code
                             getSessionKey({ code }).then((session => {

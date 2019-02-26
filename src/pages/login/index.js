@@ -47,13 +47,20 @@ class Login extends Component {
                 const user = info[0]
                 const { _id: { $oid } } = user
                 saveUserInfo(user)
+                const { nickName, avatarUrl } = user
+                putUser({
+                  user_id: id,
+                  openid,
+                  "username": nickName,
+                  "avatar": avatarUrl
+                })
                 Taro.setStorageSync('user_id', $oid)
                 Taro.navigateBack({
                   delta: 1
                 })
               } else {
                 register({
-                  unionid:unionId, identifies: [
+                  unionid: unionId, identifies: [
                     {
                       appid: APP_ID,
                       openid
@@ -68,8 +75,20 @@ class Login extends Component {
                   Taro.navigateBack({
                     delta: 1
                   })
+                }).catch(() => {
+                  Taro.showToast({
+                    title: '登录失败，请重试',
+                    icon: 'none',
+                    duration: 2000
+                  })
                 })
               }
+            }).catch(() => {
+              Taro.showToast({
+                title: '登录失败，请重试',
+                icon: 'none',
+                duration: 2000
+              })
             })
           }
         )

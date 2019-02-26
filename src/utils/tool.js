@@ -139,7 +139,7 @@ export function queryString(url, name) {
         let str = url.split('?')[1];
         let strs = str.split("&");
         for (var i = 0; i < strs.length; i++) {
-            params[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+            params[strs[i].split("=")[0]] = decodeURIComponent(strs[i].split("=")[1]);
         }
     }
     return name ? params[name] : params

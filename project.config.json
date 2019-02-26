@@ -30,7 +30,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 2,
+			"current": 3,
 			"list": [
 				{
 					"id": 0,
@@ -50,7 +50,15 @@
 					"id": -1,
 					"name": "book",
 					"pathName": "pages/book/index",
+					"query": "",
 					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "从外界扫描",
+					"pathName": "pages/index/index",
+					"query": "scene=5c72ac90eebc1102d0779528",
+					"scene": 1011
 				}
 			]
 		}

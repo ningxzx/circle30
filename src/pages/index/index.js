@@ -23,60 +23,73 @@ class Index extends Component {
   config = {
     navigationBarTitleText: 'CirCle30'
   }
+  componentDidMount() {
+    const { scene } = this.$router.params
+    if (scene) {
+      this.sign(scene)
+    }
+  }
   scan() {
-    const user_id = Taro.getStorageSync('user_id')
     Taro.scanCode({
       onlyFromCamera: true
     }).then(res => {
       if (res.errMsg == "scanCode:ok") {
         const scene = queryString(res.path, 'scene')
-        userCheckin({
-          checkin_id: scene,
-          user_id
-        }).then(res => {
-          if (res.data.code == 200) {
-            Taro.showToast({
-              icon: 'success',
-              title: '签到成功',
-              duration: 2000
-            })
-          } else if (res.data.code == 4100) {
-            Taro.showModal({
-              title: '签到失败',
-              content: `订单不存在`,
-              showCancel: false
-            })
-          } else if (res.data.code == 4101) {
-            Taro.showModal({
-              title: '签到失败',
-              content: `订单未支付`,
-              showCancel: false
-            })
-          } else if (res.data.code == 4100) {
-            Taro.showModal({
-              title: '签到失败',
-              content: `订单已退款`,
-              showCancel: false
-            })
-          } else if (res.data.code == 4304) {
-            Taro.showModal({
-              title: '签到失败',
-              content: `没有预约过此订单`,
-              showCancel: false
-            })
-          } else if (res.data.code == 4303) {
-            Taro.showModal({
-              title: '签到失败',
-              content: `预约已过期`,
-              showCancel: false
-            })
-          } else {
-            Taro.showModal({
-              title: '签到失败',
-              content: `你尚未预约此课程`,
-              showCancel: false
-            })
-          }
+        this.sign(scene)
+      }
+    })
+  }
+  sign(checkin_id) {
+    const user_id = Taro.getStorageSync('user_id')
+    Taro.showLoading({
+      title: '签到中...'
+    })
+    userCheckin({
+      checkin_id,
+      user_id
+    }).then(res => {
+      Taro.hideLoading()
+      if (res.data.code == 200) {
+        Taro.showToast({
+          icon: 'success',
+          title: '签到成功',
+          duration: 2000
+        })
+      } else if (res.data.code == 4100) {
+        Taro.showModal({
+          title: '签到失败',
+          content: `订单不存在`,
+          showCancel: false
+        })
+      } else if (res.data.code == 4101) {
+        Taro.showModal({
+          title: '签到失败',
+          content: `订单未支付`,
+          showCancel: false
+        })
+      } else if (res.data.code == 4100) {
+        Taro.showModal({
+          title: '签到失败',
+          content: `订单已退款`,
+          showCancel: false
+        })
+      } else if (res.data.code == 4304) {
+        Taro.showModal({
+          title: '签到失败',
+          content: `你尚未预约此课程`,
+          showCancel: false
+        })
+      } else if (res.data.code == 4303) {
+        Taro.showModal({
+          title: '签到失败',
+          content: `预约已过期`,
+          showCancel: false
+        })
+      } else {
+        Taro.showModal({
+          title: '签到失败',
+          content: `你尚未预约此课程`,
+          showCancel: false
         })
       }
     })

@@ -3,7 +3,7 @@ import { View, Button, Text } from '@tarojs/components'
 import { connectLogin, withShare } from '../../utils/helper'
 import { PostButton } from '../../components'
 import { refundOrder, getOrder } from '../../actions/order'
-import { getTheSchedule } from '../../actions/schedule'
+import { getTheSchedule, userCheckin } from '../../actions/schedule'
 import { formatDate, formatWeek, formatHour, formatNormalDate, getUniqueExercise } from '../../utils/tool'
 import './index.less'
 import noplanImage from '../../assets/images/img_noplan@3x.png'
@@ -36,13 +36,71 @@ class BookInfo extends Component {
     byShare: false
   }
   config = {
-    navigationBarTitleText: 'CirCle30'
+    navigationBarTitleText: '预约详情'
   }
   scan() {
     Taro.scanCode({
       onlyFromCamera: true
     }).then(res => {
-      console.log(res)
+      if (res.errMsg == "scanCode:ok") {
+        const scene = queryString(res.path, 'scene')
+        this.sign(scene)
+      }
+    })
+  }
+  sign(checkin_id) {
+    const user_id = Taro.getStorageSync('user_id')
+    Taro.showLoading({
+      title: '签到中...'
+    })
+    userCheckin({
+      checkin_id,
+      user_id
+    }).then(res => {
+      Taro.hideLoading()
+      if (res.data.code == 200) {
+        Taro.showToast({
+          icon: 'success',
+          title: '签到成功',
+          duration: 2000
+        })
+      } else if (res.data.code == 4100) {
+        Taro.showModal({
+          title: '签到失败',
+          content: `订单不存在`,
+          showCancel: false
+        })
+      } else if (res.data.code == 4101) {
+        Taro.showModal({
+          title: '签到失败',
+          content: `订单未支付`,
+          showCancel: false
+        })
+      } else if (res.data.code == 4100) {
+        Taro.showModal({
+          title: '签到失败',
+          content: `订单已退款`,
+          showCancel: false
+        })
+      } else if (res.data.code == 4304) {
+        Taro.showModal({
+          title: '签到失败',
+          content: `你尚未预约此课程`,
+          showCancel: false
+        })
+      } else if (res.data.code == 4303) {
+        Taro.showModal({
+          title: '签到失败',
+          content: `预约已过期`,
+          showCancel: false
+        })
+      } else {
+        Taro.showModal({
+          title: '签到失败',
+          content: `你尚未预约此课程`,
+          showCancel: false
+        })
+      }
     })
   }
 

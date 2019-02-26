@@ -6,6 +6,7 @@ import { set as setGlobalData, get as getGlobalData } from '../../utils/globalDa
 import { Coupon } from '../../components'
 import { createShareCoupon, verifyShareCoupon } from '../../actions/coupons'
 import { getSingleUser } from '../../actions/user'
+import { getSystemConfig } from '../../actions/system'
 import './index.less'
 import logoImage from '../../assets/images/img_logo@3x.png'
 import defaultIconImage from '../../assets/images/default_icon@3x.png'
@@ -21,54 +22,53 @@ class Share extends Component {
   config = {
     navigationBarTitleText: '邀请好友'
   }
-
-  componentWillReceiveProps(nextProps) {
-    console.log(this.props, nextProps)
-  }
-  componentWillMount(){
-    
-  }
   componentDidMount() {
     const { type } = this.$router.params
     if (type == 'shareBy') {
       wx.hideShareMenu()
-      const invite_coupon = getGlobalData('invite_coupon')
-      const coupon_id = invite_coupon._id.$oid
-      const user_id = Taro.getStorageSync('user_id')
-      const { token_id, share_user_id } = this.$router.params
-      if (token_id && share_user_id) {
-        Taro.showLoading({
-          title: '请求中...'
-        })
-        Promise.all([verifyShareCoupon({
-          coupon_id,
-          user_id,
-          token_id
-        }), getSingleUser(share_user_id)]).then(resArr => {
-          const [res1, res2] = resArr
-          Taro.hideLoading()
-          if (res2.data) {
-            const { username, avatar } = res2.data
-            this.setState({
-              type,
-              recieved: type === 'shareBy',
-              coupon: type === 'toShare' ? getGlobalData('invite_coupon') : getGlobalData('newer_coupon'),
-              userName: username,
-              avatarUrl: avatar
-            })
-          }
-        }).catch(() => {
-          Taro.showModal({
-            title: '请求出错！',
-            content: '请检查网络连接后重试',
-            showCancel: false
+      getSystemConfig().then(res => {
+        const {coupons} = res.data
+
+        const newer_coupon = coupons.filter(x=>x.type=='new_arrival')[0]
+        setGlobalData('newer_coupon', newer_coupon)
+        const coupon_id = newer_coupon._id.$oid
+        const user_id = Taro.getStorageSync('user_id')
+        const { token_id, share_user_id } = this.$router.params
+        if (token_id && share_user_id) {
+          Taro.showLoading({
+            title: '请求中...'
           })
-        })
-      }
+          Promise.all([verifyShareCoupon({
+            coupon_id,
+            user_id,
+            token_id
+          }), getSingleUser(share_user_id)]).then(resArr => {
+            const [res1, res2] = resArr
+            Taro.hideLoading()
+            if (res2.data) {
+              const { username, avatar } = res2.data
+              console.log(user_id, share_user_id)
+              this.setState({
+                type,
+                recieved: user_id !== share_user_id,
+                coupon: newer_coupon,
+                userName: username,
+                avatarUrl: avatar
+              })
+            }
+          }).catch(() => {
+            Taro.showModal({
+              title: '请求出错！',
+              content: '请检查网络连接后重试',
+              showCancel: false
+            })
+          })
+        }
+      })
     } else {
       this.setState({
         type,
-        recieved: type === 'shareBy',
+        recieved: false,
         coupon: type === 'toShare' ? getGlobalData('invite_coupon') : getGlobalData('newer_coupon'),
         userName: Taro.getStorageSync('nickName'),
         avatarUrl: Taro.getStorageSync('avatarUrl')
@@ -113,7 +113,6 @@ class Share extends Component {
   render() {
     const pixelRatio = getGlobalData('pixelRatio')
     const { coupon, type, recieved, avatarUrl, userName } = this.state
-    const ratio = pixelRatio === 3 ? '3' : '2'
     return (
       <View className='share'>
         <View class="logo-wrapper">

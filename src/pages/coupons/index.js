@@ -1,7 +1,7 @@
 import { ComponentClass } from 'react'
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
-import { connectLogin,withShare} from '../../utils/helper'
+import { connectLogin, withShare } from '../../utils/helper'
 import { Coupon } from '../../components'
 import { getCoupons } from '../../actions/coupons'
 import { set as setGlobalData, get as getGlobalData } from '../../utils/globalData'
@@ -24,8 +24,10 @@ class CouponList extends Component {
     getCoupons({
       user_id
     }).then(res => {
-      const coupons = res.data.filter(x=>x.used==0)
-      this.setState({ coupons })
+      if (res.code == 200) {
+        const coupons = res.data.filter(x => x.used == 0)
+        this.setState({ coupons })
+      }
     })
   }
   render() {
