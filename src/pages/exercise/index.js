@@ -20,13 +20,10 @@ class Exercise extends Component {
   config = {
     navigationBarTitleText: ' '
   }
-  componentWillReceiveProps(nextProps) {
-    console.log(this.props, nextProps)
-  }
 
   componentWillUnmount() { }
 
-  componentDidMount() {
+  componentDidShow() {
     const { id } = this.$router.params
     this.setState({
       id,
@@ -56,7 +53,6 @@ class Exercise extends Component {
       postFormId({ form_id, open_id })
     }
   }
-  componentDidHide() { }
   $setShareTitle() {
     const { title } = this.state
     return `${title} | Circle30`
@@ -104,3 +100,4 @@ class Exercise extends Component {
 }
 
 export default Exercise
+

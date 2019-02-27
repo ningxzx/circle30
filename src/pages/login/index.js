@@ -21,7 +21,7 @@ class Login extends Component {
     const res = await Taro.getSetting()
     if (res.authSetting['scope.userInfo']) {
       const res = await Taro.getUserInfo()
-      await this.handleUserInfo(res.userInfo)
+      this.handleUserInfo(res.userInfo)
     }
   }
   getUserInfo(e) {
@@ -49,7 +49,7 @@ class Login extends Component {
                 saveUserInfo(user)
                 const { nickName, avatarUrl } = user
                 putUser({
-                  user_id: id,
+                  user_id: $oid,
                   openid,
                   "username": nickName,
                   "avatar": avatarUrl
@@ -97,7 +97,7 @@ class Login extends Component {
       Taro.hideLoading()
     })
   }
-  async handleUserInfo(info) {
+  handleUserInfo(info) {
     const { avatarUrl } = info
     saveWxUserInfo(info)
     this.setState({

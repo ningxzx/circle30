@@ -181,7 +181,7 @@ export const connectLogin = (Component) => {
     class LoginWrapper extends Component {
         componentDidShow() {
             userLogin()
-            if (super.componentWillMount) {
+            if (super.componentDidShow) {
                 super.componentDidShow();
             }
         }

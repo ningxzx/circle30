@@ -26,9 +26,6 @@ class Mine extends Component {
       url: '/pages/share/index?type=toShare'
     })
   }
-  componentWillReceiveProps(nextProps) {
-    console.log(this.props, nextProps)
-  }
 
   componentWillUnmount() { }
 
@@ -39,6 +36,7 @@ class Mine extends Component {
   render() {
     const pixelRatio = getGlobalData('pixelRatio') === 3 ? '3' : '2'
     const avatarUrl = Taro.getStorageSync('avatarUrl') || iconImage
+    console.log(avatarUrl)
     const nickName = Taro.getStorageSync('nickName')
     return (
       <View>

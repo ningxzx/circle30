@@ -27,11 +27,11 @@ class Share extends Component {
     if (type == 'shareBy') {
       wx.hideShareMenu()
       getSystemConfig().then(res => {
-        const {coupons} = res.data
+        const { coupons } = res.data
 
-        const newer_coupon = coupons.filter(x=>x.type=='new_arrival')[0]
-        setGlobalData('newer_coupon', newer_coupon)
-        const coupon_id = newer_coupon._id.$oid
+        const invite_coupon = coupons.filter(x => x.type == 'invite_coupon')[0]
+        setGlobalData('invite_coupon', invite_coupon)
+        const coupon_id = invite_coupon._id.$oid
         const user_id = Taro.getStorageSync('user_id')
         const { token_id, share_user_id } = this.$router.params
         if (token_id && share_user_id) {
@@ -51,7 +51,7 @@ class Share extends Component {
               this.setState({
                 type,
                 recieved: user_id !== share_user_id,
-                coupon: newer_coupon,
+                coupon: invite_coupon,
                 userName: username,
                 avatarUrl: avatar
               })
@@ -69,7 +69,7 @@ class Share extends Component {
       this.setState({
         type,
         recieved: false,
-        coupon: type === 'toShare' ? getGlobalData('invite_coupon') : getGlobalData('newer_coupon'),
+        coupon: getGlobalData('invite_coupon'),
         userName: Taro.getStorageSync('nickName'),
         avatarUrl: Taro.getStorageSync('avatarUrl')
       })
@@ -111,7 +111,6 @@ class Share extends Component {
   componentDidHide() { }
 
   render() {
-    const pixelRatio = getGlobalData('pixelRatio')
     const { coupon, type, recieved, avatarUrl, userName } = this.state
     return (
       <View className='share'>

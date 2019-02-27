@@ -4,7 +4,7 @@ import { connectLogin, withShare } from '../../utils/helper'
 import { PostButton } from '../../components'
 import { refundOrder, getOrder } from '../../actions/order'
 import { getTheSchedule, userCheckin } from '../../actions/schedule'
-import { formatDate, formatWeek, formatHour, formatNormalDate, getUniqueExercise } from '../../utils/tool'
+import { formatDate, formatWeek, formatHour, formatNormalDate, getUniqueExercise,queryString} from '../../utils/tool'
 import './index.less'
 import noplanImage from '../../assets/images/img_noplan@3x.png'
 

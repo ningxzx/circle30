@@ -32,11 +32,11 @@ class Book extends Component {
     }
     componentDidShow() {
         let storeId = ''
-        if (getGlobalData('selectStore')) {
-            storeId = getGlobalData('selectStore')['storeId']
-        }
         if (this.$router.params.storeId) {
             storeId = this.$router.params.storeId
+        }
+        if (getGlobalData('selectStore')) {
+            storeId = getGlobalData('selectStore')['storeId']
         }
         this.setState({
             phoneNumber: Taro.getStorageSync('phoneNumber') || '',
@@ -56,8 +56,8 @@ class Book extends Component {
                         let { title } = res.data
                         this.setState({ storeTitle: title })
                     })
+                    this.getDateSchedules()
                 })
-                this.getDateSchedules()
             } else {
                 this.getLocationStore()
             }
@@ -113,9 +113,13 @@ class Book extends Component {
         })
     }
     getStores(location = { "latitude": 30.66342, "longitude": 104.072329 }) {
+        Taro.showLoading({
+            title: '搜索门店中...'
+        })
         //  默认选择最近的门店
         let { latitude, longitude } = location
         getShops().then(res => {
+            Taro.hideLoading()
             let stores = res.data.map(store => {
                 const { location: { lat, lng } } = store
                 const { distance, pureDistance } = calDistance(latitude, longitude, lat, lng)
@@ -133,6 +137,13 @@ class Book extends Component {
         })
     }
     componentWillUnmount() {
+        setGlobalData('selectCoupon', null)
+        this.setState({
+            couponAmount: 0,
+            couponId: null
+        })
+    }
+    componentDidHide() {
         setGlobalData('selectCoupon', null)
         this.setState({
             couponAmount: 0,
@@ -277,18 +288,18 @@ class Book extends Component {
             selectPeriodIdx[selectDateIndex] = idx
             this.setState({
                 selectPeriodIdx,
-                total: Math.max((getGlobalData('price') || 0) - couponAmount*100, 0) / 100
+                total: Math.max((getGlobalData('price') || 0) - couponAmount * 100, 0) / 100
             })
         }
     }
-    async getPhoneNumber(e) {
+    getPhoneNumber(e) {
         const { iv, encryptedData } = e.detail
         if (!iv) {
             return false
         }
-        Taro.checkSession().then(
-            res => {
-                console.log(res)
+        Taro.checkSession().then(res => {
+            console.log(res)
+            if (res.errMsg == 'checkSession:ok') {
                 decryptData({
                     encrypted: encryptedData,
                     iv,
@@ -309,35 +320,35 @@ class Book extends Component {
                         phone: phoneNumber
                     })
                 })
-                    .catch((err) => {
-                        Taro.login().then((res) => {
-                            const code = res.code
-                            getSessionKey({ code }).then((session => {
-                                decryptData({
-                                    encrypted: encryptedData,
-                                    iv,
-                                    session: session.session_key
-                                }).then((res) => {
-                                    const { phoneNumber } = res.data
-                                    const unionid = Taro.getStorageSync('unionid')
-                                    this.setState({
-                                        phoneNumber
-                                    })
-                                    Taro.setStorageSync('phoneNumber', phoneNumber)
-                                    const user_id = Taro.getStorageSync('user_id')
-                                    const openid = Taro.getStorageSync('openid')
-                                    putUser({
-                                        user_id,
-                                        openid,
-                                        unionid,
-                                        phone: phoneNumber
-                                    })
-                                })
-                            }))
-                            return res.data
+            } else {
+                Taro.login().then((res) => {
+                    const code = res.code
+                    getSessionKey({ code }).then((session => {
+                        decryptData({
+                            encrypted: encryptedData,
+                            iv,
+                            session: session.session_key
+                        }).then((res) => {
+                            const { phoneNumber } = res.data
+                            const unionid = Taro.getStorageSync('unionid')
+                            this.setState({
+                                phoneNumber
+                            })
+                            Taro.setStorageSync('phoneNumber', phoneNumber)
+                            const user_id = Taro.getStorageSync('user_id')
+                            const openid = Taro.getStorageSync('openid')
+                            putUser({
+                                user_id,
+                                openid,
+                                unionid,
+                                phone: phoneNumber
+                            })
                         })
-                    })
-            })
+                    }))
+                    return res.data
+                })
+            }
+        })
     }
     changeDate(day) {
         let { couponAmount, selectPeriodIdx } = this.state
