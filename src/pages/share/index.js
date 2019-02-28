@@ -28,8 +28,8 @@ class Share extends Component {
       wx.hideShareMenu()
       getSystemConfig().then(res => {
         const { coupons } = res.data
-
-        const invite_coupon = coupons.filter(x => x.type == 'invite_coupon')[0]
+        const invite_coupon = coupons.filter(x => x.type == 'invite')[0]
+        console.log(invite_coupon)
         setGlobalData('invite_coupon', invite_coupon)
         const coupon_id = invite_coupon._id.$oid
         const user_id = Taro.getStorageSync('user_id')
@@ -45,22 +45,13 @@ class Share extends Component {
           }), getSingleUser(share_user_id)]).then(resArr => {
             const [res1, res2] = resArr
             Taro.hideLoading()
-            if (res2.data) {
-              const { username, avatar } = res2.data
-              console.log(user_id, share_user_id)
-              this.setState({
-                type,
-                recieved: user_id !== share_user_id,
-                coupon: invite_coupon,
-                userName: username,
-                avatarUrl: avatar
-              })
-            }
-          }).catch(() => {
-            Taro.showModal({
-              title: '请求出错！',
-              content: '请检查网络连接后重试',
-              showCancel: false
+            const { username, avatar } = res2.data
+            this.setState({
+              type,
+              recieved: user_id !== share_user_id,
+              coupon: invite_coupon,
+              userName: username,
+              avatarUrl: avatar
             })
           })
         }

@@ -239,8 +239,13 @@ class Book extends Component {
                             if (total > 0) {
                                 this.pay($oid)
                             } else {
-                                Taro.navigateTo({
-                                    url: `/pages/bookStatus/index?order_id=${$oid}`
+                                this.setState({
+                                    selectPeriodIdx,
+                                    total: 0
+                                }, () => {
+                                    Taro.navigateTo({
+                                        url: `/pages/bookStatus/index?order_id=${$oid}`
+                                    })
                                 })
                             }
                         }

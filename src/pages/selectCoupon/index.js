@@ -18,12 +18,13 @@ class SelectCoupon extends Component {
         selectCouponId: ''
     }
     componentDidShow() {
-        this.getUserCoupons()
+        console.log(getGlobalData('selectCoupon'))
         if (getGlobalData('selectCoupon')) {
             this.setState({
                 selectCouponId: getGlobalData('selectCoupon')._id.$oid
             })
         }
+        this.getUserCoupons()
     }
     getUserCoupons() {
         const user_id = Taro.getStorageSync('user_id')
@@ -44,6 +45,7 @@ class SelectCoupon extends Component {
             }, () => {
                 const { coupons } = this.state
                 setGlobalData('selectCoupon', coupons[idx])
+                console.log( getGlobalData('selectCoupon'))
                 Taro.navigateBack({
                     delta: -1
                 })

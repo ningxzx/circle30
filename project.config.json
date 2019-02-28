@@ -30,13 +30,13 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 3,
+			"current": 0,
 			"list": [
 				{
 					"id": 0,
 					"name": "share",
 					"pathName": "pages/share/index",
-					"query": "type=shareBy&token_id=5c6bfb19eebc11011b3cf591&share_user_id=5c4fc0beeebc11006b1490fb",
+					"query": "type=shareBy&token_id=5c76a686eebc1119204f6af2&share_user_id=5c7684edeebc111519400f42",
 					"scene": null
 				},
 				{

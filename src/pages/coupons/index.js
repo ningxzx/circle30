@@ -24,7 +24,7 @@ class CouponList extends Component {
     getCoupons({
       user_id
     }).then(res => {
-      if (res.code == 200) {
+      if (res.statusCode == 200) {
         const coupons = res.data.filter(x => x.used == 0)
         this.setState({ coupons })
       }
